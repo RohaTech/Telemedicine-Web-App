@@ -1,5 +1,5 @@
  
-# Laravel-Vue Template
+# Telemedicine Web App
 
 A ready-to-use template for building modern web applications with Laravel as the backend framework and Vue.js for the frontend. This template provides a clean starting point for projects, with pre-configured integration between Laravel and Vue.
 
