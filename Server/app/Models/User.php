@@ -49,4 +49,72 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function doctor()
+    {
+        return $this->hasOne(Doctor::class);
+    }
+
+    /**
+     * A user can be a patient and have multiple consultations.
+     */
+    public function consultations()
+    {
+        return $this->hasMany(Consultation::class, 'patient_id');
+    }
+
+    /**
+     * A user can be a doctor and have multiple consultations.
+     */
+    public function doctorConsultations()
+    {
+        return $this->hasMany(Consultation::class, 'doctor_id');
+    }
+
+    /**
+     * A user can have multiple payments.
+     */
+    public function payments()
+    {
+        return $this->hasMany(Payment::class, 'patient_id');
+    }
+
+    /**
+     * A user can have multiple prescriptions.
+     */
+    public function prescriptions()
+    {
+        return $this->hasMany(Prescription::class, 'patient_id');
+    }
+
+    /**
+     * A doctor can issue multiple prescriptions.
+     */
+    public function doctorPrescriptions()
+    {
+        return $this->hasMany(Prescription::class, 'doctor_id');
+    }
+
+    /**
+     * A user can have multiple notifications.
+     */
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
+
+    /**
+     * A user can have multiple appointments.
+     */
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class, 'patient_id');
+    }
+
+    /**
+     * A doctor can have multiple appointments.
+     */
+    public function doctorAppointments()
+    {
+        return $this->hasMany(Appointment::class, 'doctor_id');
+    }
 }
