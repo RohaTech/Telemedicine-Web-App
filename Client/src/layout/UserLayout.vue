@@ -1,9 +1,13 @@
 <script setup>
+import UserFooter from '@/components/UserLayout/UserFooter.vue';
+import UserHeading from '@/components/UserLayout/UserHeading.vue';
+
 
 </script>
 
 <template>
 
-  <h1 class="">User Layout</h1>
+<UserHeading/>
   <slot></slot>
+<UserFooter/>
 </template>
