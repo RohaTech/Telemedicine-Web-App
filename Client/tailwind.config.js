@@ -7,7 +7,8 @@ export default {
   theme: {
     extend: {
       colors: {
-        orange: "#ff4d30"
+        "first-accent": "#048581",
+        "second-accent": "#2FC7A1"
       }
     },
   },
