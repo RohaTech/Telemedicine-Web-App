@@ -6,7 +6,7 @@ import Logo from "../UI/Logo.vue";
   <div class="py-4 border-b">
     <div class="w-full px-10 items-center bg-white flex justify-between">
       <Logo class="w-[150px]" />
-      <ul class="flex gap-x-12 items-center">
+      <ul class="flex gap-x-12 items-center text-lg">
         <li class="cursor-pointer hover:font-semibold">Home</li>
         <li class="cursor-pointer hover:font-semibold">About Us</li>
         <li class="cursor-pointer hover:font-semibold">Categories</li>
