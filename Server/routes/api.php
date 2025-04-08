@@ -6,7 +6,8 @@ use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\ConsultationController; 
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\LaboratoryController; 
-use App\Http\Controllers\LaboratoryAuthController; 
+use App\Http\Controllers\LaboratoryAuthController;  
+use App\Http\Controllers\LabRequestController;  
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +22,10 @@ Route::apiResource('/appointments', AppointmentController::class);
 Route::apiResource('/consultations', ConsultationController::class);
 Route::apiResource('/doctors', DoctorController::class);
 Route::apiResource('/laboratories', LaboratoryController::class);
+Route::apiResource('/lab-requests', LabRequestController::class);
+
+
+
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
