@@ -4,7 +4,10 @@ import AppointmentList from '@/components/Appointment/AppointmentList.vue'
 import CreateAppointment from '@/components/Appointment/CreateAppointment.vue'
 import AppointmentView from '@/components/Appointment/AppointmentView.vue'
 import AppointmentEdit from '@/components/Appointment/AppointmentEdit.vue'
-
+import ConsultationList from '@/components/Consultation/ConsultationList.vue'
+import ConsultationView from '@/components/Consultation/ConsultationView.vue'
+import ConsultationEdit from '@/components/Consultation/ConsultationEdit.vue'
+import CreateConsultation from '@/components/Consultation/CreateConsultation.vue'
 
 
 const router = createRouter({
@@ -34,7 +37,27 @@ const router = createRouter({
       path: '/appointments/:id',
       name: 'AppointmentView',
       component: AppointmentView,
-    }
+    }, 
+    {
+      path: '/consultations',
+      name: 'Consultations',
+      component: ConsultationList,
+    },
+    {
+      path: '/consultations/:id',
+      name: 'ConsultationView',
+      component: ConsultationView,
+    },
+    {
+      path: '/consultations/:id/edit',
+      name: 'ConsultationEdit',
+      component: ConsultationEdit,
+    },
+    {
+      path: '/consultations/create',
+      name: 'CreateConsultation',
+      component: CreateConsultation,
+    },
 
   ],
 })
