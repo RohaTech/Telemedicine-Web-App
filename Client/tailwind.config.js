@@ -8,7 +8,8 @@ export default {
     extend: {
       colors: {
         "first-accent": "#048581",
-        "second-accent": "#2FC7A1"
+        "second-accent": "#2FC7A1",
+        "dark-blue": "#0E2A46"
       }
     },
   },

@@ -1,7 +1,14 @@
 <script setup>
+import AboutUsSection from "@/components/HomeView/AboutUsSection.vue";
+import ExploreSection from "@/components/HomeView/ExploreSection.vue";
+import HeroSection from "@/components/HomeView/HeroSection.vue";
 import UserLayout from "@/layout/UserLayout.vue";
 </script>
 
 <template>
-  <UserLayout> HomeView </UserLayout>
+  <UserLayout>
+    <HeroSection />
+    <AboutUsSection />
+    <ExploreSection />
+  </UserLayout>
 </template>
