@@ -288,12 +288,12 @@ const cards = [
     </h1>
 
     <div
-      class="mt-8 grid grid-cols-4 place-items-center gap-x-4 text-dark-blue"
+      class="mt-16 grid grid-cols-4 place-items-center gap-x-4 text-dark-blue"
     >
       <div
         v-for="card in cards"
         :key="card.title"
-        class="flex w-[250px] flex-col items-center gap-y-8 rounded-md bg-[#f2f2f2] p-8"
+        class="h- flex h-[350px] w-[280px] flex-col items-center gap-y-8 rounded-md bg-[#f2f2f2] p-8"
       >
         <div
           class="flex size-14 items-center justify-center rounded-full border border-dark-blue"
