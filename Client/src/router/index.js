@@ -16,6 +16,10 @@ import LabRequestList from '@/components/LabRequest/LabRequestList.vue'
 import LabRequestView from '@/components/LabRequest/LabRequestView.vue'
 import LabRequestEdit from '@/components/LabRequest/LabRequestEdit.vue'
 import CreateLabRequest from '@/components/LabRequest/CreateLabRequest.vue'
+import LabResultList from '@/components/LabResult/LabResultList.vue'
+import LabResultView from '@/components/LabResult/LabResultView.vue'
+import LabResultEdit from '@/components/LabResult/LabResultEdit.vue'
+import CreateLabResult from '@/components/LabResult/CreateLabResult.vue'
 
 
 const router = createRouter({
@@ -105,6 +109,26 @@ const router = createRouter({
       path: '/lab-requests/create',
       name: 'CreateLabRequest',
       component: CreateLabRequest,
+    },
+    {
+      path: '/lab-results',
+      name: 'LabResults',
+      component: LabResultList,
+    },
+    {
+      path: '/lab-results/:id',
+      name: 'LabResultView',
+      component: LabResultView,
+    },
+    {
+      path: '/lab-results/:id/edit',
+      name: 'LabResultEdit',
+      component: LabResultEdit,
+    },
+    {
+      path: '/lab-results/create',
+      name: 'CreateLabResult',
+      component: CreateLabResult,
     },
 
   ],
