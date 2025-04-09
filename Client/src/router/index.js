@@ -20,6 +20,10 @@ import LabResultList from '@/components/LabResult/LabResultList.vue'
 import LabResultView from '@/components/LabResult/LabResultView.vue'
 import LabResultEdit from '@/components/LabResult/LabResultEdit.vue'
 import CreateLabResult from '@/components/LabResult/CreateLabResult.vue'
+import PrescriptionList from '@/components/Prescription/PrescriptionList.vue'
+import PrescriptionView from '@/components/Prescription/PrescriptionView.vue'
+import PrescriptionEdit from '@/components/Prescription/PrescriptionEdit.vue'
+import CreatePrescription from '@/components/Prescription/CreatePrescription.vue'
 
 
 const router = createRouter({
@@ -129,6 +133,26 @@ const router = createRouter({
       path: '/lab-results/create',
       name: 'CreateLabResult',
       component: CreateLabResult,
+    },
+    {
+      path: '/prescriptions',
+      name: 'Prescriptions',
+      component: PrescriptionList,
+    },
+    {
+      path: '/prescriptions/:id',
+      name: 'PrescriptionView',
+      component: PrescriptionView,
+    },
+    {
+      path: '/prescriptions/:id/edit',
+      name: 'PrescriptionEdit',
+      component: PrescriptionEdit,
+    },
+    {
+      path: '/prescriptions/create',
+      name: 'CreatePrescription',
+      component: CreatePrescription,
     },
 
   ],
