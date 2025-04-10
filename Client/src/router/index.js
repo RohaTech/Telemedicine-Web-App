@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import WelcomePage from '../views/WelcomePage.vue'
 import AppointmentList from '@/components/Appointment/AppointmentList.vue'
 import CreateAppointment from '@/components/Appointment/CreateAppointment.vue'
 import AppointmentView from '@/components/Appointment/AppointmentView.vue'
@@ -24,6 +24,7 @@ import PrescriptionList from '@/components/Prescription/PrescriptionList.vue'
 import PrescriptionView from '@/components/Prescription/PrescriptionView.vue'
 import PrescriptionEdit from '@/components/Prescription/PrescriptionEdit.vue'
 import CreatePrescription from '@/components/Prescription/CreatePrescription.vue'
+import HomePage from '@/views/HomePage.vue'
 
 
 const router = createRouter({
@@ -31,8 +32,13 @@ const router = createRouter({
   routes: [
     {
       path: '/',
+      name: 'Welcome',
+      component: WelcomePage,
+    },
+    {
+      path: '/home',
       name: 'Home',
-      component: HomeView,
+      component: HomePage,
     },
     {
       path: '/appointments',
@@ -53,7 +59,7 @@ const router = createRouter({
       path: '/appointments/:id',
       name: 'AppointmentView',
       component: AppointmentView,
-    }, 
+    },
     {
       path: '/consultations',
       name: 'Consultations',

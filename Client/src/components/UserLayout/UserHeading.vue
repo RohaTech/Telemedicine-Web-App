@@ -23,12 +23,12 @@ import Logo from "../UI/Logo.vue";
           >Appointments</RouterLink
         >
         <RouterLink
-          :to="{ name: 'Home' }"
+          :to="{ name: 'Welcome' }"
           class="cursor-pointer hover:font-semibold"
           >Reservation</RouterLink
         >
         <RouterLink
-          :to="{ name: 'Home' }"
+          :to="{ name: 'Welcome' }"
           class="cursor-pointer hover:font-semibold"
           >Contact</RouterLink
         >
