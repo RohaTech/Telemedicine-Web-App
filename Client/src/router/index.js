@@ -16,6 +16,14 @@ import LabRequestList from '@/components/LabRequest/LabRequestList.vue'
 import LabRequestView from '@/components/LabRequest/LabRequestView.vue'
 import LabRequestEdit from '@/components/LabRequest/LabRequestEdit.vue'
 import CreateLabRequest from '@/components/LabRequest/CreateLabRequest.vue'
+import LabResultList from '@/components/LabResult/LabResultList.vue'
+import LabResultView from '@/components/LabResult/LabResultView.vue'
+import LabResultEdit from '@/components/LabResult/LabResultEdit.vue'
+import CreateLabResult from '@/components/LabResult/CreateLabResult.vue'
+import PrescriptionList from '@/components/Prescription/PrescriptionList.vue'
+import PrescriptionView from '@/components/Prescription/PrescriptionView.vue'
+import PrescriptionEdit from '@/components/Prescription/PrescriptionEdit.vue'
+import CreatePrescription from '@/components/Prescription/CreatePrescription.vue'
 
 
 const router = createRouter({
@@ -105,6 +113,46 @@ const router = createRouter({
       path: '/lab-requests/create',
       name: 'CreateLabRequest',
       component: CreateLabRequest,
+    },
+    {
+      path: '/lab-results',
+      name: 'LabResults',
+      component: LabResultList,
+    },
+    {
+      path: '/lab-results/:id',
+      name: 'LabResultView',
+      component: LabResultView,
+    },
+    {
+      path: '/lab-results/:id/edit',
+      name: 'LabResultEdit',
+      component: LabResultEdit,
+    },
+    {
+      path: '/lab-results/create',
+      name: 'CreateLabResult',
+      component: CreateLabResult,
+    },
+    {
+      path: '/prescriptions',
+      name: 'Prescriptions',
+      component: PrescriptionList,
+    },
+    {
+      path: '/prescriptions/:id',
+      name: 'PrescriptionView',
+      component: PrescriptionView,
+    },
+    {
+      path: '/prescriptions/:id/edit',
+      name: 'PrescriptionEdit',
+      component: PrescriptionEdit,
+    },
+    {
+      path: '/prescriptions/create',
+      name: 'CreatePrescription',
+      component: CreatePrescription,
     },
 
   ],
