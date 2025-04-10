@@ -1,14 +1,15 @@
 <!-- filepath: e:\code files\Final Year\Telemedicine-Web-App\Client\src\views\Appointment\AppointmentView.vue -->
 <template>
-    <div class="max-w-2xl mx-auto p-5 border border-gray-300 rounded-md bg-gray-50">
-      <h1 class="text-2xl font-bold mb-6">Appointment Details</h1>
+  <UserLayout>
+    <div
+      class="mx-auto max-w-2xl rounded-md border border-gray-300 bg-gray-50 p-5"
+    >
+      <h1 class="mb-6 text-2xl font-bold">Appointment Details</h1>
       <div v-if="appointmentStore.errors.message" class="mb-4 text-red-600">
         {{ appointmentStore.errors.message }}
       </div>
       <div v-if="appointment">
-        <div class="mb-4">
-          <strong>ID:</strong> {{ appointment.id }}
-        </div>
+        <div class="mb-4"><strong>ID:</strong> {{ appointment.id }}</div>
         <div class="mb-4">
           <strong>Patient ID:</strong> {{ appointment.patient_id }}
         </div>
@@ -23,30 +24,31 @@
         </div>
         <router-link
           to="/appointments"
-          class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors"
+          class="rounded-md bg-gray-600 px-4 py-2 text-white transition-colors hover:bg-gray-700"
         >
           Back to List
         </router-link>
       </div>
       <div v-else class="text-gray-500">Loading appointment...</div>
     </div>
-  </template>
-  
-  <script setup>
-  import { ref, onMounted } from 'vue';
-  import { useRoute } from 'vue-router';
-  import { useAppointmentStore } from '@/stores/appointmentStore';
-  
-  const route = useRoute();
-  const appointmentStore = useAppointmentStore();
-  const appointment = ref(null);
-  
-  const fetchAppointment = async () => {
-    const result = await appointmentStore.getAppointment(route.params.id);
-    if (result.success) {
-      appointment.value = result.data;
-    }
-  };
-  
-  onMounted(fetchAppointment);
-  </script>
+  </UserLayout>
+</template>
+
+<script setup>
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import { useAppointmentStore } from "@/stores/appointmentStore";
+import UserLayout from "@/layout/UserLayout.vue";
+const route = useRoute();
+const appointmentStore = useAppointmentStore();
+const appointment = ref(null);
+
+const fetchAppointment = async () => {
+  const result = await appointmentStore.getAppointment(route.params.id);
+  if (result.success) {
+    appointment.value = result.data;
+  }
+};
+
+onMounted(fetchAppointment);
+</script>
