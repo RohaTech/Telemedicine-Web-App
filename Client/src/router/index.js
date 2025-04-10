@@ -25,6 +25,10 @@ import PrescriptionView from '@/components/Prescription/PrescriptionView.vue'
 import PrescriptionEdit from '@/components/Prescription/PrescriptionEdit.vue'
 import CreatePrescription from '@/components/Prescription/CreatePrescription.vue'
 import HomePage from '@/views/HomePage.vue'
+import NotificationList from '@/components/Notification/NotificationList.vue'
+import NotificationView from '@/components/Notification/NotificationView.vue'
+import NotificationEdit from '@/components/Notification/NotificationEdit.vue'
+import CreateNotification from '@/components/Notification/CreateNotification.vue'
 
 
 const router = createRouter({
@@ -159,6 +163,26 @@ const router = createRouter({
       path: '/prescriptions/create',
       name: 'CreatePrescription',
       component: CreatePrescription,
+    },
+    {
+      path: '/notifications',
+      name: 'Notifications',
+      component: NotificationList,
+    },
+    {
+      path: '/notifications/:id',
+      name: 'NotificationView',
+      component: NotificationView,
+    },
+    {
+      path: '/notifications/:id/edit',
+      name: 'NotificationEdit',
+      component: NotificationEdit,
+    },
+    {
+      path: '/notifications/create',
+      name: 'CreateNotification',
+      component: CreateNotification,
     },
 
   ],
