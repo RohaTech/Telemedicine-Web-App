@@ -5,7 +5,7 @@ import FooterBackground from "/images/General/Footer_Background.png";
 
 <template>
   <div
-    class="mt-24 min-h-[400px] w-full bg-black bg-cover bg-center pb-16 text-white"
+    class="mt-24 min-h-[400px] w-full bg-black bg-cover bg-center pb-1 text-white"
     :style="{ backgroundImage: `url(${FooterBackground})` }"
   >
     <div
@@ -80,7 +80,7 @@ import FooterBackground from "/images/General/Footer_Background.png";
       </div>
     </div>
 
-    <div class="mt-10 grid grid-cols-4 pl-32">
+    <div class="my-16 grid grid-cols-4 pl-32">
       <div class="space-y-8">
         <Logo class="w-[200px]" />
         <p class="w-[250px]">
@@ -203,8 +203,13 @@ import FooterBackground from "/images/General/Footer_Background.png";
       </div>
     </div>
 
-    <div class="flex gap-x-8">
-      <span class="text-gray-400">Copyright </span>
+    <div
+      class="flex items-center justify-center gap-x-1 py-3 text-gray-400"
+      :style="{ backgroundImage: `url(${FooterBackground})` }"
+    >
+      <span class="">Copyright &#64; 2025</span>
+      <span class="font-bold text-second-accent">Tenadam</span>
+      <span class="">|| All Rights Reserved</span>
     </div>
   </div>
 </template>
