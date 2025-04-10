@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('consultation_id')->constrained('consultations');
             $table->string('medicine_name');
             $table->text('directions');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
         });
     }
 

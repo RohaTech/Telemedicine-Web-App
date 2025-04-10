@@ -3,38 +3,18 @@ import Logo from "../UI/Logo.vue";
 </script>
 
 <template>
-  <div class="border-b py-4">
-    <div class="flex w-full items-center justify-between bg-white px-10">
+  <div class="py-4 border-b">
+    <div class="w-full px-10 items-center bg-white flex justify-between">
       <Logo class="w-[150px]" />
-      <ul class="flex items-center gap-x-12 text-lg">
-        <RouterLink
-          :to="{ name: 'Home' }"
-          class="cursor-pointer hover:font-semibold"
-          >Home</RouterLink
-        >
-        <RouterLink
-          :to="{ name: 'Consultations' }"
-          class="cursor-pointer hover:font-semibold"
-          >Consultations</RouterLink
-        >
-        <RouterLink
-          :to="{ name: 'Appointments' }"
-          class="cursor-pointer hover:font-semibold"
-          >Appointments</RouterLink
-        >
-        <RouterLink
-          :to="{ name: 'Welcome' }"
-          class="cursor-pointer hover:font-semibold"
-          >Reservation</RouterLink
-        >
-        <RouterLink
-          :to="{ name: 'Welcome' }"
-          class="cursor-pointer hover:font-semibold"
-          >Contact</RouterLink
-        >
+      <ul class="flex gap-x-12 items-center text-lg">
+        <li class="cursor-pointer hover:font-semibold">Home</li>
+        <li class="cursor-pointer hover:font-semibold">About Us</li>
+        <li class="cursor-pointer hover:font-semibold">Categories</li>
+        <li class="cursor-pointer hover:font-semibold">Reservation</li>
+        <li class="cursor-pointer hover:font-semibold">Contact</li>
       </ul>
 
-      <div class="flex items-center gap-x-8">
+      <div class="flex gap-x-8 items-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           class="size-8 cursor-pointer"
