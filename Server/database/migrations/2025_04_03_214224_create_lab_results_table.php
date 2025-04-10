@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('laboratory_id')->constrained('laboratories')->onDelete('cascade');
             $table->text('result_details');
             $table->string('attachment')->nullable();
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
         });
     }
 
