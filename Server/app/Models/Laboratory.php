@@ -17,8 +17,19 @@ class Laboratory extends Model
         'password',
         'phone',
         'address',
+        'tests'
     ];
     protected $hidden = [
         'password',
     ];
+
+    public function labRequest()
+    {
+        return $this->hasMany(LabRequest::class);
+    }
+
+    public function labResult()
+    {
+        return $this->hasMany(LabResult::class);
+    }
 }
