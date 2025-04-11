@@ -9,6 +9,8 @@ use App\Http\Controllers\LaboratoryController;
 use App\Http\Controllers\LaboratoryAuthController;  
 use App\Http\Controllers\LabRequestController;  
 use App\Http\Controllers\LabResultController;   
+use App\Http\Controllers\PrescriptionController;   
+use App\Http\Controllers\PaymentController;   
 use App\Http\Controllers\PrescriptionController;    
 use App\Http\Controllers\NotificationController;    
 use Illuminate\Http\Request;
@@ -28,7 +30,9 @@ Route::apiResource('/laboratories', LaboratoryController::class);
 Route::apiResource('/lab-requests', LabRequestController::class);
 Route::apiResource('/lab-results', LabResultController::class);
 Route::apiResource('/prescriptions', PrescriptionController::class);
+Route::apiResource('/payments', PaymentController::class);
 Route::apiResource('/notifications', NotificationController::class);
+
 
 
 

@@ -19,7 +19,8 @@ return new class extends Migration
             $table->enum('payment_method', ['credit_card', 'mobile_money', 'cash']);
             $table->enum('status', ['pending', 'completed', 'failed'])->default('pending');
             $table->string('transaction_id')->unique()->nullable();
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
+            
         });
     }
 
