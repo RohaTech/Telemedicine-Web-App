@@ -33,6 +33,7 @@ import NotificationList from '@/components/Notification/NotificationList.vue'
 import NotificationView from '@/components/Notification/NotificationView.vue'
 import NotificationEdit from '@/components/Notification/NotificationEdit.vue'
 import CreateNotification from '@/components/Notification/CreateNotification.vue'
+import LaboratoryRegister from '@/views/Laboratory/LaboratoryRegister.vue'
 
 
 
@@ -207,6 +208,11 @@ const router = createRouter({
       path: '/notifications/create',
       name: 'CreateNotification',
       component: CreateNotification,
+    },
+    {
+      path: '/laboratory/register',
+      name: 'LaboratoryRegister',
+      component: LaboratoryRegister,
     },
 
   ],
