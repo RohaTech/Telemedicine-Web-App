@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users');
             $table->text('message');
             $table->enum('status', ['unread', 'read'])->default('unread');
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
         });
     }
 

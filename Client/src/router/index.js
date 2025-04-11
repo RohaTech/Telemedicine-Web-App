@@ -29,6 +29,11 @@ import PaymentList from '@/components/Payment/PaymentList.vue'
 import PaymentView from '@/components/Payment/PaymentView.vue'
 import PaymentEdit from '@/components/Payment/PaymentEdit.vue'
 import CreatePayment from '@/components/Payment/CreatePayment.vue'
+import NotificationList from '@/components/Notification/NotificationList.vue'
+import NotificationView from '@/components/Notification/NotificationView.vue'
+import NotificationEdit from '@/components/Notification/NotificationEdit.vue'
+import CreateNotification from '@/components/Notification/CreateNotification.vue'
+
 
 
 const router = createRouter({
@@ -182,6 +187,26 @@ const router = createRouter({
       path: '/payments/create',
       name: 'CreatePayment',
       component: CreatePayment,
+    },
+    {
+      path: '/notifications',
+      name: 'Notifications',
+      component: NotificationList,
+    },
+    {
+      path: '/notifications/:id',
+      name: 'NotificationView',
+      component: NotificationView,
+    },
+    {
+      path: '/notifications/:id/edit',
+      name: 'NotificationEdit',
+      component: NotificationEdit,
+    },
+    {
+      path: '/notifications/create',
+      name: 'CreateNotification',
+      component: CreateNotification,
     },
 
   ],
