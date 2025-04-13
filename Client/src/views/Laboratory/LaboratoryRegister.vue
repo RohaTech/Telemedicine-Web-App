@@ -233,7 +233,3 @@ const submitForm = async () => {
     </div>
   </div>
 </template>
-
-<style scoped>
-/* No custom styles needed, Tailwind CSS classes are used */
-</style>
