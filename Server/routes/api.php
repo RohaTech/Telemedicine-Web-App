@@ -31,6 +31,7 @@ Route::apiResource('/lab-results', LabResultController::class);
 Route::apiResource('/prescriptions', PrescriptionController::class);
 Route::apiResource('/payments', PaymentController::class);
 Route::apiResource('/notifications', NotificationController::class);
+Route::post('/appointments/{id}/confirm-meeting', [AppointmentController::class, 'confirmAppointmentWithMeeting']);
 
 
 

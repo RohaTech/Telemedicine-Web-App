@@ -14,6 +14,7 @@ class Appointment extends Model
         'doctor_id',
         'appointment_date',
         'status',
+        'meeting_url',
     ];
 
     /**

@@ -6,6 +6,7 @@ use App\Models\Appointment;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Exception;
+use App\Services\DailyService;
 
 class AppointmentController extends Controller
 {
@@ -84,6 +85,32 @@ class AppointmentController extends Controller
             return response()->json(['error' => 'Appointment not found', 'message' => $e->getMessage()], 404);
         } catch (Exception $e) {
             return response()->json(['error' => 'Failed to delete appointment', 'message' => $e->getMessage()], 500);
+        }
+    }
+    public function confirmAppointmentWithMeeting($id)
+    {
+        try {
+            $appointment = Appointment::findOrFail($id);
+
+            if ($appointment->status !== 'confirmed') {
+                return response()->json(['error' => 'Appointment must be confirmed first.'], 400);
+            }
+
+            $dailyService = new DailyService();
+            $meeting = $dailyService->createMeetingRoom();
+
+            $appointment->meeting_url = $meeting['url'] ?? null;
+            $appointment->save();
+
+            return response()->json([
+                'message' => 'Meeting room created successfully.',
+                'meeting_url' => $appointment->meeting_url
+            ], 200);
+
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Appointment not found', 'message' => $e->getMessage()], 404);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to create meeting room', 'message' => $e->getMessage()], 500);
         }
     }
 }
