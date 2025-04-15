@@ -10,7 +10,7 @@ export const useLaboratoryStore = defineStore('laboratoryStore', {
 
   actions: {
     async getLaboratories() {
-      const res = await fetch("/api/categories", {
+      const res = await fetch("/api/laboratories", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,

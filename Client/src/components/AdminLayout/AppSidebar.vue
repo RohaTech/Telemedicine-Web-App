@@ -36,12 +36,17 @@ const menuGroups = [
       },
       {
         icon: CalenderIcon,
-        name: "Calendar",
+        name: "Customers",
         path: "AdminHome",
       },
       {
         icon: UserCircleIcon,
-        name: "User Profile",
+        name: "Doctors",
+        path: "AdminHome",
+      },
+      {
+        icon: UserCircleIcon,
+        name: "Laboratory",
         path: "AdminHome",
       },
 

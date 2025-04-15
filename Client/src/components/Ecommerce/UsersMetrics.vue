@@ -1,5 +1,28 @@
 
 <script setup>
+import { useLaboratoryStore } from '@/stores/laboratoryStore';
+import { usePatientStore } from '@/stores/patientStore';
+import { onMounted, ref } from 'vue';
+
+
+const {getLaboratories} = useLaboratoryStore()
+const {getAllPatients} = usePatientStore()
+
+
+const laboratories = ref([]);
+const customers = ref([]);
+
+
+onMounted(async ()=>{
+
+  laboratories.value = await getLaboratories();
+  customers.value = await getAllPatients();
+
+  console.log(customers.value);
+})
+
+
+
 
 </script>
 
@@ -31,7 +54,7 @@
       <div class="flex items-end justify-between mt-5">
         <div>
           <span class="text-sm text-gray-500  ">Customers</span>
-          <h4 class="mt-2 font-bold text-gray-800 text-title-sm ">3,782</h4>
+          <h4 class="mt-2 font-bold text-gray-800 text-title-sm ">{{ customers.length }}</h4>
         </div>
 
       </div>
@@ -94,7 +117,7 @@
       <div class="flex items-end justify-between mt-5">
         <div>
           <span class="text-sm text-gray-500  ">Laboratories</span>
-          <h4 class="mt-2 font-bold text-gray-800 text-title-sm ">5,359</h4>
+          <h4 class="mt-2 font-bold text-gray-800 text-title-sm ">{{ laboratories.length }}</h4>
         </div>
 
       </div>
