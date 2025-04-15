@@ -34,6 +34,7 @@ import NotificationView from '@/components/Notification/NotificationView.vue'
 import NotificationEdit from '@/components/Notification/NotificationEdit.vue'
 import CreateNotification from '@/components/Notification/CreateNotification.vue'
 import LaboratoryRegister from '@/views/Laboratory/LaboratoryRegister.vue'
+import AdminHome from '@/views/Admin/AdminHome.vue'
 
 
 
@@ -213,6 +214,11 @@ const router = createRouter({
       path: '/laboratory/register',
       name: 'LaboratoryRegister',
       component: LaboratoryRegister,
+    },
+    {
+      path: '/admin/home',
+      name: 'AdminHome',
+      component: AdminHome,
     },
 
   ],
