@@ -4,14 +4,18 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import flatPickr from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
+import { useAuthStore } from "@/stores/auth";
+import { storeToRefs } from "pinia";
+
+const { authenticate } = useAuthStore();
+const { errors } = storeToRefs(useAuthStore());
 
 // Form data for patient registration
 const patientData = ref({
   email: "",
   password: "",
   password_confirmation: "",
-  first_name: "",
-  last_name: "",
+  name: "",
   birth_date: "",
   gender: "",
   region: "",
@@ -23,60 +27,35 @@ const patientData = ref({
 
 const showPassword = ref(false);
 const showConfirmPassword = ref(false);
-const imagePreviewUrl = ref(null); 
-
- 
+const imagePreviewUrl = ref(null);
 
 // Router for navigation
 const router = useRouter();
 
 // Handle form submission
 const submitForm = async () => {
-  try {
-    if (!patientData.value.terms_agreed) {
-      alert("You must agree to the Terms of Use and Privacy Policy to register.");
-      return;
-    }
-
-
-    // api call
-  
-  } catch (error) {
-    console.error("Error registering patient:", error);
-    alert("An unexpected error occurred. Please try again.");
-  }
+  authenticate("register", patientData);
+  console.log(patientData.value);
 };
 
-// Handle file input for profile picture
-const handleFileChange = (event) => {
-  const file = event.target.files[0];
-  if (file) {
-    
-    const validTypes = ["image/png", "image/jpeg", "image/gif"];
-    if (!validTypes.includes(file.type)) {
-      alert("Please upload a PNG, JPG, or GIF image.");
-      return;
+const widget = window.cloudinary.createUploadWidget(
+  {
+    cloud_name: "dqxy77qks",
+    upload_preset: "tenadam-upload",
+    multiple: false,
+    sources: ["local"],
+  },
+  (error, result) => {
+    if (!error && result && result.event === "success") {
+      console.log("uploaded Successfully...  ", result.info.secure_url);
+      patientData.value.profile_picture = result.info.secure_url;
+      imagePreviewUrl.value = result.info.secure_url;
     }
-    
-    if (file.size > 2 * 1024 * 1024) {
-      alert("File size must be less than 2MB.");
-      return;
-    }
-    patientData.value.profile_picture = file;
-   
-    imagePreviewUrl.value = URL.createObjectURL(file);
-  }
-};
+  },
+);
 
-// Clear the selected image
-const clearImage = () => {
-  patientData.value.profile_picture = null;
-  imagePreviewUrl.value = null;
-  // Reset the file input
-  const fileInput = document.getElementById("profile_picture");
-  if (fileInput) {
-    fileInput.value = "";
-  }
+const uploadImage = () => {
+  widget.open();
 };
 
 // Handle cancel button
@@ -91,6 +70,11 @@ const flatpickrConfig = {
   altInput: true,
   altFormat: "F j, Y",
   wrap: true,
+};
+
+const clearImage = () => {
+  patientData.value.profile_picture = null;
+  imagePreviewUrl.value = null;
 };
 </script>
 
@@ -264,38 +248,17 @@ const flatpickrConfig = {
               Profile Information
             </h2>
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <!-- First Name -->
+              <!-- Full Name -->
               <div>
-                <label
-                  for="first_name"
-                  class="mb-1 block text-sm text-[#0F172A]"
-                >
-                  First Name <span class="text-red-500">*</span>
+                <label for="name" class="mb-1 block text-sm text-[#0F172A]">
+                  Full Name <span class="text-red-500">*</span>
                 </label>
                 <input
-                  id="first_name"
-                  v-model="patientData.first_name"
+                  id="name"
+                  v-model="patientData.name"
                   type="text"
                   class="ark:bg-dark-900 focus:outline-hidden ark:border-gray-700 ark:bg-gray-900 ark:text-white/90 ark:placeholder:text-white/30 ark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-first-accent"
-                  placeholder="First Name"
-                  required
-                />
-              </div>
-
-              <!-- Last Name -->
-              <div>
-                <label
-                  for="last_name"
-                  class="mb-1 block text-sm text-[#0F172A]"
-                >
-                  Last Name <span class="text-red-500">*</span>
-                </label>
-                <input
-                  id="last_name"
-                  v-model="patientData.last_name"
-                  type="text"
-                  class="ark:bg-dark-900 focus:outline-hidden ark:border-gray-700 ark:bg-gray-900 ark:text-white/90 ark:placeholder:text-white/30 ark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-first-accent"
-                  placeholder="Last Name"
+                  placeholder="Full Name"
                   required
                 />
               </div>
@@ -308,7 +271,7 @@ const flatpickrConfig = {
                 >
                   Birth Date <span class="text-red-500">*</span>
                 </label>
-                <div class="relative">
+                <div class="relative cursor-pointer">
                   <flat-pickr
                     v-model="patientData.birth_date"
                     :config="flatpickrConfig"
@@ -316,25 +279,6 @@ const flatpickrConfig = {
                     placeholder="Select date"
                     required
                   />
-                  <span
-                    class="ark:text-gray-400 pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-                  >
-                    <svg
-                      class="fill-current"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 20 20"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
-                        d="M6.66659 1.5415C7.0808 1.5415 7.41658 1.87729 7.41658 2.2915V2.99984H12.5833V2.2915C12.5833 1.87729 12.919 1.5415 13.3333 1.5415C13.7475 1.5415 14.0833 1.87729 14.0833 2.2915V2.99984L15.4166 2.99984C16.5212 2.99984 17.4166 3.89527 17.4166 4.99984V7.49984V15.8332C17.4166 16.9377 16.5212 17.8332 15.4166 17.8332H4.58325C3.47868 17.8332 2.58325 16.9377 2.58325 15.8332V7.49984V4.99984C2.58325 3.89527 3.47868 2.99984 4.58325 2.99984L5.91659 2.99984V2.2915C5.91659 1.87729 6.25237 1.5415 6.66659 1.5415ZM6.66659 4.49984H4.58325C4.30711 4.49984 4.08325 4.7237 4.08325 4.99984V6.74984H15.9166V4.99984C15.9166 4.7237 15.6927 4.49984 15.4166 4.49984H13.3333H6.66659ZM15.9166 8.24984H4.08325V15.8332C4.08325 16.1093 4.30711 16.3332 4.58325 16.3332H15.4166C15.6927 16.3332 15.9166 16.1093 15.9166 15.8332V8.24984Z"
-                        fill=""
-                      />
-                    </svg>
-                  </span>
                 </div>
               </div>
 
@@ -412,13 +356,12 @@ const flatpickrConfig = {
 
               <!-- Profile Picture -->
               <div class="md:col-span-2">
-                <label
-                  for="profile_picture"
-                  class="mb-1 block text-sm text-[#0F172A]"
-                  >Profile Picture</label
+                <span class="mb-1 block text-sm text-[#0F172A]"
+                  >Profile Picture</span
                 >
                 <div
-                  class="mt-2 flex justify-center rounded-lg border border-dashed border-[#0F172A]/25 px-6 py-10"
+                  :onclick="uploadImage"
+                  class="mt-2 flex cursor-pointer justify-center rounded-lg border border-dashed border-[#0F172A]/25 px-6 py-10"
                 >
                   <div class="text-center">
                     <svg
@@ -434,37 +377,20 @@ const flatpickrConfig = {
                       />
                     </svg>
                     <div class="mt-4 flex text-sm text-[#64748B]">
-                      <label
-                        for="profile_picture"
+                      <span
                         class="relative cursor-pointer rounded-md bg-white font-semibold text-[#26C6DA] focus-within:outline-none focus-within:ring-2 focus-within:ring-[#26C6DA] focus-within:ring-offset-2 hover:text-[#00BCD4]"
                       >
-                        <span>Upload a file</span>
-                        <input
-                          id="profile_picture"
-                          name="profile_picture"
-                          type="file"
-                          accept="image/*"
-                          @change="handleFileChange"
-                          class="sr-only"
-                        />
-                      </label>
-                      <p class="pl-1">or drag and drop</p>
-                    </div>
-                    <p class="mt-1 text-xs text-[#64748B]">
-                      PNG, JPG, GIF up to 2MB
-                      <span
-                        v-if="patientData.profile_picture"
-                        class="ml-2 font-medium"
-                      >
-                        (Selected: {{ patientData.profile_picture.name }})
+                        <span> Click To Upload A Image</span>
                       </span>
-                    </p>
+                      <!-- <p class="pl-1">or drag and drop</p> -->
+                    </div>
+
                     <!-- Image Preview -->
                     <div v-if="imagePreviewUrl" class="mt-4">
                       <img
                         :src="imagePreviewUrl"
                         alt="Profile picture preview"
-                        class="mx-auto h-32 w-32 rounded-full object-cover border border-[#E2E8F0]"
+                        class="mx-auto h-32 w-32 rounded-full border border-[#E2E8F0] object-cover"
                       />
                       <button
                         type="button"
