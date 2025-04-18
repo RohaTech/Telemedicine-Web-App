@@ -9,6 +9,9 @@ import {
 import { RouterLink } from "vue-router";
 import { ref, onMounted, onUnmounted } from "vue";
 import owner_image from "/images/AdminLayout/owner.jpg";
+import { useAuthStore } from "@/stores/auth";
+
+const authStore = useAuthStore();
 
 const dropdownOpen = ref(false);
 const dropdownRef = ref(null);
@@ -28,8 +31,7 @@ const closeDropdown = () => {
 };
 
 const signOut = () => {
-  // Implement sign out logic here
-  console.log("Signing out...");
+  authStore.logout();
   closeDropdown();
 };
 
@@ -51,14 +53,16 @@ onUnmounted(() => {
 <template>
   <div class="relative" ref="dropdownRef">
     <button
-      class="flex items-center text-gray-700 ark:text-gray-400"
+      class="ark:text-gray-400 flex items-center text-gray-700"
       @click.prevent="toggleDropdown"
     >
       <span class="mr-3 h-11 w-11 overflow-hidden rounded-full">
-        <img :src="owner_image" alt="User" />
+        <img :src="authStore.user.profile_picture" alt="User" />
       </span>
 
-      <span class="text-theme-sm mr-1 block font-medium">Musharof </span>
+      <span class="mr-1 block text-theme-sm font-medium"
+        >{{ authStore.user?.name }}
+      </span>
 
       <ChevronDownIcon :class="{ 'rotate-180': dropdownOpen }" />
     </button>
@@ -66,48 +70,47 @@ onUnmounted(() => {
     <!-- Dropdown Start -->
     <div
       v-if="dropdownOpen"
-      class="shadow-theme-lg ark:bg-gray-dark absolute right-0 mt-[17px] flex w-[260px] flex-col rounded-2xl border border-gray-200 bg-white p-3 ark:border-gray-800"
+      class="ark:bg-gray-dark ark:border-gray-800 absolute right-0 mt-[17px] flex w-[260px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg"
     >
       <div>
         <span
-          class="text-theme-sm block font-medium text-gray-700 ark:text-gray-400"
+          class="ark:text-gray-400 block text-theme-sm font-medium text-gray-700"
         >
-          Musharof Chowdhury
+          {{ authStore.user.name }}
         </span>
         <span
-          class="text-theme-xs mt-0.5 block text-gray-500 ark:text-gray-400"
+          class="ark:text-gray-400 mt-0.5 block text-theme-xs text-gray-500"
         >
-          randomuser@pimjo.com
+          {{ authStore.user.email }}
         </span>
       </div>
 
       <ul
-        class="flex flex-col gap-1 border-b border-gray-200 pb-3 pt-4 ark:border-gray-800"
+        class="ark:border-gray-800 flex flex-col gap-1 border-b border-gray-200 pb-3 pt-4"
       >
         <li v-for="item in menuItems" :key="item.href">
           <RouterLink
             :to="item.href"
-            class="text-theme-sm group flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 ark:text-gray-400 ark:hover:bg-white/5 ark:hover:text-gray-300"
+            class="ark:text-gray-400 ark:hover:bg-white/5 ark:hover:text-gray-300 group flex items-center gap-3 rounded-lg px-3 py-2 text-theme-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700"
           >
             <!-- SVG icon would go here -->
             <component
               :is="item.icon"
-              class="text-gray-500 group-hover:text-gray-700 ark:group-hover:text-gray-300"
+              class="ark:group-hover:text-gray-300 text-gray-500 group-hover:text-gray-700"
             />
             {{ item.text }}
           </RouterLink>
         </li>
       </ul>
-      <RouterLink
-        :to="{ name: 'Home' }"
+      <button
         @click="signOut"
-        class="text-theme-sm group mt-3 flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 ark:text-gray-400 ark:hover:bg-white/5 ark:hover:text-gray-300"
+        class="ark:text-gray-400 ark:hover:bg-white/5 ark:hover:text-gray-300 group mt-3 flex items-center gap-3 rounded-lg px-3 py-2 text-theme-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700"
       >
         <LogoutIcon
-          class="text-gray-500 group-hover:text-gray-700 ark:group-hover:text-gray-300"
+          class="ark:group-hover:text-gray-300 text-gray-500 group-hover:text-gray-700"
         />
         Sign out
-      </RouterLink>
+      </button>
     </div>
     <!-- Dropdown End -->
   </div>

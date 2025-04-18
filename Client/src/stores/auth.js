@@ -19,6 +19,7 @@ export const useAuthStore = defineStore("authStore", {
           },
         });
         const data = await res.json();
+        console.log(data);
         if (res.ok) {
           this.user = data;
         }
@@ -28,7 +29,10 @@ export const useAuthStore = defineStore("authStore", {
     /**************** Login and Register  ***************/
     async authenticate(apiRoute, formData) {
       const res = await fetch(`/api/${apiRoute}`, {
-        method: "post",
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(formData),
       });
 
@@ -61,7 +65,7 @@ export const useAuthStore = defineStore("authStore", {
         this.user = null;
         this.errors = {};
         localStorage.removeItem("token");
-        router.push({ name: "Home" });
+        router.push({ name: "Welcome" });
       }
     },
   },

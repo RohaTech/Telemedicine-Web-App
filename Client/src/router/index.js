@@ -39,6 +39,7 @@ import AdminLaboratory from '@/views/Admin/AdminLaboratory.vue'
 import { useAuthStore } from '@/stores/auth'
 import GetStarted from '@/views/Auth/GetStarted.vue'
 import PatientRegisterPage from '@/views/Auth/PatientRegisterPage.vue'
+import LoginPage from '@/views/Auth/LoginPage.vue'
 
 
 
@@ -49,7 +50,14 @@ const router = createRouter({
       path: '/',
       name: 'Welcome',
       component: WelcomePage,
-      meta: { guest: true },
+      meta: { welcome: true },
+
+    },
+    {
+      path: '/home',
+      name: 'Home',
+      component: HomePage,
+      meta: { auth: true },
 
     },
     {
@@ -67,12 +75,13 @@ const router = createRouter({
 
     },
     {
-      path: '/home',
-      name: 'Home',
-      component: HomePage,
-      meta: { auth: true },
+      path: '/login',
+      name: 'Login',
+      component: LoginPage,
+      meta: { guest: true },
 
     },
+
     {
       path: '/appointments',
       name: 'Appointments',

@@ -54,7 +54,7 @@ const recentlyVisited = [
       <RouterLink
         v-for="item in recentlyVisited"
         :key="item.slug"
-        :to="`/category/${item.slug}`"
+        :to="{ name: 'Home' }"
         class="overflow-hidden rounded-lg bg-white shadow-md transition duration-300 hover:shadow-lg"
       >
         <!-- Image -->
