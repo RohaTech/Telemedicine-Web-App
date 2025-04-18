@@ -23,7 +23,9 @@ const patientData = ref({
 
 const showPassword = ref(false);
 const showConfirmPassword = ref(false);
-const imagePreviewUrl = ref(null); // Store the preview URL for the selected image
+const imagePreviewUrl = ref(null); 
+
+ 
 
 // Router for navigation
 const router = useRouter();
@@ -31,45 +33,14 @@ const router = useRouter();
 // Handle form submission
 const submitForm = async () => {
   try {
-    // Validate terms agreement
     if (!patientData.value.terms_agreed) {
       alert("You must agree to the Terms of Use and Privacy Policy to register.");
       return;
     }
 
-    // Create FormData for file upload (profile picture)
-    const formData = new FormData();
-    formData.append("email", patientData.value.email);
-    formData.append("password", patientData.value.password);
-    formData.append("password_confirmation", patientData.value.password_confirmation);
-    formData.append("first_name", patientData.value.first_name);
-    formData.append("last_name", patientData.value.last_name);
-    formData.append("birth_date", patientData.value.birth_date);
-    formData.append("gender", patientData.value.gender);
-    formData.append("region", patientData.value.region);
-    formData.append("city", patientData.value.city);
-    formData.append("phone", patientData.value.phone);
-    if (patientData.value.profile_picture) {
-      formData.append("profile_picture", patientData.value.profile_picture);
-    }
-    formData.append("terms_agreed", patientData.value.terms_agreed);
 
-    // Send request to API (replace with your actual endpoint)
-    const response = await fetch("/api/patients/register", {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await response.json();
-
-    if (!response.ok || data.errors) {
-      alert("Registration failed: " + (data.errors ? JSON.stringify(data.errors) : "Unknown error"));
-      return;
-    }
-
-    alert("Patient registered successfully!");
-    // Redirect to login or dashboard
-    router.push("/login");
+    // api call
+  
   } catch (error) {
     console.error("Error registering patient:", error);
     alert("An unexpected error occurred. Please try again.");
@@ -80,19 +51,19 @@ const submitForm = async () => {
 const handleFileChange = (event) => {
   const file = event.target.files[0];
   if (file) {
-    // Validate file type
+    
     const validTypes = ["image/png", "image/jpeg", "image/gif"];
     if (!validTypes.includes(file.type)) {
       alert("Please upload a PNG, JPG, or GIF image.");
       return;
     }
-    // Validate file size (2MB = 2 * 1024 * 1024 bytes)
+    
     if (file.size > 2 * 1024 * 1024) {
       alert("File size must be less than 2MB.");
       return;
     }
     patientData.value.profile_picture = file;
-    // Generate preview URL
+   
     imagePreviewUrl.value = URL.createObjectURL(file);
   }
 };
