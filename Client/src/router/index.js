@@ -34,6 +34,11 @@ import NotificationView from '@/components/Notification/NotificationView.vue'
 import NotificationEdit from '@/components/Notification/NotificationEdit.vue'
 import CreateNotification from '@/components/Notification/CreateNotification.vue'
 import LaboratoryRegister from '@/views/Laboratory/LaboratoryRegister.vue'
+import AdminHome from '@/views/Admin/AdminHome.vue'
+import AdminLaboratory from '@/views/Admin/AdminLaboratory.vue'
+import { useAuthStore } from '@/stores/auth'
+import GetStarted from '@/views/Auth/GetStarted.vue'
+import PatientRegisterPage from '@/views/Auth/PatientRegisterPage.vue'
 
 
 
@@ -44,11 +49,29 @@ const router = createRouter({
       path: '/',
       name: 'Welcome',
       component: WelcomePage,
+      meta: { guest: true },
+
+    },
+    {
+      path: '/get-started',
+      name: 'GetStarted',
+      component: GetStarted,
+      meta: { GetStarted: true },
+
+    },
+    {
+      path: '/patient-register',
+      name: 'PatientRegister',
+      component: PatientRegisterPage,
+      meta: { guest: true },
+
     },
     {
       path: '/home',
       name: 'Home',
       component: HomePage,
+      meta: { auth: true },
+
     },
     {
       path: '/appointments',
@@ -214,8 +237,36 @@ const router = createRouter({
       name: 'LaboratoryRegister',
       component: LaboratoryRegister,
     },
+    {
+      path: '/admin/home',
+      name: 'AdminHome',
+      component: AdminHome,
+    },
+    {
+      path: '/admin/laboratories',
+      name: 'AdminLaboratories',
+      component: AdminLaboratory,
+    },
 
   ],
 })
+
+
+router.beforeEach(async (to, from) => {
+  const authStore = useAuthStore();
+
+  await authStore.getUser();
+
+  if (authStore.user && to.meta.welcome) {
+    return { name: "Home" }
+  }
+  if (!authStore.user && to.meta.auth) {
+    return { name: "GetStarted" }
+  }
+
+})
+
+
+
 
 export default router

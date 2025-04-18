@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -59,5 +61,14 @@ class UserController extends Controller
         $user->delete();
 
         return response()->json(['message' => 'User deleted successfully'], 200);
+    }
+
+
+    public function getAllCustomers()
+    {
+
+        $customer = User::where('role', 'patient')->get();
+
+        return response()->json($customer, 200);
     }
 }

@@ -5,7 +5,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <RouterLink :to="{ name: 'Home' }">
+  <RouterLink :to="{ name: 'Welcome' }">
     <svg
       :class="props.class"
       viewBox="0 0 220 40"

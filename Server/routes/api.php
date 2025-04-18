@@ -19,9 +19,13 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::apiResource('/users', UserController::class);
-});
+// Route::middleware('auth:sanctum')->group(function () {
+//     Route::apiResource('/users', UserController::class);
+// });
+
+Route::get('/users/patient', [UserController::class, 'getAllCustomers']);
+
+
 Route::apiResource('/appointments', AppointmentController::class);
 Route::apiResource('/consultations', ConsultationController::class);
 Route::apiResource('/doctors', DoctorController::class);
