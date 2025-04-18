@@ -6,7 +6,6 @@ import {
   GridIcon,
   CalenderIcon,
   UserCircleIcon,
-  ChatIcon,
   MailIcon,
   DocsIcon,
   PieChartIcon,
@@ -18,6 +17,8 @@ import {
   PlugInIcon,
 } from "@/components/UI/Icons";
 
+import LaboratoryIcon from "@/components/UI/Icons/LaboratoryIcon.vue"
+ 
 import { useSidebar } from "@/composables/useSidebar";
 
 const route = useRoute();
@@ -45,9 +46,9 @@ const menuGroups = [
         path: "AdminHome",
       },
       {
-        icon: UserCircleIcon,
-        name: "Laboratory",
-        path: "AdminHome",
+        icon: LaboratoryIcon,
+        name: "Laboratories",
+        path: "AdminLaboratories",
       },
 
       {

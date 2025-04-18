@@ -24,7 +24,7 @@ const categories = ref([
       <img :src="categories_pattern" :alt="'Categories Pattern'" class="h-8 md:h-10" />
       <RouterLink
         :to="{ name: 'Home' }"
-        class="uppercase flex items-center justify-center bg-first-accent py-2 md:py-3 px-4 md:px-8 w-40 md:w-52 text-white rounded-md shadow-sm hover:bg-second-accent hover:text-gray-800 transition duration-300"
+        class="uppercase flex items-center justify-center bg-first-accent py-2 md:py-3 px-1 md:px-8  w-fit text-white rounded-md shadow-sm hover:bg-second-accent hover:text-gray-800 transition duration-300"
       >
         More Categories
       </RouterLink>
