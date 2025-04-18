@@ -12,15 +12,16 @@ const { errors } = storeToRefs(useAuthStore());
 
 // Form data for patient registration
 const patientData = ref({
+  name: "",
   email: "",
   password: "",
   password_confirmation: "",
-  name: "",
+  role: "patient",
+  phone: "",
   birth_date: "",
   gender: "",
   region: "",
   city: "",
-  phone: "",
   profile_picture: null,
   terms_agreed: false,
 });
@@ -34,7 +35,7 @@ const router = useRouter();
 
 // Handle form submission
 const submitForm = async () => {
-  authenticate("register", patientData);
+  authenticate("register", patientData.value);
   console.log(patientData.value);
 };
 
@@ -116,6 +117,13 @@ const clearImage = () => {
                   placeholder="Email"
                   required
                 />
+
+                <p
+                  v-if="errors.email"
+                  class="mt-2 text-xs font-semibold text-red-500"
+                >
+                  {{ errors.email }}
+                </p>
               </div>
 
               <!-- Password -->
@@ -134,6 +142,12 @@ const clearImage = () => {
                     required
                     minlength="8"
                   />
+                  <p
+                    v-if="errors.password"
+                    class="mt-2 text-xs font-semibold text-red-500"
+                  >
+                    {{ errors.password }}
+                  </p>
                   <button
                     type="button"
                     @click="showPassword = !showPassword"
@@ -196,6 +210,12 @@ const clearImage = () => {
                     required
                     minlength="8"
                   />
+                  <p
+                    v-if="errors.password_confirmation"
+                    class="mt-2 text-xs font-semibold text-red-500"
+                  >
+                    {{ errors.password_confirmation }}
+                  </p>
                   <button
                     type="button"
                     @click="showConfirmPassword = !showConfirmPassword"
@@ -261,6 +281,12 @@ const clearImage = () => {
                   placeholder="Full Name"
                   required
                 />
+                <p
+                  v-if="errors.name"
+                  class="mt-2 text-xs font-semibold text-red-500"
+                >
+                  {{ errors.name }}
+                </p>
               </div>
 
               <!-- Birth Date -->
@@ -279,6 +305,12 @@ const clearImage = () => {
                     placeholder="Select date"
                     required
                   />
+                  <p
+                    v-if="errors.birth_date"
+                    class="mt-2 text-xs font-semibold text-red-500"
+                  >
+                    {{ errors.birth_date }}
+                  </p>
                 </div>
               </div>
 
@@ -297,6 +329,12 @@ const clearImage = () => {
                   <option value="male">Male</option>
                   <option value="female">Female</option>
                 </select>
+                <p
+                  v-if="errors.gender"
+                  class="mt-2 text-xs font-semibold text-red-500"
+                >
+                  {{ errors.gender }}
+                </p>
               </div>
 
               <!-- Region -->
@@ -323,6 +361,12 @@ const clearImage = () => {
                   <option value="Sidama ">Sidama</option>
                   <option value="Dire Dawa">Dire Dawa</option>
                 </select>
+                <p
+                  v-if="errors.region"
+                  class="mt-2 text-xs font-semibold text-red-500"
+                >
+                  {{ errors.region }}
+                </p>
               </div>
 
               <!-- City -->
@@ -337,6 +381,12 @@ const clearImage = () => {
                   class="ark:bg-dark-900 focus:outline-hidden ark:border-gray-700 ark:bg-gray-900 ark:text-white/90 ark:placeholder:text-white/30 ark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-first-accent"
                   placeholder="City"
                 />
+                <p
+                  v-if="errors.city"
+                  class="mt-2 text-xs font-semibold text-red-500"
+                >
+                  {{ errors.city }}
+                </p>
               </div>
 
               <!-- Phone -->
@@ -352,6 +402,12 @@ const clearImage = () => {
                   placeholder="Phone"
                   required
                 />
+                <p
+                  v-if="errors.phone"
+                  class="mt-2 text-xs font-semibold text-red-500"
+                >
+                  {{ errors.phone }}
+                </p>
               </div>
 
               <!-- Profile Picture -->
