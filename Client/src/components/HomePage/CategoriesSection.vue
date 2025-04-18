@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref } from "vue";
 import categories_pattern from "/images/HomePage/categories_pattern.png";
 
 const categories = ref([
@@ -19,24 +19,30 @@ const categories = ref([
 <template>
   <div class="my-16 px-4 md:px-24">
     <!-- Header Section -->
-    <div class="flex justify-between items-center mb-8">
-      <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Categories</h1>
-      <img :src="categories_pattern" :alt="'Categories Pattern'" class="h-8 md:h-10" />
+    <div class="mb-8 flex items-center justify-between">
+      <h1 class="text-3xl font-bold text-gray-800 md:text-4xl">Categories</h1>
+      <img
+        :src="categories_pattern"
+        :alt="'Categories Pattern'"
+        class="h-8 md:h-10"
+      />
       <RouterLink
         :to="{ name: 'Home' }"
-        class="uppercase flex items-center justify-center bg-first-accent py-2 md:py-3 px-1 md:px-8  w-fit text-white rounded-md shadow-sm hover:bg-second-accent hover:text-gray-800 transition duration-300"
+        class="flex w-fit items-center justify-center rounded-md bg-first-accent px-1 py-2 uppercase text-white shadow-sm transition duration-300 hover:bg-second-accent hover:text-gray-800 md:px-8 md:py-3"
       >
         More Categories
       </RouterLink>
     </div>
 
     <!-- Categories Grid -->
-    <div class="grid grid-cols-2 gap-3 md:grid-cols-5 md:gap-8 max-w-[1200px] mx-auto mt-16">
+    <div
+      class="mx-auto mt-16 grid max-w-[1200px] grid-cols-2 gap-3 md:grid-cols-5 md:gap-8"
+    >
       <RouterLink
         v-for="category in categories"
         :key="category.name"
-        :to="`/category/${category.slug}`"
-        class="bg-first-accent text-white text-center py-4 md:py-6 rounded-md shadow-sm hover:bg-second-accent hover:text-gray-800 transition duration-300 text-sm md:text-base font-medium"
+        :to="{ name: 'Home' }"
+        class="rounded-md bg-first-accent py-4 text-center text-sm font-medium text-white shadow-sm transition duration-300 hover:bg-second-accent hover:text-gray-800 md:py-6 md:text-base"
       >
         {{ category.name }}
       </RouterLink>
