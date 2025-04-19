@@ -146,7 +146,7 @@ const handleSubmit = () => {
                     <!-- Checkbox -->
                     <div class="flex items-center justify-between">
                       <RouterLink :to="{name:'Home'}"
-                        class="ark:text-brand-400 text-sm text-brand-500 hover:text-brand-600"
+                        class="ark:text-brand-400 text-sm text-first-accent/70  hover:text-first-accent"
                         >Forgot password?</RouterLink :to="{name:'Home'}"
                       >
                     </div>
@@ -154,7 +154,7 @@ const handleSubmit = () => {
                     <div>
                       <button
                         type="submit"
-                        class="flex w-full items-center justify-center rounded-lg bg-brand-500 px-4 py-3 text-sm font-medium text-white shadow-theme-xs transition hover:bg-brand-600"
+                        class="flex w-full items-center justify-center rounded-lg bg-first-accent/70 px-4 py-3 text-sm font-medium text-white shadow-theme-xs transition hover:bg-first-accent"
                       >
                         Sign In
                       </button>
@@ -167,7 +167,7 @@ const handleSubmit = () => {
                   >
                     Don't have an account?
                     <RouterLink :to="{name:'GetStarted'}"
-                      class="ark:text-brand-400 text-brand-500 hover:text-brand-600"
+                      class="ark:text-brand-400 text-first-accent/70 hover:text-first-accent"
                       >Sign Up</RouterLink :to="{name:'Home'}"
                     >
                   </p>

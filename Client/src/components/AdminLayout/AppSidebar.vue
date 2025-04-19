@@ -17,8 +17,8 @@ import {
   PlugInIcon,
 } from "@/components/UI/Icons";
 
-import LaboratoryIcon from "@/components/UI/Icons/LaboratoryIcon.vue"
- 
+import LaboratoryIcon from "@/components/UI/Icons/LaboratoryIcon.vue";
+
 import { useSidebar } from "@/composables/useSidebar";
 
 const route = useRoute();
@@ -151,7 +151,7 @@ const endTransition = (el) => {
 <template>
   <aside
     :class="[
-      'z-99999 fixed left-0 top-0 mt-16 flex h-screen flex-col border-r border-gray-200 bg-white px-5 text-gray-900 transition-all duration-300 ease-in-out lg:mt-0',
+      'fixed left-0 top-0 z-99999 mt-16 flex h-screen flex-col border-r border-gray-200 bg-white px-5 text-gray-900 transition-all duration-300 ease-in-out lg:mt-0',
       {
         'lg:w-[290px]': isExpanded || isMobileOpen || isHovered,
         'lg:w-[90px]': !isExpanded && !isHovered,
@@ -169,7 +169,7 @@ const endTransition = (el) => {
         !isExpanded && !isHovered ? 'lg:justify-center' : 'justify-start',
       ]"
     >
-      <Logo class="w-[150px]" />
+      <Logo class="w-[150px] fill-first-accent" />
     </div>
     <div
       class="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear"
@@ -225,7 +225,7 @@ const endTransition = (el) => {
                     :class="[
                       'ml-auto h-5 w-5 transition-transform duration-200',
                       {
-                        'text-brand-500 rotate-180': isSubmenuOpen(
+                        'rotate-180 text-brand-500': isSubmenuOpen(
                           groupIndex,
                           index,
                         ),

@@ -57,7 +57,7 @@ const router = createRouter({
       path: '/home',
       name: 'Home',
       component: HomePage,
-      meta: { auth: true },
+      meta: { home: true },
 
     },
     {
@@ -274,6 +274,9 @@ router.beforeEach(async (to, from) => {
   }
   if (authStore.user && to.meta.welcome) {
     return { name: "Home" }
+  }
+  if (!authStore.user && to.meta.home) {
+    return { name: "Welcome" }
   }
   if (!authStore.user && to.meta.auth) {
     return { name: "GetStarted" }

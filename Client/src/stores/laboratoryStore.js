@@ -9,6 +9,7 @@ export const useLaboratoryStore = defineStore('laboratoryStore', {
   },
 
   actions: {
+
     async getLaboratories() {
       const res = await fetch("/api/laboratories", {
         method: "GET",
