@@ -13,14 +13,23 @@ export const useAuthStore = defineStore("authStore", {
 
     async getUser() {
       if (localStorage.getItem("token")) {
-        const res = await fetch("/api/user", {
-          headers: {
-            authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        const data = await res.json();
-        if (res.ok) {
-          this.user = data;
+        try {
+          const res = await fetch("/api/user", {
+            headers: {
+              authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          });
+          const data = await res.json();
+          if (res.ok) {
+            this.user = data;
+          } else {
+            this.errors = { general: "Failed to fetch user data" };
+          }
+        } catch (error) {
+          this.errors = {
+            general: "An error occurred while fetching user data",
+          };
+          console.error(error);
         }
       }
     },
@@ -29,6 +38,9 @@ export const useAuthStore = defineStore("authStore", {
     async authenticate(apiRoute, formData) {
       const res = await fetch(`/api/${apiRoute}`, {
         method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(formData),
       });
 
@@ -40,7 +52,9 @@ export const useAuthStore = defineStore("authStore", {
         this.errors = {};
         localStorage.setItem("token", data.token);
         this.user = data.user;
-        router.push({ name: "Home" });
+        router.push({
+          name: data.user.role === "doctor" ? "DoctorStatus" : "Home",
+        });
       }
     },
 

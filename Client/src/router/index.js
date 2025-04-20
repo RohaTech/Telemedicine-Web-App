@@ -1,256 +1,262 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import WelcomePage from '../views/WelcomePage.vue'
-import AppointmentList from '@/components/Appointment/AppointmentList.vue'
-import CreateAppointment from '@/components/Appointment/CreateAppointment.vue'
-import AppointmentView from '@/components/Appointment/AppointmentView.vue'
-import AppointmentEdit from '@/components/Appointment/AppointmentEdit.vue'
-import ConsultationList from '@/components/Consultation/ConsultationList.vue'
-import ConsultationView from '@/components/Consultation/ConsultationView.vue'
-import ConsultationEdit from '@/components/Consultation/ConsultationEdit.vue'
-import CreateConsultation from '@/components/Consultation/CreateConsultation.vue'
-import LaboratoryList from '@/components/Laboratory/LaboratoryList.vue'
-import LaboratoryView from '@/components/Laboratory/LaboratoryView.vue'
-import LaboratoryEdit from '@/components/Laboratory/LaboratoryEdit.vue'
-import CreateLaboratory from '@/components/Laboratory/CreateLaboratory.vue'
-import LabRequestList from '@/components/LabRequest/LabRequestList.vue'
-import LabRequestView from '@/components/LabRequest/LabRequestView.vue'
-import LabRequestEdit from '@/components/LabRequest/LabRequestEdit.vue'
-import CreateLabRequest from '@/components/LabRequest/CreateLabRequest.vue'
-import LabResultList from '@/components/LabResult/LabResultList.vue'
-import LabResultView from '@/components/LabResult/LabResultView.vue'
-import LabResultEdit from '@/components/LabResult/LabResultEdit.vue'
-import CreateLabResult from '@/components/LabResult/CreateLabResult.vue'
-import PrescriptionList from '@/components/Prescription/PrescriptionList.vue'
-import PrescriptionView from '@/components/Prescription/PrescriptionView.vue'
-import PrescriptionEdit from '@/components/Prescription/PrescriptionEdit.vue'
-import CreatePrescription from '@/components/Prescription/CreatePrescription.vue'
-import HomePage from '@/views/HomePage.vue'
-import PaymentList from '@/components/Payment/PaymentList.vue'
-import PaymentView from '@/components/Payment/PaymentView.vue'
-import PaymentEdit from '@/components/Payment/PaymentEdit.vue'
-import CreatePayment from '@/components/Payment/CreatePayment.vue'
-import NotificationList from '@/components/Notification/NotificationList.vue'
-import NotificationView from '@/components/Notification/NotificationView.vue'
-import NotificationEdit from '@/components/Notification/NotificationEdit.vue'
-import CreateNotification from '@/components/Notification/CreateNotification.vue'
-import LaboratoryRegister from '@/views/Laboratory/LaboratoryRegister.vue'
-import AdminHome from '@/views/Admin/AdminHome.vue'
-import AdminLaboratory from '@/views/Admin/AdminLaboratory.vue'
-import { useAuthStore } from '@/stores/auth'
-import GetStarted from '@/views/Auth/GetStarted.vue'
-import PatientRegisterPage from '@/views/Auth/PatientRegisterPage.vue'
-
-
+import { createRouter, createWebHistory } from "vue-router";
+import WelcomePage from "../views/WelcomePage.vue";
+import AppointmentList from "@/components/Appointment/AppointmentList.vue";
+import CreateAppointment from "@/components/Appointment/CreateAppointment.vue";
+import AppointmentView from "@/components/Appointment/AppointmentView.vue";
+import AppointmentEdit from "@/components/Appointment/AppointmentEdit.vue";
+import ConsultationList from "@/components/Consultation/ConsultationList.vue";
+import ConsultationView from "@/components/Consultation/ConsultationView.vue";
+import ConsultationEdit from "@/components/Consultation/ConsultationEdit.vue";
+import CreateConsultation from "@/components/Consultation/CreateConsultation.vue";
+import LaboratoryList from "@/components/Laboratory/LaboratoryList.vue";
+import LaboratoryView from "@/components/Laboratory/LaboratoryView.vue";
+import LaboratoryEdit from "@/components/Laboratory/LaboratoryEdit.vue";
+import CreateLaboratory from "@/components/Laboratory/CreateLaboratory.vue";
+import LabRequestList from "@/components/LabRequest/LabRequestList.vue";
+import LabRequestView from "@/components/LabRequest/LabRequestView.vue";
+import LabRequestEdit from "@/components/LabRequest/LabRequestEdit.vue";
+import CreateLabRequest from "@/components/LabRequest/CreateLabRequest.vue";
+import LabResultList from "@/components/LabResult/LabResultList.vue";
+import LabResultView from "@/components/LabResult/LabResultView.vue";
+import LabResultEdit from "@/components/LabResult/LabResultEdit.vue";
+import CreateLabResult from "@/components/LabResult/CreateLabResult.vue";
+import PrescriptionList from "@/components/Prescription/PrescriptionList.vue";
+import PrescriptionView from "@/components/Prescription/PrescriptionView.vue";
+import PrescriptionEdit from "@/components/Prescription/PrescriptionEdit.vue";
+import CreatePrescription from "@/components/Prescription/CreatePrescription.vue";
+import HomePage from "@/views/HomePage.vue";
+import PaymentList from "@/components/Payment/PaymentList.vue";
+import PaymentView from "@/components/Payment/PaymentView.vue";
+import PaymentEdit from "@/components/Payment/PaymentEdit.vue";
+import CreatePayment from "@/components/Payment/CreatePayment.vue";
+import NotificationList from "@/components/Notification/NotificationList.vue";
+import NotificationView from "@/components/Notification/NotificationView.vue";
+import NotificationEdit from "@/components/Notification/NotificationEdit.vue";
+import CreateNotification from "@/components/Notification/CreateNotification.vue";
+import LaboratoryRegister from "@/views/Laboratory/LaboratoryRegister.vue";
+import AdminHome from "@/views/Admin/AdminHome.vue";
+import AdminLaboratory from "@/views/Admin/AdminLaboratory.vue";
+import { useAuthStore } from "@/stores/auth";
+import GetStarted from "@/views/Auth/GetStarted.vue";
+import PatientRegisterPage from "@/views/Auth/PatientRegisterPage.vue";
+import DoctorRegistration from "@/views/Doctor/DoctorRegistration.vue";
+import DoctorStatusPage from "@/views/Doctor/DoctorStatusPage.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'Welcome',
+      path: "/",
+      name: "Welcome",
       component: WelcomePage,
       meta: { guest: true },
-
     },
     {
-      path: '/get-started',
-      name: 'GetStarted',
+      path: "/get-started",
+      name: "GetStarted",
       component: GetStarted,
       meta: { GetStarted: true },
-
     },
     {
-      path: '/patient-register',
-      name: 'PatientRegister',
+      path: "/patient-register",
+      name: "PatientRegister",
       component: PatientRegisterPage,
       meta: { guest: true },
-
     },
     {
-      path: '/home',
-      name: 'Home',
+      path: "/doctor-register",
+      name: "DoctorRegister",
+      component: DoctorRegistration,
+      meta: { guest: true },
+    },
+    {
+      path: "/doctor-status",
+      name: "DoctorStatus",
+      component: DoctorStatusPage,
+    },
+    {
+      path: "/home",
+      name: "Home",
       component: HomePage,
       meta: { auth: true },
-
     },
     {
-      path: '/appointments',
-      name: 'Appointments',
+      path: "/appointments",
+      name: "Appointments",
       component: AppointmentList,
     },
     {
-      path: '/appointments/:id/edit',
-      name: 'AppointmentEdit',
+      path: "/appointments/:id/edit",
+      name: "AppointmentEdit",
       component: AppointmentEdit,
     },
     {
-      path: '/appointments/create',
-      name: 'CreateAppointment',
+      path: "/appointments/create",
+      name: "CreateAppointment",
       component: CreateAppointment,
     },
     {
-      path: '/appointments/:id',
-      name: 'AppointmentView',
+      path: "/appointments/:id",
+      name: "AppointmentView",
       component: AppointmentView,
     },
     {
-      path: '/consultations',
-      name: 'Consultations',
+      path: "/consultations",
+      name: "Consultations",
       component: ConsultationList,
     },
     {
-      path: '/consultations/:id',
-      name: 'ConsultationView',
+      path: "/consultations/:id",
+      name: "ConsultationView",
       component: ConsultationView,
     },
     {
-      path: '/consultations/:id/edit',
-      name: 'ConsultationEdit',
+      path: "/consultations/:id/edit",
+      name: "ConsultationEdit",
       component: ConsultationEdit,
     },
     {
-      path: '/consultations/create',
-      name: 'CreateConsultation',
+      path: "/consultations/create",
+      name: "CreateConsultation",
       component: CreateConsultation,
     },
     {
-      path: '/laboratories',
-      name: 'Laboratories',
+      path: "/laboratories",
+      name: "Laboratories",
       component: LaboratoryList,
     },
     {
-      path: '/laboratories/:id',
-      name: 'LaboratoryView',
+      path: "/laboratories/:id",
+      name: "LaboratoryView",
       component: LaboratoryView,
     },
     {
-      path: '/laboratories/:id/edit',
-      name: 'LaboratoryEdit',
+      path: "/laboratories/:id/edit",
+      name: "LaboratoryEdit",
       component: LaboratoryEdit,
     },
     {
-      path: '/laboratories/create',
-      name: 'CreateLaboratory',
+      path: "/laboratories/create",
+      name: "CreateLaboratory",
       component: CreateLaboratory,
     },
     {
-      path: '/lab-requests',
-      name: 'LabRequests',
+      path: "/lab-requests",
+      name: "LabRequests",
       component: LabRequestList,
     },
     {
-      path: '/lab-requests/:id',
-      name: 'LabRequestView',
+      path: "/lab-requests/:id",
+      name: "LabRequestView",
       component: LabRequestView,
     },
     {
-      path: '/lab-requests/:id/edit',
-      name: 'LabRequestEdit',
+      path: "/lab-requests/:id/edit",
+      name: "LabRequestEdit",
       component: LabRequestEdit,
     },
     {
-      path: '/lab-requests/create',
-      name: 'CreateLabRequest',
+      path: "/lab-requests/create",
+      name: "CreateLabRequest",
       component: CreateLabRequest,
     },
     {
-      path: '/lab-results',
-      name: 'LabResults',
+      path: "/lab-results",
+      name: "LabResults",
       component: LabResultList,
     },
     {
-      path: '/lab-results/:id',
-      name: 'LabResultView',
+      path: "/lab-results/:id",
+      name: "LabResultView",
       component: LabResultView,
     },
     {
-      path: '/lab-results/:id/edit',
-      name: 'LabResultEdit',
+      path: "/lab-results/:id/edit",
+      name: "LabResultEdit",
       component: LabResultEdit,
     },
     {
-      path: '/lab-results/create',
-      name: 'CreateLabResult',
+      path: "/lab-results/create",
+      name: "CreateLabResult",
       component: CreateLabResult,
     },
     {
-      path: '/prescriptions',
-      name: 'Prescriptions',
+      path: "/prescriptions",
+      name: "Prescriptions",
       component: PrescriptionList,
     },
     {
-      path: '/prescriptions/:id',
-      name: 'PrescriptionView',
+      path: "/prescriptions/:id",
+      name: "PrescriptionView",
       component: PrescriptionView,
     },
     {
-      path: '/prescriptions/:id/edit',
-      name: 'PrescriptionEdit',
+      path: "/prescriptions/:id/edit",
+      name: "PrescriptionEdit",
       component: PrescriptionEdit,
     },
     {
-      path: '/prescriptions/create',
-      name: 'CreatePrescription',
+      path: "/prescriptions/create",
+      name: "CreatePrescription",
       component: CreatePrescription,
-    }, {
-      path: '/payments',
-      name: 'Payments',
+    },
+    {
+      path: "/payments",
+      name: "Payments",
       component: PaymentList,
     },
     {
-      path: '/payments/:id',
-      name: 'PaymentView',
+      path: "/payments/:id",
+      name: "PaymentView",
       component: PaymentView,
     },
     {
-      path: '/payments/:id/edit',
-      name: 'PaymentEdit',
+      path: "/payments/:id/edit",
+      name: "PaymentEdit",
       component: PaymentEdit,
     },
     {
-      path: '/payments/create',
-      name: 'CreatePayment',
+      path: "/payments/create",
+      name: "CreatePayment",
       component: CreatePayment,
     },
     {
-      path: '/notifications',
-      name: 'Notifications',
+      path: "/notifications",
+      name: "Notifications",
       component: NotificationList,
     },
     {
-      path: '/notifications/:id',
-      name: 'NotificationView',
+      path: "/notifications/:id",
+      name: "NotificationView",
       component: NotificationView,
     },
     {
-      path: '/notifications/:id/edit',
-      name: 'NotificationEdit',
+      path: "/notifications/:id/edit",
+      name: "NotificationEdit",
       component: NotificationEdit,
     },
     {
-      path: '/notifications/create',
-      name: 'CreateNotification',
+      path: "/notifications/create",
+      name: "CreateNotification",
       component: CreateNotification,
     },
     {
-      path: '/laboratory/register',
-      name: 'LaboratoryRegister',
+      path: "/laboratory/register",
+      name: "LaboratoryRegister",
       component: LaboratoryRegister,
     },
     {
-      path: '/admin/home',
-      name: 'AdminHome',
+      path: "/admin/home",
+      name: "AdminHome",
       component: AdminHome,
     },
     {
-      path: '/admin/laboratories',
-      name: 'AdminLaboratories',
+      path: "/admin/laboratories",
+      name: "AdminLaboratories",
       component: AdminLaboratory,
     },
-
   ],
-})
-
+});
 
 router.beforeEach(async (to, from) => {
   const authStore = useAuthStore();
@@ -258,15 +264,11 @@ router.beforeEach(async (to, from) => {
   await authStore.getUser();
 
   if (authStore.user && to.meta.welcome) {
-    return { name: "Home" }
+    return { name: "Home" };
   }
   if (!authStore.user && to.meta.auth) {
-    return { name: "GetStarted" }
+    return { name: "GetStarted" };
   }
+});
 
-})
-
-
-
-
-export default router
+export default router;

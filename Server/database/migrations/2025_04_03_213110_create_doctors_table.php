@@ -21,7 +21,9 @@ return new class extends Migration
             $table->string('university_attended');
             $table->date('license_issue_date');
             $table->date('license_expiry_date');
-            $table->enum('status', ['active', 'suspended', 'expired'])->default('active');
+            $table->enum('status', ['pending', 'active', 'suspended', 'expired'])->default('pending');
+            $table->decimal('payment', 8, 2)->default(0.00);
+            $table->json('location')->nullable();
             $table->timestamps();
         });
     }
