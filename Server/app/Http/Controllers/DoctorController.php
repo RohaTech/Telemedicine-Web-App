@@ -42,8 +42,12 @@ class DoctorController extends Controller
                 'university_attended' => 'required|string',
                 'license_issue_date' => 'required|date',
                 'license_expiry_date' => 'required|date|after:license_issue_date',
-                'status' => 'required|in:active,suspended,expired',
+                'status' => 'required|in:pending,active,suspended,expired',
+                'payment' => 'required|numeric|min:0',
+                'location' => 'nullable|json',
+                'certificate_path' => 'required|url',
             ]);
+
 
             $doctor = Doctor::create($validatedData);
             return response()->json($doctor, 201);
@@ -65,7 +69,10 @@ class DoctorController extends Controller
                 'university_attended' => 'sometimes|string',
                 'license_issue_date' => 'sometimes|date',
                 'license_expiry_date' => 'sometimes|date|after:license_issue_date',
-                'status' => 'sometimes|in:active,suspended,expired',
+                'status' => 'sometimes|in:pending,active,suspended,expired',
+                'payment' => 'sometimes|required|numeric|min:0',
+                'location' => 'sometimes|nullable|json',
+                'certificate_path' => 'required|url',
             ]);
 
             $doctor->update($validatedData);

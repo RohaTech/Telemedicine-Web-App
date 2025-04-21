@@ -18,13 +18,18 @@ use Illuminate\Support\Facades\Route;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
-
+Route::get('/doctor-status', function (Request $request) {
+    $doctor = $request->user()->doctor;
+    return response()->json([
+        'status' => $doctor->status,
+    ], 200);
+})->middleware('auth:sanctum');
 // Route::middleware('auth:sanctum')->group(function () {
 //     Route::apiResource('/users', UserController::class);
 // });
 
 Route::get('/users/patient', [UserController::class, 'getAllCustomers']);
-
+Route::post('/register-doctor', [AuthController::class, 'registerDoctor']);
 
 Route::apiResource('/appointments', AppointmentController::class);
 Route::apiResource('/consultations', ConsultationController::class);

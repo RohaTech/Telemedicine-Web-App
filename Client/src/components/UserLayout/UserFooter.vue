@@ -72,9 +72,9 @@ import FooterBackground from "/images/General/Footer_Background.png";
           <p class="font-semibold text-first-accent">Email</p>
           <a
             target="_blank"
-            href="mailto:rohatech@gmail.com"
+            href="mailto:rohatechofficial@gmail.com"
             class="text-xl font-bold"
-            >rohatech@gmail.com</a
+            >rohatechofficial@gmail.com</a
           >
         </div>
       </div>

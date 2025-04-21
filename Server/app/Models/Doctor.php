@@ -19,6 +19,9 @@ class Doctor extends Model
         'license_issue_date',
         'license_expiry_date',
         'status',
+        'payment',
+        'location',
+        'certificate_path',
     ];
 
     /**
