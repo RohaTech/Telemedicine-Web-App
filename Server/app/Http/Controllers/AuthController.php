@@ -17,19 +17,27 @@ class AuthController extends Controller
         $fields = $request->validate([
             'name' => 'required|max:255',
             'email' => 'required|email|unique:users',
-            'password' => 'required|min:8|confirmed ',
-            'role' => 'required|in:admin,doctor,patient', // Optional, based on schema
-            'phone' => 'nullable|string|max:20|unique:users',           // Optional, based on schema
-            'address' => 'nullable|string',                 // Optional, JSON in schema
+            'password' => 'required|min:8|confirmed',
+            'role' => 'required|in:admin,doctor,patient',
+            'phone' => ['required', 'string', 'regex:/^09\d{8}$/', 'unique:users'],
+            'birth_date' => 'nullable|date',
+            'gender' => 'nullable|in:male,female,other',
+            'region' => 'nullable|string',
+            'city' => 'nullable|string',
+            'profile_picture' => 'nullable|string',
         ]);
 
         $user = User::create([
             'name' => $fields['name'],
             'email' => $fields['email'],
-            'password' => Hash::make($fields['password']), // Hash password manually if not using 'hashed' cast
-            'role' => $fields['role'] ?? 'patient',        // Default to 'patient' if not provided
-            'phone' => $fields['phone'] ?? null,
-            'address' => $fields['address'] ?? null,
+            'password' => Hash::make($fields['password']),
+            'role' => $fields['role'],
+            'phone' => $fields['phone'],
+            'birth_date' => $fields['birth_date'],
+            'gender' => $fields['gender'],
+            'region' => $fields['region'],
+            'city' => $fields['city'],
+            'profile_picture' => $fields['profile_picture'],
         ]);
 
         $token = $user->createToken($request->name)->plainTextToken;
