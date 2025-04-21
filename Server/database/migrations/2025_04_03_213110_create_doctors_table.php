@@ -24,6 +24,7 @@ return new class extends Migration
             $table->enum('status', ['pending', 'active', 'suspended', 'expired'])->default('pending');
             $table->decimal('payment', 8, 2)->default(0.00);
             $table->json('location')->nullable();
+            $table->string('certificate_path')->nullable()->after('location'); 
             $table->timestamps();
         });
     }
