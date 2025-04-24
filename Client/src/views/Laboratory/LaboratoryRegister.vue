@@ -221,7 +221,7 @@ const submitForm = async () => {
                 Upload Your License <span class="text-red-500">*</span>
               </label>
               <div
-                class="flex h-11 w-1/2 cursor-pointer justify-center rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 hover:border-2 focus:border-first-accent"
+                class="mt-1 flex h-11 w-1/2 cursor-pointer justify-center rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 hover:border-2 focus:border-first-accent"
               >
                 Click to upload
               </div>
