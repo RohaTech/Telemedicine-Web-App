@@ -220,11 +220,11 @@ const submitForm = async () => {
               <label for="license" class="mb-1 block text-sm text-[#0F172A]">
                 Upload Your License <span class="text-red-500">*</span>
               </label>
-              <button
-                class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 hover:border-2 focus:border-first-accent"
+              <div
+                class="flex h-11 w-1/2 cursor-pointer justify-center rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 hover:border-2 focus:border-first-accent"
               >
                 Click to upload
-              </button>
+              </div>
               <p
                 v-if="errors?.license"
                 class="mt-2 text-xs font-semibold text-red-500"
