@@ -60,6 +60,7 @@ export const useLaboratoryStore = defineStore('laboratoryStore', {
         this.errors = data.errors;
       } else {
         this.errors = {};
+        router.push({ name: "LaboratoryStatusPage" });
       }
     },
 

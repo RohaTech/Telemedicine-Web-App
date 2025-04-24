@@ -42,6 +42,7 @@ import PatientRegisterPage from '@/views/Auth/PatientRegisterPage.vue'
 import LoginPage from '@/views/Auth/LoginPage.vue'
 import DoctorRegistration from "@/views/Doctor/DoctorRegistration.vue";
 import DoctorStatusPage from "@/views/Doctor/DoctorStatusPage.vue";
+import LaboratoryStatusPage from '@/views/Laboratory/LaboratoryStatusPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -190,6 +191,23 @@ const router = createRouter({
       component: CreateLabResult,
     },
     {
+      path: "/laboratory/register",
+      name: "LaboratoryRegister",
+      component: LaboratoryRegister,
+      meta: { guest: true }
+    },
+    {
+      path: "/laboratory/status",
+      name: "LaboratoryStatusPage",
+      component: LaboratoryStatusPage,
+      meta: { guest: true }
+    },
+    {
+      path: "/laboratory/register",
+      name: "LaboratoryRegister",
+      component: LaboratoryRegister,
+    },
+    {
       path: "/prescriptions",
       name: "Prescriptions",
       component: PrescriptionList,
@@ -248,11 +266,6 @@ const router = createRouter({
       path: "/notifications/create",
       name: "CreateNotification",
       component: CreateNotification,
-    },
-    {
-      path: "/laboratory/register",
-      name: "LaboratoryRegister",
-      component: LaboratoryRegister,
     },
     {
       path: "/admin/home",

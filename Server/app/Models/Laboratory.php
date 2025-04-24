@@ -16,7 +16,11 @@ class Laboratory extends Model
         'email',
         'password',
         'phone',
-        'address',
+        'location',
+        'city',
+        'region',
+        'status',
+        'license',
         'tests'
     ];
     protected $hidden = [

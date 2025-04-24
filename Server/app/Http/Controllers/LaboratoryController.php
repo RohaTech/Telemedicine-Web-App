@@ -33,7 +33,10 @@ class LaboratoryController extends Controller
                 'email' => 'required|email|unique:laboratories,email',
                 'password' => 'required|string|min:6',
                 'phone' => 'nullable|string|max:20',
-                'address' => 'nullable|string',
+                'license' => 'nullable|string',
+                'region' => 'nullable|string',
+                'city' => 'nullable|string',
+                'location' => 'nullable|string',
                 'tests' => 'required|array',
             ]);
 
@@ -42,7 +45,11 @@ class LaboratoryController extends Controller
                 'email' => $validated['email'],
                 'password' =>  Hash::make($validated['password']),
                 'phone' => $validated['phone'],
-                'address' => $validated['address'],
+                'license' => $validated['license'],
+                'region' => $validated['region'],
+                'city' => $validated['city'],
+                'location' => $validated['location'],
+                'status' => "pending",
                 'tests' => json_encode($validated['tests']),
             ]);
 
