@@ -25,8 +25,6 @@ class LaboratoryController extends Controller
 
     public function store(Request $request)
     {
-
-
         try {
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
@@ -36,7 +34,7 @@ class LaboratoryController extends Controller
                 'license' => 'nullable|string',
                 'region' => 'nullable|string',
                 'city' => 'nullable|string',
-                'location' => 'nullable|string',
+                'location' => 'nullable|array',  // Changed to array
                 'tests' => 'required|array',
             ]);
 
@@ -48,7 +46,7 @@ class LaboratoryController extends Controller
                 'license' => $validated['license'],
                 'region' => $validated['region'],
                 'city' => $validated['city'],
-                'location' => $validated['location'],
+                'location' => json_encode($validated['location']), // Encoding to JSON here
                 'status' => "pending",
                 'tests' => json_encode($validated['tests']),
             ]);
@@ -66,6 +64,9 @@ class LaboratoryController extends Controller
     {
         try {
             $laboratory = Laboratory::findOrFail($id);
+            // Decode JSON fields before returning
+            $laboratory->tests = json_decode($laboratory->tests);
+            $laboratory->location = json_decode($laboratory->location);
             return response()->json($laboratory, 200);
         } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Laboratory not found', 'message' => $e->getMessage()], 404);

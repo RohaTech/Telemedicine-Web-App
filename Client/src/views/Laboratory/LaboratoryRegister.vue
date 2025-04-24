@@ -1,8 +1,10 @@
 <script setup>
+import { ref, onMounted } from "vue";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 import UserLayout from "@/layout/UserLayout.vue";
 import { useLaboratoryStore } from "@/stores/laboratoryStore";
 import { storeToRefs } from "pinia";
-import { ref } from "vue";
 
 const { createLaboratory } = useLaboratoryStore();
 
@@ -13,8 +15,8 @@ const labData = ref({
   email: "",
   password: "",
   phone: "",
-  location: "",
-  license: "",
+  location: { lat: null, lng: null },
+  license: null,
   region: "",
   city: "",
   tests: {
@@ -102,8 +104,39 @@ const labData = ref({
   },
 });
 
+const map = ref(null); // Ref to hold the map instance
+const mapContainer = ref(null); // Ref to the map container
+const marker = ref(null); // Ref to hold the marker instance
+const selectedLocation = ref(null);
+
 const submitForm = async () => {
-  console.log(labData.value);
+  errors.value = {}; // Clear previous errors
+
+  // Validation checks
+  if (!labData.value.location.lat || !labData.value.location.lng) {
+    errors.value.location = "Please select a location on the map.";
+  }
+
+  if (!labData.value.license) {
+    errors.value.license = "Please upload your license.";
+  }
+
+  let atLeastOneTestProvided = false;
+  for (const testName in labData.value.tests) {
+    if (labData.value.tests[testName].provided) {
+      atLeastOneTestProvided = true;
+      break;
+    }
+  }
+
+  if (!atLeastOneTestProvided) {
+    errors.value.tests = "Please select at least one test provided.";
+  }
+
+  if (Object.keys(errors.value).length > 0) {
+    // If there are errors, stop submission
+    return;
+  }
   createLaboratory(labData.value);
 };
 
@@ -125,6 +158,37 @@ const widget = window.cloudinary.createUploadWidget(
     }
   },
 );
+
+onMounted(() => {
+  // Initialize Leaflet map
+  map.value = L.map(mapContainer.value).setView([9.02, 38.74], 6); // Coordinates for Ethiopia, zoom level 6
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  }).addTo(map.value);
+
+  // Add click event listener to the map
+  map.value.on("click", (e) => {
+    const lat = e.latlng.lat;
+    const lng = e.latlng.lng;
+
+    labData.value.location = {
+      lat: lat,
+      lng: lng,
+    };
+    selectedLocation.value = { lat: lat, lng: lng };
+
+    console.log("Selected location:", labData.value.location);
+
+    // Add or move the marker
+    if (marker.value) {
+      marker.value.setLatLng([lat, lng]);
+    } else {
+      marker.value = L.marker([lat, lng]).addTo(map.value);
+    }
+  });
+});
 </script>
 
 <template>
@@ -321,17 +385,19 @@ const widget = window.cloudinary.createUploadWidget(
                 <label class="mb-1 block text-sm text-[#0F172A]">
                   Map Location
                   <span class="ml-1 text-xs text-gray-500"
-                    >(Optional - Click on map to set location)</span
+                    >(Click on map to set location)</span
                   >
                 </label>
-                <div class="h-64 rounded-lg border border-gray-300 bg-gray-100">
-                  <!-- Map component would go here -->
-                  <p
-                    class="flex h-full items-center justify-center text-sm text-gray-500"
-                  >
-                    Map component will be integrated here
-                  </p>
-                </div>
+                <div
+                  class="h-[400px] rounded-lg border border-gray-300 bg-gray-100"
+                  ref="mapContainer"
+                ></div>
+                <p
+                  v-if="errors?.location"
+                  class="mt-2 text-xs font-semibold text-red-500"
+                >
+                  {{ errors.location }}
+                </p>
               </div>
             </div>
           </div>
@@ -361,6 +427,12 @@ const widget = window.cloudinary.createUploadWidget(
                 </label>
               </div>
             </div>
+            <p
+              v-if="errors?.tests"
+              class="mt-2 text-xs font-semibold text-red-500"
+            >
+              {{ errors.tests }}
+            </p>
           </div>
 
           <!-- Submit Button -->
