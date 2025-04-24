@@ -62,7 +62,7 @@ import doctor_person from "/images/HomePage/doctor_person.png";
             <p class="ml-2 text-lg font-bold">Join Us A Physician</p>
 
             <RouterLink
-              :to="{ name: 'Home' }"
+              :to="{ name: 'DoctorRegister' }"
               class="flex w-[158px] items-center justify-around rounded-3xl bg-[#17254E] py-1.5 text-sm uppercase text-white transition-all duration-300 ease-linear hover:bg-[#1F3061]"
             >
               Join Now
