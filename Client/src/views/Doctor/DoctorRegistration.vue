@@ -1,6 +1,6 @@
 <script setup>
 import UserLayout from "@/layout/UserLayout.vue";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import flatPickr from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
@@ -8,6 +8,8 @@ import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
 import { useVuelidate } from "@vuelidate/core";
 import { required, url } from "@vuelidate/validators";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
 // Specialties list
 const specialties = ref([
@@ -43,6 +45,10 @@ const doctorData = ref({
   password: "",
   password_confirmation: "",
   phone: "",
+  city: "",
+  region: "",
+  gender: "",
+  birth_date: "",
   medical_license_number: "",
   specialty: "",
   qualification: "",
@@ -52,9 +58,9 @@ const doctorData = ref({
   license_expiry_date: "",
   status: "pending",
   payment: "",
-  location: { region: "", city: "" },
+  location: { lat: null, lng: null },
   terms_agreed: false,
-  certificate_path: "", // Initialize as empty string
+  certificate_path: "",
 });
 
 const showPassword = ref(false);
@@ -62,6 +68,11 @@ const showConfirmPassword = ref(false);
 const certificatePreviewUrl = ref(null);
 const router = useRouter();
 const successMessage = ref(null);
+
+const map = ref(null);
+const mapContainer = ref(null);
+const marker = ref(null);
+
 // Cloudinary Upload Widget
 const widget = window.cloudinary.createUploadWidget(
   {
@@ -104,6 +115,10 @@ const rules = {
   password: { required },
   password_confirmation: { required },
   phone: { required },
+  city: { required },
+  region: { required },
+  gender: { required },
+  birth_date: { required },
   medical_license_number: { required },
   specialty: { required },
   qualification: { required },
@@ -113,8 +128,8 @@ const rules = {
   license_expiry_date: { required },
   payment: { required },
   location: {
-    region: { required },
-    city: { required },
+    lat: { required },
+    lng: { required },
   },
   terms_agreed: { required, checked: (value) => value === true },
   certificate_path: { required, url },
@@ -128,11 +143,11 @@ const prepareLocation = () => {
   if (!location || typeof location !== "object") {
     return null;
   }
-  if (location.region || location.city) {
+  if (location.lat !== null && location.lng !== null) {
     try {
       const locationData = {
-        region: location.region || "",
-        city: location.city || "",
+        lat: location.lat,
+        lng: location.lng,
       };
       return JSON.stringify(locationData);
     } catch (error) {
@@ -150,7 +165,7 @@ const submitForm = async () => {
     if (!isValid) {
       console.error("Form validation failed:", v$.value.$errors);
       alert(
-        "Please complete all required fields, including uploading a certificate.",
+        "Please complete all required fields, including selecting a map location and uploading a certificate.",
       );
       return;
     }
@@ -161,6 +176,10 @@ const submitForm = async () => {
       password: doctorData.value.password,
       password_confirmation: doctorData.value.password_confirmation,
       phone: doctorData.value.phone,
+      city: doctorData.value.city,
+      region: doctorData.value.region,
+      gender: doctorData.value.gender,
+      birth_date: doctorData.value.birth_date,
       role: "doctor",
       medical_license_number: doctorData.value.medical_license_number,
       specialty: doctorData.value.specialty,
@@ -180,13 +199,16 @@ const submitForm = async () => {
     await authStore.authenticate("register-doctor", submissionData);
 
     successMessage.value =
-      response.message ||
       "Registration successful. Your account is under review.";
     setTimeout(() => {
       router.push({ name: "DoctorStatus" });
-    }, 3000); // 3-second delay for user to read message
+    }, 3000);
   } catch (error) {
     console.error("Registration failed:", error);
+    alert(
+      "Registration failed: " +
+        (error.response?.data?.message || error.message),
+    );
   }
 };
 
@@ -202,6 +224,35 @@ const flatpickrConfig = {
   altFormat: "F j, Y",
   wrap: true,
 };
+
+onMounted(() => {
+  // Initialize Leaflet map
+  map.value = L.map(mapContainer.value).setView([9.02, 38.74], 6); // Ethiopia coordinates
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution:
+      '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  }).addTo(map.value);
+
+  // Add click event listener to the map
+  map.value.on("click", (e) => {
+    const lat = e.latlng.lat;
+    const lng = e.latlng.lng;
+
+    // Update doctorData.location
+    doctorData.value.location.lat = lat;
+    doctorData.value.location.lng = lng;
+
+    console.log("Selected location:", doctorData.value.location);
+
+    // Add or move the marker
+    if (marker.value) {
+      marker.value.setLatLng([lat, lng]);
+    } else {
+      marker.value = L.marker([lat, lng]).addTo(map.value);
+    }
+  });
+});
 </script>
 
 <template>
@@ -382,10 +433,10 @@ const flatpickrConfig = {
             </div>
           </div>
 
-          <!-- Professional Information Section -->
+          <!-- Personal Information Section -->
           <div>
             <h2 class="mb-4 text-lg font-semibold text-[#0F172A]">
-              Professional Information
+              Personal Information
             </h2>
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
               <!-- Name -->
@@ -428,6 +479,111 @@ const flatpickrConfig = {
                   {{ errors.phone.join(", ") }}
                 </p>
               </div>
+              <!-- Gender -->
+              <div>
+                <label for="gender" class="mb-1 block text-sm text-[#0F172A]">
+                  Gender <span class="text-red-500">*</span>
+                </label>
+                <select
+                  id="gender"
+                  v-model="doctorData.gender"
+                  class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-first-accent"
+                  required
+                >
+                  <option value="" disabled selected>Select gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+                <p
+                  v-if="errors.gender"
+                  class="mt-2 text-xs font-semibold text-red-500"
+                >
+                  {{ errors.gender.join(", ") }}
+                </p>
+              </div>
+              <!-- Birth Date -->
+              <div>
+                <label
+                  for="birth_date"
+                  class="mb-1 block text-sm text-[#0F172A]"
+                >
+                  Birth Date <span class="text-red-500">*</span>
+                </label>
+                <flat-pickr
+                  v-model="doctorData.birth_date"
+                  :config="flatpickrConfig"
+                  class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-first-accent"
+                  placeholder="Select date"
+                  required
+                />
+                <p
+                  v-if="errors.birth_date"
+                  class="mt-2 text-xs font-semibold text-red-500"
+                >
+                  {{ errors.birth_date.join(", ") }}
+                </p>
+              </div>
+              <!-- Region -->
+              <div>
+                <label for="region" class="mb-1 block text-sm text-[#0F172A]">
+                  Region <span class="text-red-500">*</span>
+                </label>
+                <select
+                  id="region"
+                  v-model="doctorData.region"
+                  class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-first-accent"
+                  required
+                >
+                  <option value="" disabled selected>Select an option</option>
+                  <option value="addis_abeba">Addis Abeba</option>
+                  <option value="Tigray">Tigray</option>
+                  <option value="Afar">Afar</option>
+                  <option value="Amhara">Amhara</option>
+                  <option value="Oromia">Oromia</option>
+                  <option value="Somali">Somali</option>
+                  <option value="Benishangul-Gumuz">Benishangul-Gumuz</option>
+                  <option value="SNNPR">SNNPR</option>
+                  <option value="Gambella">Gambella</option>
+                  <option value="Harari">Harari</option>
+                  <option value="Sidama">Sidama</option>
+                  <option value="Dire Dawa">Dire Dawa</option>
+                </select>
+                <p
+                  v-if="errors.region"
+                  class="mt-2 text-xs font-semibold text-red-500"
+                >
+                  {{ errors.region.join(", ") }}
+                </p>
+              </div>
+              <!-- City -->
+              <div>
+                <label for="city" class="mb-1 block text-sm text-[#0F172A]">
+                  City <span class="text-red-500">*</span>
+                </label>
+                <input
+                  id="city"
+                  v-model="doctorData.city"
+                  type="text"
+                  class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-first-accent"
+                  placeholder="City"
+                  required
+                />
+                <p
+                  v-if="errors.city"
+                  class="mt-2 text-xs font-semibold text-red-500"
+                >
+                  {{ errors.city.join(", ") }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Professional Information Section -->
+          <div>
+            <h2 class="mb-4 text-lg font-semibold text-[#0F172A]">
+              Professional Information
+            </h2>
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
               <!-- Medical License Number -->
               <div>
                 <label
@@ -595,7 +751,6 @@ const flatpickrConfig = {
                   {{ errors.license_expiry_date.join(", ") }}
                 </p>
               </div>
-
               <!-- Payment -->
               <div>
                 <label for="payment" class="mb-1 block text-sm text-[#0F172A]">
@@ -618,55 +773,23 @@ const flatpickrConfig = {
                   {{ errors.payment.join(", ") }}
                 </p>
               </div>
-              <!-- Location -->
-              <div>
-                <label for="region" class="mb-1 block text-sm text-[#0F172A]">
-                  Region <span class="text-red-500">*</span>
+              <!-- Map Location -->
+              <div class="md:col-span-2">
+                <label class="mb-1 block text-sm text-[#0F172A]">
+                  Map Location <span class="text-red-500">*</span>
+                  <span class="ml-1 text-xs text-gray-500"
+                    >(Click on map to set location)</span
+                  >
                 </label>
-                <select
-                  id="region"
-                  v-model="doctorData.location.region"
-                  class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-first-accent"
-                  required
-                >
-                  <option value="" disabled selected>Select an option</option>
-                  <option value="addis_abeba">Addis Abeba</option>
-                  <option value="Tigray">Tigray</option>
-                  <option value="Afar">Afar</option>
-                  <option value="Amhara">Amhara</option>
-                  <option value="Oromia">Oromia</option>
-                  <option value="Somali">Somali</option>
-                  <option value="Benishangul-Gumuz">Benishangul-Gumuz</option>
-                  <option value="SNNPR">SNNPR</option>
-                  <option value="Gambella">Gambella</option>
-                  <option value="Harari">Harari</option>
-                  <option value="Sidama">Sidama</option>
-                  <option value="Dire Dawa">Dire Dawa</option>
-                </select>
+                <div
+                  class="h-[400px] rounded-lg border border-gray-300 bg-gray-100"
+                  ref="mapContainer"
+                ></div>
                 <p
-                  v-if="errors.location"
+                  v-if="v$.location.lat.$error || v$.location.lng.$error"
                   class="mt-2 text-xs font-semibold text-red-500"
                 >
-                  {{ errors.location.join(", ") }}
-                </p>
-              </div>
-              <div>
-                <label for="city" class="mb-1 block text-sm text-[#0F172A]">
-                  City <span class="text-red-500">*</span>
-                </label>
-                <input
-                  id="city"
-                  v-model="doctorData.location.city"
-                  type="text"
-                  class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-first-accent"
-                  placeholder="City"
-                  required
-                />
-                <p
-                  v-if="errors.location"
-                  class="mt-2 text-xs font-semibold text-red-500"
-                >
-                  {{ errors.location.join(", ") }}
+                  Please select a location on the map.
                 </p>
               </div>
             </div>

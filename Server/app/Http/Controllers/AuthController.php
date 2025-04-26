@@ -8,7 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Mail;
+use App\Mail\DoctorRegistrationPending;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -96,6 +98,10 @@ class AuthController extends Controller
                 'email' => 'required|string|email|max:255|unique:users',
                 'password' => 'required|string|min:8|confirmed',
                 'phone' => 'required|string|max:20|unique:users',
+                'city' => 'required|string|max:255',
+                'region' => 'required|string|max:255',
+                'gender' => 'nullable|in:male,female,other',
+                'birth_date' => 'nullable|date',
                 'medical_license_number' => 'required|string|unique:doctors',
                 'specialty' => 'required|string',
                 'qualification' => 'required|string',
@@ -105,18 +111,30 @@ class AuthController extends Controller
                 'license_expiry_date' => 'required|date|after:license_issue_date',
                 'status' => 'nullable|in:pending,active,suspended,expired',
                 'payment' => 'required|numeric|min:0',
-                'location' => 'nullable|json',
-                'certificate_path' => 'required|url', // Already required
+                'location' => 'required|json', // Expect JSON with lat, lng
+                'certificate_path' => 'required|url',
             ]);
 
+            // Parse location JSON
+            $locationData = json_decode($validated['location'], true);
+            if (!isset($locationData['lat']) || !isset($locationData['lng'])) {
+                throw ValidationException::withMessages([
+                    'location' => ['Location must include lat and lng.'],
+                ]);
+            }
+
             // Use a transaction to ensure atomicity
-            return DB::transaction(function () use ($validated) {
+            return DB::transaction(function () use ($validated, $locationData) {
                 // Create User
                 $user = User::create([
                     'name' => $validated['name'],
                     'email' => $validated['email'],
                     'password' => Hash::make($validated['password']),
                     'phone' => $validated['phone'],
+                    'city' => $validated['city'],
+                    'region' => $validated['region'],
+                    'gender' => $validated['gender'],
+                    'birth_date' => $validated['birth_date'],
                     'role' => 'doctor',
                 ]);
 
@@ -130,14 +148,29 @@ class AuthController extends Controller
                     'university_attended' => $validated['university_attended'],
                     'license_issue_date' => $validated['license_issue_date'],
                     'license_expiry_date' => $validated['license_expiry_date'],
-                    'status' => $validated['status'],
+                    'status' => $validated['status'] ?? 'pending',
                     'payment' => $validated['payment'],
-                    'location' => $validated['location'],
+                    'location' => json_encode([
+                        'lat' => $locationData['lat'],
+                        'lng' => $locationData['lng'],
+                    ]), // Store only lat and lng
                     'certificate_path' => $validated['certificate_path'],
                 ]);
 
-                // Optionally, generate an API token for the user
+                // Generate an API token
                 $token = $user->createToken('auth_token')->plainTextToken;
+
+                // Send email
+                try {
+                    Mail::to($user->email)->send(new DoctorRegistrationPending($user));
+                    Log::info('Email sent successfully', ['user_id' => $user->id]);
+                } catch (\Exception $e) {
+                    Log::error('Failed to send email', ['error' => $e->getMessage()]);
+                    return response()->json([
+                        'error' => 'Failed to send email',
+                        'message' => $e->getMessage(),
+                    ], 500);
+                }
 
                 return response()->json([
                     'user' => $user,
@@ -157,4 +190,8 @@ class AuthController extends Controller
             ], 500);
         }
     }
+
+    /*
+        
+    */
 }
