@@ -23,6 +23,17 @@ class LaboratoryController extends Controller
         }
     }
 
+    public function getPendingLaboratories()
+    {
+
+        try {
+            $laboratories = Laboratory::where('status', 'pending')->get();
+            return response()->json($laboratories, 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to fetch laboratories', 'message' => $e->getMessage()], 500);
+        }
+    }
+
     public function store(Request $request)
     {
         try {
@@ -59,12 +70,10 @@ class LaboratoryController extends Controller
         }
     }
 
-    // Get a single laboratory by ID
     public function show($id)
     {
         try {
             $laboratory = Laboratory::findOrFail($id);
-            // Decode JSON fields before returning
             $laboratory->tests = json_decode($laboratory->tests);
             $laboratory->location = json_decode($laboratory->location);
             return response()->json($laboratory, 200);

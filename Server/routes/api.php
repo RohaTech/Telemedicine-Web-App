@@ -12,6 +12,7 @@ use App\Http\Controllers\LabResultController;
 use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,13 +29,20 @@ Route::get('/doctor-status', function (Request $request) {
 //     Route::apiResource('/users', UserController::class);
 // });
 
-Route::get('/users/patient', [UserController::class, 'getAllCustomers']);
+Route::get('/users/patient', [UserController::class, 'getAllCustomers'])->middleware(AdminMiddleware::class);;
 Route::post('/register-doctor', [AuthController::class, 'registerDoctor']);
 
 Route::apiResource('/appointments', AppointmentController::class);
 Route::apiResource('/consultations', ConsultationController::class);
 Route::apiResource('/doctors', DoctorController::class);
+
+
+
 Route::apiResource('/laboratories', LaboratoryController::class);
+Route::get('/laboratories/pending', [LaboratoryController::class, 'getPendingLaboratories']);
+
+
+
 Route::apiResource('/lab-requests', LabRequestController::class);
 Route::apiResource('/lab-results', LabResultController::class);
 Route::apiResource('/prescriptions', PrescriptionController::class);

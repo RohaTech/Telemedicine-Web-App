@@ -1,8 +1,7 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
 
 @layer base {
   *,
@@ -17,13 +16,13 @@
     cursor: pointer;
   }
   body {
-    @apply font-outfit relative bg-gray-50 font-normal;
+    @apply relative bg-gray-50 font-outfit font-normal;
   }
 }
 
 @layer components {
   .menu-item {
-    @apply text-theme-sm relative flex w-full items-center gap-3 rounded-lg px-3 py-2 font-medium;
+    @apply relative flex w-full items-center gap-3 rounded-lg px-3 py-2 text-theme-sm font-medium;
   }
 
   .menu-item-active {
@@ -59,7 +58,7 @@
   }
 
   .menu-dropdown-item {
-    @apply text-theme-sm relative flex items-center gap-3 rounded-lg px-3 py-2.5 font-medium;
+    @apply relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-theme-sm font-medium;
   }
 
   .menu-dropdown-item-active {

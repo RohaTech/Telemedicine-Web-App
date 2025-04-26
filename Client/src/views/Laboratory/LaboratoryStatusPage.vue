@@ -14,13 +14,13 @@ onMounted(() => {
   <UserLayout>
     <div class="flex justify-center px-4 py-12 sm:px-6 lg:px-8">
       <div
-        class="w-full max-w-md border border-gray-50 bg-[#f3f5f5] p-8 drop-shadow-md"
+        class="flex w-full max-w-md flex-col border border-gray-50 bg-[#f3f5f5] p-8 drop-shadow-md"
       >
         <h1 class="mb-4 text-2xl font-bold text-[#0F172A]">
           Registration Status
         </h1>
 
-        <div class="space-y-4">
+        <div class="space-y-4 pb-8">
           <div class="rounded-lg bg-yellow-100 p-4 text-yellow-700">
             <p class="font-semibold">Your registration is under review.</p>
             <p class="mt-2 text-sm">
@@ -34,7 +34,13 @@ onMounted(() => {
           </div>
         </div>
 
-        <!-- Contact Support -->
+        <RouterLink
+          :to="{ name: 'Welcome' }"
+          class="mx-auto cursor-pointer rounded-md bg-second-accent px-6 py-2 text-white"
+        >
+          Back to Home</RouterLink
+        >
+
         <div class="mt-6 text-center text-sm text-[#64748B]">
           <p>
             Need help? Contact us at

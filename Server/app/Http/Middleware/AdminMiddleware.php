@@ -15,6 +15,6 @@ class AdminMiddleware
             return $next($request);
         }
 
-        return ['message' => "Unauthorized"];
+        return ['message' => "Unauthorized - Admin Required"];
     }
 }
