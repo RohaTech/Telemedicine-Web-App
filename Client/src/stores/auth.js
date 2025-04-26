@@ -30,7 +30,6 @@ export const useAuthStore = defineStore("authStore", {
             general: "An error occurred while fetching user data",
           };
           console.error(error);
-
         }
       }
     },
@@ -40,12 +39,13 @@ export const useAuthStore = defineStore("authStore", {
       const res = await fetch(`/api/${apiRoute}`, {
         method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
 
       const data = await res.json();
+      console.log(data);
       if (data.errors) {
         this.errors = data.errors;
       } else {
@@ -53,6 +53,7 @@ export const useAuthStore = defineStore("authStore", {
         this.errors = {};
         localStorage.setItem("token", data.token);
         this.user = data.user;
+
         router.push({
           name: data.user.role === "doctor" ? "DoctorStatus" : "Home",
         });
