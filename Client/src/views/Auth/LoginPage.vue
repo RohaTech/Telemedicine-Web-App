@@ -1,16 +1,23 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import CommonGridShape from "@/components/common/CommonGridShape.vue";
 import UserLayout from "@/layout/UserLayout.vue";
 import Logo from "@/components/UI/Logo.vue";
 import { useAuthStore } from "@/stores/auth";
+import { storeToRefs } from "pinia";
 
 const formData = ref({
    email : "",
    password :"",
 })
 
+onMounted(()=>{
+  errors.value={};
+  console.log(errors.value);
+})
+
 const {authenticate} = useAuthStore();
+const {errors} = storeToRefs(useAuthStore());
 
 const showPassword = ref(false);
 const keepLoggedIn = ref(false);
@@ -68,7 +75,7 @@ const handleSubmit = () => {
                 </p>
               </div>
               <div>
-                <div class="relative py-3 sm:py-5"></div>
+                <div v-if="Object.keys(errors).length > 0" class="relative py-3 sm:py-5 text-sm text-red-500">Incorrect Credentials</div>
                 <form @submit.prevent="handleSubmit">
                   <div class="space-y-5">
                     <!-- Email -->
@@ -87,6 +94,8 @@ const handleSubmit = () => {
                         placeholder="info@gmail.com"
                         class="ark:bg-ark-900 focus:outline-hidden focus:ring-3 ark:border-gray-700 ark:bg-gray-900 ark:placeholder:text-white/30 ark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:ring-brand-500/10"
                       />
+
+                      
                     </div>
                     <!-- Password -->
                     <div>
@@ -146,7 +155,7 @@ const handleSubmit = () => {
                     <!-- Checkbox -->
                     <div class="flex items-center justify-between">
                       <RouterLink :to="{name:'Home'}"
-                        class="ark:text-brand-400 text-sm text-brand-500 hover:text-brand-600"
+                        class="ark:text-brand-400 text-sm text-first-accent/70  hover:text-first-accent"
                         >Forgot password?</RouterLink :to="{name:'Home'}"
                       >
                     </div>
@@ -154,7 +163,7 @@ const handleSubmit = () => {
                     <div>
                       <button
                         type="submit"
-                        class="flex w-full items-center justify-center rounded-lg bg-brand-500 px-4 py-3 text-sm font-medium text-white shadow-theme-xs transition hover:bg-brand-600"
+                        class="flex w-full items-center justify-center rounded-lg bg-first-accent/70 px-4 py-3 text-sm font-medium text-white shadow-theme-xs transition hover:bg-first-accent"
                       >
                         Sign In
                       </button>
@@ -167,7 +176,7 @@ const handleSubmit = () => {
                   >
                     Don't have an account?
                     <RouterLink :to="{name:'GetStarted'}"
-                      class="ark:text-brand-400 text-brand-500 hover:text-brand-600"
+                      class="ark:text-brand-400 text-first-accent/70 hover:text-first-accent"
                       >Sign Up</RouterLink :to="{name:'Home'}"
                     >
                   </p>

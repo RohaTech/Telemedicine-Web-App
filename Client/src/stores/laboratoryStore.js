@@ -9,8 +9,25 @@ export const useLaboratoryStore = defineStore('laboratoryStore', {
   },
 
   actions: {
+
     async getLaboratories() {
       const res = await fetch("/api/laboratories", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      const data = await res.json();
+      if (data.errors) {
+        this.errors = data.errors;
+      } else {
+        this.errors = {};
+        return data;
+      }
+    },
+
+    async getPendingLaboratories() {
+      const res = await fetch("/api/laboratories/pending", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -59,6 +76,7 @@ export const useLaboratoryStore = defineStore('laboratoryStore', {
         this.errors = data.errors;
       } else {
         this.errors = {};
+        router.push({ name: "LaboratoryStatusPage" });
       }
     },
 
@@ -114,18 +132,6 @@ export const useLaboratoryStore = defineStore('laboratoryStore', {
         this.errors = { message: err.message || 'An unexpected error occurred' };
         return { success: false };
       }
-    },
-
-    resetForm() {
-      this.laboratory = {
-        name: "",
-        email: "",
-        password: "",
-        password_confirmation: "", // Reset confirmation too
-        phone: "",
-        address: "",
-      };
-      this.errors = {};
     },
   },
 });

@@ -23,17 +23,29 @@ class LaboratoryController extends Controller
         }
     }
 
-    public function store(Request $request)
+    public function getPendingLaboratories()
     {
 
+        try {
+            $laboratories = Laboratory::where('status', 'pending')->get();
+            return response()->json($laboratories, 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to fetch laboratories', 'message' => $e->getMessage()], 500);
+        }
+    }
 
+    public function store(Request $request)
+    {
         try {
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|unique:laboratories,email',
                 'password' => 'required|string|min:6',
                 'phone' => 'nullable|string|max:20',
-                'address' => 'nullable|string',
+                'license' => 'nullable|string',
+                'region' => 'nullable|string',
+                'city' => 'nullable|string',
+                'location' => 'nullable|array',  // Changed to array
                 'tests' => 'required|array',
             ]);
 
@@ -42,7 +54,11 @@ class LaboratoryController extends Controller
                 'email' => $validated['email'],
                 'password' =>  Hash::make($validated['password']),
                 'phone' => $validated['phone'],
-                'address' => $validated['address'],
+                'license' => $validated['license'],
+                'region' => $validated['region'],
+                'city' => $validated['city'],
+                'location' => json_encode($validated['location']), // Encoding to JSON here
+                'status' => "pending",
                 'tests' => json_encode($validated['tests']),
             ]);
 
@@ -54,11 +70,12 @@ class LaboratoryController extends Controller
         }
     }
 
-    // Get a single laboratory by ID
     public function show($id)
     {
         try {
             $laboratory = Laboratory::findOrFail($id);
+            $laboratory->tests = json_decode($laboratory->tests);
+            $laboratory->location = json_decode($laboratory->location);
             return response()->json($laboratory, 200);
         } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Laboratory not found', 'message' => $e->getMessage()], 404);

@@ -23,10 +23,10 @@ import doctor_person from "/images/HomePage/doctor_person.png";
         >
           <div class="space-y-6">
             <p class="ml-2">Start Today</p>
-            <p class="ml-2 text-lg font-bold">Join Us A Customer</p>
+            <p class="ml-2 text-lg font-bold">Join Us A Patient</p>
 
             <RouterLink
-              :to="{ name: 'Home' }"
+              :to="{ name: 'PatientRegister' }"
               class="flex w-[158px] items-center justify-around rounded-3xl bg-first-accent py-1.5 text-sm uppercase text-white transition-all duration-300 ease-linear hover:bg-second-accent"
             >
               Join Now
