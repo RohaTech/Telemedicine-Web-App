@@ -27,7 +27,7 @@ export const useLaboratoryStore = defineStore('laboratoryStore', {
     },
 
     async getPendingLaboratories() {
-      const res = await fetch("/api/laboratories/status-pending", {
+      const res = await fetch("/api/status-pending/laboratories", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,

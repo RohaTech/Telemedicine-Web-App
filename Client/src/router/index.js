@@ -200,7 +200,7 @@ const router = createRouter({
       path: "/laboratory/status",
       name: "LaboratoryStatusPage",
       component: LaboratoryStatusPage,
-      meta: { guest: true }
+      meta: { laboratoryStatus: true }
     },
     {
       path: "/laboratory/register",
@@ -293,6 +293,9 @@ router.beforeEach(async (to, from) => {
   }
   if (authStore.user && to.meta.welcome) {
     return { name: "Home" };
+  }
+  if (authStore.user?.role === "admin" && to.meta.welcome) {
+    return { name: "AdminHome" }
   }
   if (!authStore.user && to.meta.home) {
     return { name: "Welcome" }
