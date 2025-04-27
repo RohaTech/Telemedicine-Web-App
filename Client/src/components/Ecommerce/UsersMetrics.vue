@@ -1,41 +1,30 @@
-
 <script setup>
-import { useLaboratoryStore } from '@/stores/laboratoryStore';
-import { usePatientStore } from '@/stores/patientStore';
-import { onMounted, ref } from 'vue';
+import { useLaboratoryStore } from "@/stores/laboratoryStore";
+import { usePatientStore } from "@/stores/patientStore";
+import { onMounted, ref } from "vue";
 
-
-const {getLaboratories} = useLaboratoryStore()
-const {getAllPatients} = usePatientStore()
-
+const { getLaboratories } = useLaboratoryStore();
+const { getAllPatients } = usePatientStore();
 
 const laboratories = ref([]);
 const customers = ref([]);
 
-
-onMounted(async ()=>{
-
+onMounted(async () => {
   laboratories.value = await getLaboratories();
   customers.value = await getAllPatients();
 
-  console.log(customers.value);
-})
-
-
-
-
+  console.log(laboratories.value);
+});
 </script>
 
 <template>
   <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">
-    <div
-      class="rounded-2xl border border-gray-200 bg-white p-5   md:p-6"
-    >
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 md:p-6">
       <div
-        class="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl "
+        class="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100"
       >
         <svg
-          class="fill-gray-800  "
+          class="fill-gray-800"
           width="24"
           height="24"
           viewBox="0 0 24 24"
@@ -51,23 +40,22 @@ onMounted(async ()=>{
         </svg>
       </div>
 
-      <div class="flex items-end justify-between mt-5">
+      <div class="mt-5 flex items-end justify-between">
         <div>
-          <span class="text-sm text-gray-500  ">Customers</span>
-          <h4 class="mt-2 font-bold text-gray-800 text-title-sm ">{{ customers.length }}</h4>
+          <span class="text-sm text-gray-500">Customers</span>
+          <h4 class="mt-2 text-title-sm font-bold text-gray-800">
+            {{ customers.length }}
+          </h4>
         </div>
-
       </div>
     </div>
 
-    <div
-      class="rounded-2xl border border-gray-200 bg-white p-5  md:p-6"
-    >
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 md:p-6">
       <div
-        class="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl  "
+        class="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100"
       >
         <svg
-          class="fill-gray-800  "
+          class="fill-gray-800"
           width="24"
           height="24"
           viewBox="0 0 24 24"
@@ -83,22 +71,19 @@ onMounted(async ()=>{
         </svg>
       </div>
 
-      <div class="flex items-end justify-between mt-5">
+      <div class="mt-5 flex items-end justify-between">
         <div>
-          <span class="text-sm text-gray-500  ">Physicians</span>
-          <h4 class="mt-2 font-bold text-gray-800 text-title-sm ">5,359</h4>
+          <span class="text-sm text-gray-500">Physicians</span>
+          <h4 class="mt-2 text-title-sm font-bold text-gray-800">5,359</h4>
         </div>
-
       </div>
     </div>
-    <div
-      class="rounded-2xl border border-gray-200 bg-white p-5  md:p-6"
-    >
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 md:p-6">
       <div
-        class="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl  "
+        class="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100"
       >
         <svg
-          class="fill-gray-800  "
+          class="fill-gray-800"
           width="24"
           height="24"
           viewBox="0 0 24 24"
@@ -114,12 +99,13 @@ onMounted(async ()=>{
         </svg>
       </div>
 
-      <div class="flex items-end justify-between mt-5">
+      <div class="mt-5 flex items-end justify-between">
         <div>
-          <span class="text-sm text-gray-500  ">Laboratories</span>
-          <h4 class="mt-2 font-bold text-gray-800 text-title-sm ">{{ laboratories.length }}</h4>
+          <span class="text-sm text-gray-500">Laboratories</span>
+          <h4 class="mt-2 text-title-sm font-bold text-gray-800">
+            {{ laboratories.length }}
+          </h4>
         </div>
-
       </div>
     </div>
   </div>

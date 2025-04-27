@@ -39,7 +39,7 @@ Route::apiResource('/doctors', DoctorController::class);
 
 
 Route::apiResource('/laboratories', LaboratoryController::class);
-Route::get('/laboratories/pending', [LaboratoryController::class, 'getPendingLaboratories']);
+Route::get('/laboratories/status-pending', [LaboratoryController::class, 'getPendingLaboratories']);
 
 
 

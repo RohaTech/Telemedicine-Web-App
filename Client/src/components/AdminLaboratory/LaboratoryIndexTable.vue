@@ -4,10 +4,10 @@ import { usePatientStore } from "@/stores/patientStore";
 import { onMounted, ref } from "vue";
 
 const { getPendingLaboratories } = useLaboratoryStore();
-const { getAllPatients } = usePatientStore();
+// const { getAllPatients } = usePatientStore();
 const laboratories = ref([]);
 onMounted(async () => {
-  laboratories.value = await getAllPatients();
+  laboratories.value = await getPendingLaboratories();
   console.log(laboratories.value);
 });
 
