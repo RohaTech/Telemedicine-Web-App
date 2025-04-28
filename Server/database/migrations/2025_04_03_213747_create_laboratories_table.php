@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('phone')->nullable()->unique();
             $table->string('license')->nullable();
             $table->json('tests')->nullable();
-            $table->enum('status', ['active', 'pending', 'suspended', 'expired'])->default('active');
+            $table->enum('status', ['active', 'pending', 'suspended', 'expired'])->default('pending');
             $table->string('region')->nullable();
             $table->string('city')->nullable();
             $table->json('location')->nullable();

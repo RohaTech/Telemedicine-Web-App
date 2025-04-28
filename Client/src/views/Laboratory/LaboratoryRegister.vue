@@ -338,7 +338,7 @@ onMounted(() => {
                   required
                 >
                   <option value="" disabled selected>Select an option</option>
-                  <option value="addis_abeba">Addis Abeba</option>
+                  <option value="Addis Abeba">Addis Abeba</option>
                   <option value="Tigray">Tigray</option>
                   <option value="Afar">Afar</option>
                   <option value="Amhara">Amhara</option>
