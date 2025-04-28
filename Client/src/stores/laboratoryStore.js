@@ -85,16 +85,14 @@ export const useLaboratoryStore = defineStore('laboratoryStore', {
         const res = await fetch(`/api/laboratories/${id}`, {
           method: 'put',
           headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
             'Content-Type': 'application/json',
-            ...(localStorage.getItem('token') && {
-              authorization: `Bearer ${localStorage.getItem('token')}`,
-            }),
           },
           body: JSON.stringify(laboratoryData),
         });
 
         const data = await res.json();
-
+        console.log(data);
         if (!res.ok) {
           this.errors = data || { message: 'Failed to update laboratory' };
           return { success: false };
@@ -102,6 +100,30 @@ export const useLaboratoryStore = defineStore('laboratoryStore', {
 
         this.errors = {};
         return { success: true, message: 'Laboratory updated successfully!' };
+      } catch (err) {
+        this.errors = { message: err.message || 'An unexpected error occurred' };
+        return { success: false };
+      }
+    },
+    async updateLaboratoryStatus(status, laboratory) {
+      try {
+        const res = await fetch(`/api/laboratories/update-status/${laboratory}`, {
+          method: 'put',
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(status),
+        });
+
+        const data = await res.json();
+        console.log(data);
+        if (!res.ok) {
+          return
+        }
+
+        this.errors = {};
+        return { success: true, message: ' laboratory the request approved successfully!' };
       } catch (err) {
         this.errors = { message: err.message || 'An unexpected error occurred' };
         return { success: false };

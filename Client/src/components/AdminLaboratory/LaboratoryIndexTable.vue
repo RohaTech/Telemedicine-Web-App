@@ -5,10 +5,9 @@ import { onMounted, ref, computed } from "vue";
 import Modal from "@/components/UI/Modal.vue";
 
 const { getLaboratories } = useLaboratoryStore();
-// const { getAllPatients } = usePatientStore();
+const { updateLaboratoryStatus } = useLaboratoryStore();
 const laboratories = ref([]);
 
-// Status filter options
 const statusOptions = ["active", "pending", "suspended", "expired"];
 const selectedStatus = ref("all"); // Default to 'all'
 
@@ -17,7 +16,12 @@ onMounted(async () => {
   console.log(laboratories.value);
 });
 
-// Filter laboratories based on selected status
+const handleStatusUpdate = async (status, laboratory) => {
+  await updateLaboratoryStatus(status, laboratory);
+  laboratories.value = await getLaboratories();
+  closePopup();
+};
+
 const filteredLaboratories = computed(() => {
   if (selectedStatus.value === "all") {
     return laboratories.value;
@@ -89,21 +93,26 @@ const decodedLocation = computed(() => {
 // Function to download license
 const downloadLicense = () => {
   if (selectedLaboratory.value && selectedLaboratory.value.license) {
-    // Create an anchor element
-    const anchor = document.createElement("a");
-    anchor.href = selectedLaboratory.value.license;
+    // Get the original license URL
+    const originalUrl = selectedLaboratory.value.license;
 
-    // Extract filename from URL or use a default name
-    const urlParts = selectedLaboratory.value.license.split("/");
-    const fileName = urlParts[urlParts.length - 1] || "license-document";
+    if (originalUrl.includes("cloudinary.com")) {
+      const uploadIndex = originalUrl.indexOf("/upload/");
 
-    anchor.download = fileName;
-    anchor.target = "_blank";
+      if (uploadIndex !== -1) {
+        const downloadUrl =
+          originalUrl.substring(0, uploadIndex + 8) +
+          "fl_attachment/" +
+          originalUrl.substring(uploadIndex + 8);
 
-    // Trigger the download
-    document.body.appendChild(anchor);
-    anchor.click();
-    document.body.removeChild(anchor);
+        // Navigate to the download URL
+        window.open(downloadUrl, "_blank");
+        return;
+      }
+    }
+
+    // Fallback: if not a Cloudinary URL or couldn't properly modify it
+    window.open(originalUrl, "_blank");
   }
 };
 </script>
@@ -124,9 +133,11 @@ const downloadLicense = () => {
             name="status-filter"
             :checked="selectedStatus === 'all'"
             @change="changeStatus('all')"
-            class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            class="h-4 w-4 cursor-pointer rounded border-gray-300 text-blue-600 focus:ring-blue-500"
           />
-          <label for="status-all" class="ml-2 text-sm capitalize text-gray-700"
+          <label
+            for="status-all"
+            class="ml-2 cursor-pointer text-sm capitalize text-gray-700"
             >All</label
           >
         </div>
@@ -143,11 +154,11 @@ const downloadLicense = () => {
             name="status-filter"
             :checked="selectedStatus === status"
             @change="changeStatus(status)"
-            class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            class="h-4 w-4 cursor-pointer rounded border-gray-300 text-blue-600 focus:ring-blue-500"
           />
           <label
             :for="'status-' + status"
-            class="ml-2 text-sm capitalize text-gray-700"
+            class="ml-2 cursor-pointer text-sm capitalize text-gray-700"
             >{{ status }}</label
           >
         </div>
@@ -274,7 +285,7 @@ const downloadLicense = () => {
             <td class="px-5 py-4 sm:px-6">
               <p
                 @click="openDetailPopup(laboratory)"
-                class="cursor-pointer rounded p-1 text-theme-sm text-gray-500 transition-colors duration-200 hover:bg-success-50 hover:text-success-700"
+                class="cursor-pointer rounded bg-gray-200 p-1 py-2 text-center text-theme-sm font-bold text-gray-500 transition-colors duration-200 hover:bg-success-50 hover:text-success-700"
               >
                 More Detail
               </p>
@@ -393,13 +404,14 @@ const downloadLicense = () => {
                   </p>
                 </div>
 
-                <div class="mt-4">
+                <div class="mt-4 flex items-end gap-x-4">
                   <label class="mb-1.5 block text-sm font-medium text-gray-700">
                     Status
                   </label>
+
                   <span
                     :class="[
-                      'rounded-full px-3 py-1 text-sm font-medium',
+                      'rounded-xl border px-3 py-1 text-sm font-medium',
                       {
                         'bg-success-50 text-success-700':
                           selectedLaboratory.status === 'active',
@@ -413,6 +425,32 @@ const downloadLicense = () => {
                   >
                     {{ selectedLaboratory.status }}
                   </span>
+                </div>
+                <div
+                  v-if="selectedLaboratory.status === `pending`"
+                  class="mt-4"
+                >
+                  <span class="mb-1.5 block text-sm font-medium text-gray-700"
+                    >Handle The Request</span
+                  >
+                  <div
+                    v-if="selectedLaboratory.status === `pending`"
+                    class="flex items-center gap-3"
+                  >
+                    <button
+                      @click="
+                        handleStatusUpdate('active', selectedLaboratory.id)
+                      "
+                      class="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 transition-all duration-300 ease-linear hover:bg-gray-50 hover:text-success-600 hover:ring-success-600"
+                    >
+                      Approve
+                    </button>
+                    <button
+                      class="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 transition-all duration-300 ease-linear hover:bg-gray-50 hover:text-error-600 hover:ring-error-600"
+                    >
+                      Decline
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
