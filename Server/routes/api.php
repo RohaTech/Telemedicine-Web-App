@@ -35,7 +35,7 @@ Route::post('/register-doctor', [AuthController::class, 'registerDoctor']);
 Route::apiResource('/appointments', AppointmentController::class);
 Route::apiResource('/consultations', ConsultationController::class);
 Route::apiResource('/doctors', DoctorController::class);
-
+Route::put('/doctors/update-status/{doctor}', [DoctorController::class, 'updateStatus']);
 
 
 Route::apiResource('/laboratories', LaboratoryController::class);
@@ -60,3 +60,5 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::post('/laboratories/login', [LaboratoryAuthController::class, 'login']);
 Route::post('/laboratories/register', [LaboratoryAuthController::class, 'register']);
 Route::post('/laboratories/logout', [LaboratoryAuthController::class, 'logout'])->middleware('auth:sanctum');
+
+

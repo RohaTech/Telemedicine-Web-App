@@ -43,7 +43,7 @@ const menuGroups = [
       {
         icon: UserCircleIcon,
         name: "Doctors",
-        path: "AdminHome",
+        path: "AdminDoctors",
       },
       {
         icon: LaboratoryIcon,
