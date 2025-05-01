@@ -1,48 +1,49 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import WelcomePage from '../views/WelcomePage.vue'
-import AppointmentList from '@/components/Appointment/AppointmentList.vue'
-import CreateAppointment from '@/components/Appointment/CreateAppointment.vue'
-import AppointmentView from '@/components/Appointment/AppointmentView.vue'
-import AppointmentEdit from '@/components/Appointment/AppointmentEdit.vue'
-import ConsultationList from '@/components/Consultation/ConsultationList.vue'
-import ConsultationView from '@/components/Consultation/ConsultationView.vue'
-import ConsultationEdit from '@/components/Consultation/ConsultationEdit.vue'
-import CreateConsultation from '@/components/Consultation/CreateConsultation.vue'
-import LaboratoryList from '@/components/Laboratory/LaboratoryList.vue'
-import LaboratoryView from '@/components/Laboratory/LaboratoryView.vue'
-import LaboratoryEdit from '@/components/Laboratory/LaboratoryEdit.vue'
-import CreateLaboratory from '@/components/Laboratory/CreateLaboratory.vue'
-import LabRequestList from '@/components/LabRequest/LabRequestList.vue'
-import LabRequestView from '@/components/LabRequest/LabRequestView.vue'
-import LabRequestEdit from '@/components/LabRequest/LabRequestEdit.vue'
-import CreateLabRequest from '@/components/LabRequest/CreateLabRequest.vue'
-import LabResultList from '@/components/LabResult/LabResultList.vue'
-import LabResultView from '@/components/LabResult/LabResultView.vue'
-import LabResultEdit from '@/components/LabResult/LabResultEdit.vue'
-import CreateLabResult from '@/components/LabResult/CreateLabResult.vue'
-import PrescriptionList from '@/components/Prescription/PrescriptionList.vue'
-import PrescriptionView from '@/components/Prescription/PrescriptionView.vue'
-import PrescriptionEdit from '@/components/Prescription/PrescriptionEdit.vue'
-import CreatePrescription from '@/components/Prescription/CreatePrescription.vue'
-import HomePage from '@/views/HomePage.vue'
-import PaymentList from '@/components/Payment/PaymentList.vue'
-import PaymentView from '@/components/Payment/PaymentView.vue'
-import PaymentEdit from '@/components/Payment/PaymentEdit.vue'
-import CreatePayment from '@/components/Payment/CreatePayment.vue'
-import NotificationList from '@/components/Notification/NotificationList.vue'
-import NotificationView from '@/components/Notification/NotificationView.vue'
-import NotificationEdit from '@/components/Notification/NotificationEdit.vue'
-import CreateNotification from '@/components/Notification/CreateNotification.vue'
-import LaboratoryRegister from '@/views/Laboratory/LaboratoryRegister.vue'
-import AdminHome from '@/views/Admin/AdminHome.vue'
-import AdminLaboratory from '@/views/Admin/AdminLaboratory.vue'
-import { useAuthStore } from '@/stores/auth'
-import GetStarted from '@/views/Auth/GetStarted.vue'
-import PatientRegisterPage from '@/views/Auth/PatientRegisterPage.vue'
-import LoginPage from '@/views/Auth/LoginPage.vue'
+import { createRouter, createWebHistory } from "vue-router";
+import WelcomePage from "../views/WelcomePage.vue";
+import AppointmentList from "@/components/Appointment/AppointmentList.vue";
+import CreateAppointment from "@/components/Appointment/CreateAppointment.vue";
+import AppointmentView from "@/components/Appointment/AppointmentView.vue";
+import AppointmentEdit from "@/components/Appointment/AppointmentEdit.vue";
+import ConsultationList from "@/components/Consultation/ConsultationList.vue";
+import ConsultationView from "@/components/Consultation/ConsultationView.vue";
+import ConsultationEdit from "@/components/Consultation/ConsultationEdit.vue";
+import CreateConsultation from "@/components/Consultation/CreateConsultation.vue";
+import LaboratoryList from "@/components/Laboratory/LaboratoryList.vue";
+import LaboratoryView from "@/components/Laboratory/LaboratoryView.vue";
+import LaboratoryEdit from "@/components/Laboratory/LaboratoryEdit.vue";
+import CreateLaboratory from "@/components/Laboratory/CreateLaboratory.vue";
+import LabRequestList from "@/components/LabRequest/LabRequestList.vue";
+import LabRequestView from "@/components/LabRequest/LabRequestView.vue";
+import LabRequestEdit from "@/components/LabRequest/LabRequestEdit.vue";
+import CreateLabRequest from "@/components/LabRequest/CreateLabRequest.vue";
+import LabResultList from "@/components/LabResult/LabResultList.vue";
+import LabResultView from "@/components/LabResult/LabResultView.vue";
+import LabResultEdit from "@/components/LabResult/LabResultEdit.vue";
+import CreateLabResult from "@/components/LabResult/CreateLabResult.vue";
+import PrescriptionList from "@/components/Prescription/PrescriptionList.vue";
+import PrescriptionView from "@/components/Prescription/PrescriptionView.vue";
+import PrescriptionEdit from "@/components/Prescription/PrescriptionEdit.vue";
+import CreatePrescription from "@/components/Prescription/CreatePrescription.vue";
+import HomePage from "@/views/HomePage.vue";
+import PaymentList from "@/components/Payment/PaymentList.vue";
+import PaymentView from "@/components/Payment/PaymentView.vue";
+import PaymentEdit from "@/components/Payment/PaymentEdit.vue";
+import CreatePayment from "@/components/Payment/CreatePayment.vue";
+import NotificationList from "@/components/Notification/NotificationList.vue";
+import NotificationView from "@/components/Notification/NotificationView.vue";
+import NotificationEdit from "@/components/Notification/NotificationEdit.vue";
+import CreateNotification from "@/components/Notification/CreateNotification.vue";
+import LaboratoryRegister from "@/views/Laboratory/LaboratoryRegister.vue";
+import AdminHome from "@/views/Admin/AdminHome.vue";
+import AdminLaboratory from "@/views/Admin/AdminLaboratory.vue";
+import { useAuthStore } from "@/stores/auth";
+import GetStarted from "@/views/Auth/GetStarted.vue";
+import PatientRegisterPage from "@/views/Auth/PatientRegisterPage.vue";
+import LoginPage from "@/views/Auth/LoginPage.vue";
 import DoctorRegistration from "@/views/Doctor/DoctorRegistration.vue";
 import DoctorStatusPage from "@/views/Doctor/DoctorStatusPage.vue";
-import LaboratoryStatusPage from '@/views/Laboratory/LaboratoryStatusPage.vue'
+import LaboratoryStatusPage from "@/views/Laboratory/LaboratoryStatusPage.vue";
+import AdminDoctor from "@/views/Admin/AdminDoctor.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -54,8 +55,8 @@ const router = createRouter({
       meta: { welcome: true },
     },
     {
-      path: '/home',
-      name: 'Home',
+      path: "/home",
+      name: "Home",
       component: HomePage,
       meta: { auth: true },
     },
@@ -84,8 +85,8 @@ const router = createRouter({
       meta: { auth: true },
     },
     {
-      path: '/login',
-      name: 'Login',
+      path: "/login",
+      name: "Login",
       component: LoginPage,
       meta: { guest: true },
     },
@@ -194,13 +195,13 @@ const router = createRouter({
       path: "/laboratory/register",
       name: "LaboratoryRegister",
       component: LaboratoryRegister,
-      meta: { guest: true }
+      meta: { guest: true },
     },
     {
       path: "/laboratory/status",
       name: "LaboratoryStatusPage",
       component: LaboratoryStatusPage,
-      meta: { laboratoryStatus: true }
+      meta: { laboratoryStatus: true },
     },
     {
       path: "/laboratory/register",
@@ -277,6 +278,11 @@ const router = createRouter({
       name: "AdminLaboratories",
       component: AdminLaboratory,
     },
+    {
+      path: "/admin/doctors",
+      name: "AdminDoctors",
+      component: AdminDoctor,
+    },
   ],
 });
 
@@ -286,19 +292,19 @@ router.beforeEach(async (to, from) => {
   await authStore.getUser();
 
   if (authStore.user?.role === "admin" && to.meta.welcome) {
-    return { name: "AdminHome" }
+    return { name: "AdminHome" };
   }
   if (authStore.user?.role === "admin" && to.meta.auth) {
-    return { name: "AdminHome" }
+    return { name: "AdminHome" };
   }
   if (authStore.user && to.meta.welcome) {
     return { name: "Home" };
   }
   if (authStore.user?.role === "admin" && to.meta.welcome) {
-    return { name: "AdminHome" }
+    return { name: "AdminHome" };
   }
   if (!authStore.user && to.meta.home) {
-    return { name: "Welcome" }
+    return { name: "Welcome" };
   }
   if (!authStore.user && to.meta.auth) {
     return { name: "GetStarted" };

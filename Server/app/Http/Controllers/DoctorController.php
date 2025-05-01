@@ -5,7 +5,10 @@ use App\Models\Doctor;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Exception;
-
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\DoctorStatusUpdated;
+use App\Mail\DoctorRegistrationPending;
 class DoctorController extends Controller
 {
     public function index()
@@ -94,6 +97,35 @@ class DoctorController extends Controller
             return response()->json(['error' => 'Doctor not found', 'message' => $e->getMessage()], 404);
         } catch (Exception $e) {
             return response()->json(['error' => 'Failed to delete doctor', 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        try {
+            $doctor = Doctor::findOrFail($id);
+
+            $validatedData = $request->validate([
+                'status' => 'required|in:pending,active,suspended,expired',
+            ]);
+
+            $doctor->update($validatedData);
+            // dd($doctor->user->email);
+            try {
+            Mail::to($doctor->user->email)->send(new DoctorStatusUpdated($doctor->user, $validatedData['status']));
+            Log::info('Email sent successfully', ['user_id' => $doctor->id]);
+            } catch (\Exception $e) {
+                Log::error('Failed to send email', ['error' => $e->getMessage()]);
+                return response()->json([
+                    'error' => 'Failed to send email',
+                    'message' => $e->getMessage(),
+                ], 500);
+            }
+            return response()->json($doctor, 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Doctor not found', 'message' => $e->getMessage()], 404);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to update doctor status', 'message' => $e->getMessage()], 500);
         }
     }
 }
