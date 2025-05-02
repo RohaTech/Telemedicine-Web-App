@@ -137,11 +137,10 @@ class LaboratoryController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'status' => 'required|string|in:active,pending,suspended,expired',
+                'status' => 'required|in:pending,active,suspended,expired',
             ]);
 
-            $laboratory->status = $validatedData['status'];
-            $laboratory->save();
+            $laboratory->update($validatedData);
 
             // Decode JSON fields for the response
             $laboratory->tests = json_decode($laboratory->tests);
