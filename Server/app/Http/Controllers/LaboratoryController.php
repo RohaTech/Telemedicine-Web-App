@@ -185,10 +185,6 @@ class LaboratoryController extends Controller
 
             $laboratory->update($validatedData);
 
-            // Decode JSON fields for the response
-            $laboratory->tests = json_decode($laboratory->tests);
-            $laboratory->location = json_decode($laboratory->location);
-
             return response()->json([
                 'message' => 'Laboratory status updated successfully',
                 'laboratory' => $laboratory
