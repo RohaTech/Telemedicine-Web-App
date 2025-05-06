@@ -113,7 +113,7 @@ export const useLaboratoryStore = defineStore('laboratoryStore', {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(status),
+          body: JSON.stringify({ status }),
         });
 
         const data = await res.json();

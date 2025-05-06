@@ -452,6 +452,45 @@ const downloadLicense = () => {
                     </button>
                   </div>
                 </div>
+                <div v-if="selectedLaboratory.status === `active`" class="mt-4">
+                  <span class="mb-1.5 block text-sm font-medium text-gray-700"
+                    >Change Status</span
+                  >
+                  <div
+                    v-if="selectedLaboratory.status === `active`"
+                    class="flex items-center gap-3"
+                  >
+                    <button
+                      @click="
+                        handleStatusUpdate('suspended', selectedLaboratory.id)
+                      "
+                      class="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium capitalize text-gray-700 ring-1 ring-inset ring-gray-300 transition-all duration-300 ease-linear hover:bg-gray-50 hover:text-error-600 hover:ring-error-600"
+                    >
+                      suspended
+                    </button>
+                  </div>
+                </div>
+                <div
+                  v-if="selectedLaboratory.status === `suspended`"
+                  class="mt-4"
+                >
+                  <span class="mb-1.5 block text-sm font-medium text-gray-700"
+                    >Change Status</span
+                  >
+                  <div
+                    v-if="selectedLaboratory.status === `suspended`"
+                    class="flex items-center gap-3"
+                  >
+                    <button
+                      @click="
+                        handleStatusUpdate('active', selectedLaboratory.id)
+                      "
+                      class="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium capitalize text-gray-700 ring-1 ring-inset ring-gray-300 transition-all duration-300 ease-linear hover:bg-gray-50 hover:text-success-600 hover:ring-success-600"
+                    >
+                      restore
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
 

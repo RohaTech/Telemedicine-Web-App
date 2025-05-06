@@ -6,11 +6,11 @@ use App\Models\Laboratory;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Hash;
-
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 use Exception;
 
 class LaboratoryController extends Controller
-
 {
     // Get all laboratories
     public function index()
@@ -25,7 +25,6 @@ class LaboratoryController extends Controller
 
     public function getPendingLaboratories()
     {
-
         try {
             $laboratories = Laboratory::where('status', 'pending')->get();
             return response()->json($laboratories, 200);
@@ -45,28 +44,72 @@ class LaboratoryController extends Controller
                 'license' => 'nullable|string',
                 'region' => 'nullable|string',
                 'city' => 'nullable|string',
-                'location' => 'nullable|array',  // Changed to array
+                'location' => 'nullable|array',
                 'tests' => 'required|array',
             ]);
 
             $laboratory = Laboratory::create([
                 'name' => $validated['name'],
                 'email' => $validated['email'],
-                'password' =>  Hash::make($validated['password']),
+                'password' => Hash::make($validated['password']),
                 'phone' => $validated['phone'],
                 'license' => $validated['license'],
                 'region' => $validated['region'],
                 'city' => $validated['city'],
-                'location' => json_encode($validated['location']), // Encoding to JSON here
+                'location' => json_encode($validated['location']),
                 'status' => "pending",
                 'tests' => json_encode($validated['tests']),
             ]);
 
-            return response()->json(['message' => 'Laboratory registered successfully', 'laboratory' => $laboratory], 201);
+            $token = $laboratory->createToken('laboratory-token')->plainTextToken;
+
+            return response()->json([
+                'message' => 'Laboratory registered successfully',
+                'laboratory' => $laboratory,
+                'token' => $token,
+            ], 201);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json(['error' => 'Validation failed', 'messages' => $e->errors()], 422);
         } catch (Exception $e) {
             return response()->json(['error' => 'Laboratory registration failed', 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function login(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'email' => 'required|email',
+                'password' => 'required',
+            ]);
+
+            if (Auth::guard('laboratory')->attempt($validated)) {
+                $laboratory = Auth::guard('laboratory')->user();
+                $token = $laboratory->createToken('laboratory-token')->plainTextToken;
+
+                return response()->json([
+                    'message' => 'Laboratory logged in successfully',
+                    'laboratory' => $laboratory,
+                    'token' => $token,
+                ], 200);
+            }
+
+            return response()->json(['message' => 'Invalid credentials'], 401);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['error' => 'Validation failed', 'messages' => $e->errors()], 422);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Login failed', 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function logout(Request $request)
+    {
+        try {
+            auth('sanctum')->user()->currentAccessToken()->delete();
+
+            return response()->json(['message' => 'Laboratory logged out successfully'], 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Logout failed', 'message' => $e->getMessage()], 500);
         }
     }
 
@@ -137,11 +180,10 @@ class LaboratoryController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'status' => 'required|string|in:active,pending,suspended,expired',
+                'status' => 'required|in:pending,active,suspended,expired',
             ]);
 
-            $laboratory->status = $validatedData['status'];
-            $laboratory->save();
+            $laboratory->update($validatedData);
 
             // Decode JSON fields for the response
             $laboratory->tests = json_decode($laboratory->tests);
