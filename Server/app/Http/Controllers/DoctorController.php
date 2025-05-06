@@ -9,6 +9,13 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\DoctorStatusUpdated;
 use App\Mail\DoctorRegistrationPending;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Appointment;
+use App\Models\LabRequest;
+use App\Models\Notification;
+use App\Models\User;
+use App\Models\Laboratory;
+use App\Models\LaboratoryAuth;
 class DoctorController extends Controller
 {
     public function index()
@@ -126,6 +133,31 @@ class DoctorController extends Controller
             return response()->json(['error' => 'Doctor not found', 'message' => $e->getMessage()], 404);
         } catch (Exception $e) {
             return response()->json(['error' => 'Failed to update doctor status', 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function dashboard(Request $request)
+    {
+        try {
+            // Fetch the doctor record for the authenticated user
+            $doctor = Doctor::where('user_id', Auth::id())->firstOrFail();
+
+            // Gather dashboard data
+            $dashboardData = [
+                'upcomingAppointments' => Appointment::where('doctor_id', $doctor->user->id)
+                    ->where('date', '>=', now())
+                    ->count(),
+                'pendingLabRequests' => LabRequest::where('doctor_id', $doctor->user->id)
+                    ->where('status', 'pending')
+                    ->count(),
+                'unreadNotifications' => Notification::where('user_id', Auth::id())
+                    ->where('status', 'unread')
+                    ->count(),
+            ];
+
+            return response()->json($dashboardData, 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to fetch dashboard data', 'message' => $e->getMessage()], 500);
         }
     }
 }

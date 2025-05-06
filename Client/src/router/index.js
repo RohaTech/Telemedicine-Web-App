@@ -44,7 +44,7 @@ import DoctorRegistration from "@/views/Doctor/DoctorRegistration.vue";
 import DoctorStatusPage from "@/views/Doctor/DoctorStatusPage.vue";
 import LaboratoryStatusPage from "@/views/Laboratory/LaboratoryStatusPage.vue";
 import AdminDoctor from "@/views/Admin/AdminDoctor.vue";
-
+import DoctorHomePage from "@/views/Doctor/DoctorHomePage.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -58,7 +58,7 @@ const router = createRouter({
       path: "/home",
       name: "Home",
       component: HomePage,
-      meta: { auth: true },
+      meta: { auth: true, home: true },
     },
     {
       path: "/get-started",
@@ -283,6 +283,12 @@ const router = createRouter({
       name: "AdminDoctors",
       component: AdminDoctor,
     },
+    {
+      path: "/doctor/home",
+      name: "DoctorHome",
+      component: DoctorHomePage,
+      meta: { requiresAuth: true, role: "doctor" },
+    },
   ],
 });
 
@@ -296,6 +302,12 @@ router.beforeEach(async (to, from) => {
   }
   if (authStore.user?.role === "admin" && to.meta.auth) {
     return { name: "AdminHome" };
+  }
+  if (authStore.user?.role === "doctor" && to.meta.welcome) {
+    return { name: "DoctorHome" };
+  }
+  if (authStore.user?.role === "doctor" && to.meta.home) {
+    return { name: "DoctorHome" };
   }
   if (authStore.user && to.meta.welcome) {
     return { name: "Home" };
