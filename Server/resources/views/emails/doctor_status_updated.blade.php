@@ -49,7 +49,7 @@
                             <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin: 20px 0;">
                                 <tr>
                                     <td align="center">
-                                        <a href="{{ localhost:5173('/doctor-status') }}" style="display: inline-block; padding: 12px 24px; background-color: #26C6DA; color: #ffffff; font-size: 16px; font-weight: bold; text-decoration: none; border-radius: 25px; transition: background-color 0.3s;">
+                                        <a href="{{ url('/doctor-status') }}" style="display: inline-block; padding: 12px 24px; background-color: #26C6DA; color: #ffffff; font-size: 16px; font-weight: bold; text-decoration: none; border-radius: 25px; transition: background-color 0.3s;">
                                             Check Your Status
                                         </a>
                                     </td>

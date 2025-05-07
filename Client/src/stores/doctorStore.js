@@ -37,6 +37,7 @@ export const useDoctorStore = defineStore("doctorStore", {
         const response = await fetch(`/api/doctors/update-status/${doctorId}`, {
           method: "PUT",
           headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ status }),
