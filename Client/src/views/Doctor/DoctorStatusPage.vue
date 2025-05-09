@@ -3,34 +3,27 @@ import UserLayout from "@/layout/UserLayout.vue";
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
+import { useDoctorStore } from "@/stores/doctorStore";
 import { storeToRefs } from "pinia";
 
 const authStore = useAuthStore();
+const doctorStore = useDoctorStore();
+
 const { user, errors } = storeToRefs(authStore);
 const router = useRouter();
-const status = ref(null);
+const { status } = storeToRefs(doctorStore);
 const isLoading = ref(true);
 
 const fetchStatus = async () => {
   try {
     isLoading.value = true;
-    const response = await fetch("/api/doctor-status", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
-    const data = await response.json();
-    if (response.ok) {
-      status.value = data.status;
-    } else {
-      errors.value = data.errors || { general: "Failed to fetch status" };
+    await doctorStore.fetchStatus();
+    if (status.value === "active") {
+      router.push({ name: "DoctorHome" });
     }
   } catch (error) {
     console.error("Error fetching status:", error);
-    errors.value = {
-      general:
-        "An error occurred while fetching your status. Please try again.",
-    };
+    // Errors are handled by doctorStore
   } finally {
     isLoading.value = false;
   }
@@ -47,8 +40,8 @@ onMounted(async () => {
   }
 });
 
-const goToLogin = () => {
-  router.push({ name: "Login" });
+const goToHome = () => {
+  router.push({ name: "DoctorHome" });
 };
 
 const contactSupport = () => {
@@ -131,10 +124,10 @@ const contactSupport = () => {
               services.
             </p>
             <button
-              @click="goToLogin"
+              @click="goToHome"
               class="mt-4 rounded-3xl bg-green-500 px-4 py-2 text-sm uppercase text-white hover:bg-green-700"
             >
-              Log In Now
+              Go To Home
             </button>
           </div>
           <div
