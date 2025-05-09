@@ -71,7 +71,7 @@ return [
 
         'laboratories' => [
             'driver' => 'eloquent',
-            'model' =>  App\Models\Laboratory::class
+            'model' => env('AUTH_MODEL', App\Models\Laboratory::class),
         ]
 
         // 'users' => [

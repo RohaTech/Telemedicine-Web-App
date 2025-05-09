@@ -3,8 +3,8 @@ import { onMounted, ref } from "vue";
 import CommonGridShape from "@/components/common/CommonGridShape.vue";
 import UserLayout from "@/layout/UserLayout.vue";
 import Logo from "@/components/UI/Logo.vue";
-import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
+import { useLaboratoryStore } from "@/stores/laboratoryStore";
 
 const formData = ref({
   email: "",
@@ -16,13 +16,10 @@ onMounted(() => {
   console.log(errors.value);
 });
 
-const { authenticate } = useAuthStore();
-const { errors } = storeToRefs(useAuthStore());
+const { authenticate } = useLaboratoryStore();
+const { errors } = storeToRefs(useLaboratoryStore());
 
 const showPassword = ref(false);
-const keepLoggedIn = ref(false);
-
-// Toggle for User Type (Normal User or Laboratory)
 const isLaboratoryLogin = ref(false);
 
 const togglePasswordVisibility = () => {
@@ -30,12 +27,7 @@ const togglePasswordVisibility = () => {
 };
 
 const handleSubmit = () => {
-  // Pass user type to authentication function
-  authenticate(
-    isLaboratoryLogin.value ? "login/laboratory" : "login",
-    formData.value,
-  );
-  // console.log(formData.value);
+  authenticate("login", formData.value);
 };
 </script>
 
@@ -76,7 +68,7 @@ const handleSubmit = () => {
                 <h1
                   class="mb-2 text-title-sm font-semibold text-gray-800 sm:text-title-md"
                 >
-                  Sign In
+                  Laboratory Login Page
                 </h1>
                 <p class="text-sm text-gray-500">
                   Enter your email and password to sign in!
@@ -170,11 +162,6 @@ const handleSubmit = () => {
                         class="ark:text-brand-400 text-sm text-first-accent/70 hover:text-first-accent"
                         >Forgot password?</RouterLink
                       >
-                      <RouterLink
-                        :to="{ name: 'LaboratoryLoginPage' }"
-                        class="ark:text-brand-400 text-sm text-first-accent/70 hover:text-first-accent"
-                        >Login as Laboratory?</RouterLink
-                      >
                     </div>
                     <!-- Button -->
                     <div>
@@ -214,8 +201,8 @@ const handleSubmit = () => {
               <RouterLink :to="{ name: 'Home' }" class="mb-4 block">
                 <Logo class="w-[200px] fill-white" />
               </RouterLink>
-              <p class="ark:text-white/60 text-center text-white">
-                ACCESS YOUR HEALTHCARE Anytime, Anywhere
+              <p class="w-fit text-center text-3xl font-bold text-white">
+                Laboratory Login Form
               </p>
             </div>
           </div>

@@ -44,6 +44,8 @@ import DoctorRegistration from "@/views/Doctor/DoctorRegistration.vue";
 import DoctorStatusPage from "@/views/Doctor/DoctorStatusPage.vue";
 import LaboratoryStatusPage from "@/views/Laboratory/LaboratoryStatusPage.vue";
 import AdminDoctor from "@/views/Admin/AdminDoctor.vue";
+import LaboratoryLoginPage from "@/views/Laboratory/LaboratoryLoginPage.vue";
+import LaboratoryHome from "@/views/Laboratory/LaboratoryHome.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -138,8 +140,9 @@ const router = createRouter({
     },
     {
       path: "/laboratories/:id",
-      name: "LaboratoryView",
-      component: LaboratoryView,
+      name: "LaboratoryHome",
+      component: LaboratoryHome,
+      meta: { laboratory: true }
     },
     {
       path: "/laboratories/:id/edit",
@@ -207,6 +210,11 @@ const router = createRouter({
       path: "/laboratory/register",
       name: "LaboratoryRegister",
       component: LaboratoryRegister,
+    },
+    {
+      path: "/laboratory/login",
+      name: "LaboratoryLoginPage",
+      component: LaboratoryLoginPage,
     },
     {
       path: "/prescriptions",
@@ -290,6 +298,7 @@ router.beforeEach(async (to, from) => {
   const authStore = useAuthStore();
 
   await authStore.getUser();
+  // console.log(authStore.user);
 
   if (authStore.user?.role === "admin" && to.meta.welcome) {
     return { name: "AdminHome" };
@@ -297,16 +306,27 @@ router.beforeEach(async (to, from) => {
   if (authStore.user?.role === "admin" && to.meta.auth) {
     return { name: "AdminHome" };
   }
+  if (authStore.user?.status === "pending" && to.name !== "LaboratoryStatusPage") {
+    return { name: "LaboratoryStatusPage" };
+  }
+
+  if (authStore.user?.status === "active" && authStore.user.tests && !to.meta.laboratory) {
+    return { name: "LaboratoryHome", params: { id: authStore.user.id } };
+  }
+
   if (authStore.user && to.meta.welcome) {
     return { name: "Home" };
   }
   if (authStore.user?.role === "admin" && to.meta.welcome) {
     return { name: "AdminHome" };
   }
-  if (!authStore.user && to.meta.home) {
+  if (!authStore.user && to.meta.Home) {
     return { name: "Welcome" };
   }
   if (!authStore.user && to.meta.auth) {
+    return { name: "GetStarted" };
+  }
+  if (!authStore.user && to.meta.laboratory) {
     return { name: "GetStarted" };
   }
 });
