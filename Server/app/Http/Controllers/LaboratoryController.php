@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Exception;
+use Illuminate\Container\Attributes\DB;
 
 class LaboratoryController extends Controller
 {
@@ -77,11 +78,15 @@ class LaboratoryController extends Controller
 
     public function login(Request $request)
     {
+
+        return $request;
         try {
             $validated = $request->validate([
                 'email' => 'required|email',
                 'password' => 'required',
             ]);
+
+
 
             if (Auth::guard('laboratory')->attempt($validated)) {
                 $laboratory = Auth::guard('laboratory')->user();
@@ -185,9 +190,6 @@ class LaboratoryController extends Controller
 
             $laboratory->update($validatedData);
 
-            // Decode JSON fields for the response
-            $laboratory->tests = json_decode($laboratory->tests);
-            $laboratory->location = json_decode($laboratory->location);
 
             return response()->json([
                 'message' => 'Laboratory status updated successfully',

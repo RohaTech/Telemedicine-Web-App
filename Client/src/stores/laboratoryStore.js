@@ -5,10 +5,46 @@ export const useLaboratoryStore = defineStore('laboratoryStore', {
   state: () => {
     return {
       errors: {},
+      user: null, // Add user state
+      token: null, // Add token state
     };
   },
 
   actions: {
+
+    /**************** Login and Register  ***************/
+    async authenticate(apiRoute, formData) {
+      try {
+        const res = await fetch(`/api/laboratories/${apiRoute}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+
+        const data = await res.json();
+        console.log(data);
+
+        if (res.ok) {
+          this.errors = {};
+          this.user = data.laboratory; // Store laboratory data
+          this.token = data.token; // Store token
+          localStorage.setItem("token", data.token);
+          router.push({ name: "Home" }); // Example route
+        } else {
+          this.errors = data.errors || { message: data.message || 'Authentication failed' };
+          this.user = null;
+          this.token = null;
+          localStorage.removeItem("token");
+        }
+      } catch (error) {
+        this.errors = { message: error.message || 'An unexpected error occurred' };
+        this.user = null;
+        this.token = null;
+        localStorage.removeItem("token");
+      }
+    },
 
     async getLaboratories() {
       const res = await fetch("/api/laboratories", {

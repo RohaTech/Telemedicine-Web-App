@@ -40,7 +40,10 @@ Route::get('/doctor-dashboard', [DoctorController::class, 'dashboard'])->middlew
 
 Route::apiResource('/laboratories', LaboratoryController::class);
 Route::get('/laboratories/status-pending', [LaboratoryController::class, 'getPendingLaboratories']);
-Route::put('/laboratories/update-status/{laboratory}', [LaboratoryController::class, 'updateLaboratoryStatus']);
+Route::put('/laboratories/update-status/{laboratory}', [LaboratoryController::class, 'updateLaboratoryStatus'])->middleware(AdminMiddleware::class);
+Route::get('/laboratories/login', [LaboratoryController::class, 'login']);
+Route::get('/laboratories/register', [LaboratoryController::class, 'store']);
+Route::get('/laboratories/logout', [LaboratoryController::class, 'logout']);
 
 
 
@@ -60,5 +63,3 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::post('/laboratories/login', [LaboratoryAuthController::class, 'login']);
 Route::post('/laboratories/register', [LaboratoryAuthController::class, 'register']);
 Route::post('/laboratories/logout', [LaboratoryAuthController::class, 'logout'])->middleware('auth:sanctum');
-
-
