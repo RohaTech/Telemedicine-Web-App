@@ -3,6 +3,7 @@ import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useLaboratoryStore } from "@/stores/laboratoryStore";
 import UserLayout from "@/layout/UserLayout.vue";
+import LaboratoryLayout from "@/layout/LaboratoryLayout.vue";
 const route = useRoute();
 const laboratoryStore = useLaboratoryStore();
 const laboratory = ref(null);
@@ -14,7 +15,7 @@ onMounted(async () => {
 });
 </script>
 <template>
-  <UserLayout>
+  <LaboratoryLayout>
     <div
       class="mx-auto max-w-2xl rounded-md border border-gray-300 bg-gray-50 p-5"
     >
@@ -40,5 +41,5 @@ onMounted(async () => {
       </div>
       <div v-else class="text-gray-500">Loading laboratory...</div>
     </div>
-  </UserLayout>
+  </LaboratoryLayout>
 </template>
