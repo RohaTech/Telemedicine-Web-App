@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\LabResult;
+use App\Models\LabRequest; // Import the LabRequest model
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Storage;
@@ -37,27 +38,26 @@ class LabResultController extends Controller
     // Create a new lab result
     public function store(Request $request)
     {
-        // dd($request->all()); // Uncomment to debug request data
 
         try {
             $fields = $request->validate([
                 'lab_request_id' => 'required|exists:lab_requests,id',
                 'laboratory_id' => 'required|exists:laboratories,id',
                 'result_details' => 'required|string',
-                'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048', // 2MB max
+                'attachment' => 'required | string',
             ]);
-
-            $path = null;
-            if ($request->hasFile('attachment')) {
-                $path = $request->file('attachment')->store('lab_results', 'public'); // Store in storage/app/public/lab_results
-            }
 
             $labResult = LabResult::create([
                 'lab_request_id' => $fields['lab_request_id'],
                 'laboratory_id' => $fields['laboratory_id'],
                 'result_details' => $fields['result_details'],
-                'attachment' => $path,
+                'attachment' => $fields['attachment'],
             ]);
+
+            // Update lab request status to completed
+            $labRequest = LabRequest::findOrFail($fields['lab_request_id']);
+            $labRequest->status = 'completed';
+            $labRequest->save();
 
             return response()->json(['message' => 'Lab result created successfully', 'lab_result' => $labResult], 201);
         } catch (Exception $e) {

@@ -179,6 +179,8 @@ const router = createRouter({
       path: "/lab-requests/create",
       name: "CreateLabRequest",
       component: CreateLabRequest,
+      meta: { laboratory: true }
+
     },
     {
       path: "/lab-results",

@@ -1,16 +1,10 @@
-// filepath: e:\code files\Final Year\Telemedicine-Web-App\Client\src\Store\labResultStore.js
+
 import { defineStore } from 'pinia';
 import router from '@/router';
 
 export const useLabResultStore = defineStore('labResultStore', {
   state: () => {
     return {
-      labResult: {
-        lab_request_id: "",
-        laboratory_id: "",
-        result_details: "",
-        attachment: null, // File object for upload, null otherwise
-      },
       errors: {},
     };
   },
@@ -19,19 +13,18 @@ export const useLabResultStore = defineStore('labResultStore', {
     async getLabResults() {
       try {
         const res = await fetch('/api/lab-results', {
+          method: "GET",
           headers: {
-            ...(localStorage.getItem('token') && {
-              authorization: `Bearer ${localStorage.getItem('token')}`,
-            }),
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
         const data = await res.json();
-        if (!res.ok) {
-          this.errors = data || { message: 'Failed to fetch lab results' };
-          return { success: false };
+        if (data.errors) {
+          this.errors = data.errors;
+        } else {
+          this.errors = {};
+          return data;
         }
-        this.errors = {};
-        return { success: true, data };
       } catch (err) {
         this.errors = { message: err.message || 'An unexpected error occurred' };
         return { success: false };
@@ -60,37 +53,25 @@ export const useLabResultStore = defineStore('labResultStore', {
       }
     },
 
-    async createLabResult() {
+    async createLabResult(formData) {
       try {
-        const formData = new FormData();
-        formData.append('lab_request_id', this.labResult.lab_request_id);
-        formData.append('laboratory_id', this.labResult.laboratory_id);
-        formData.append('result_details', this.labResult.result_details);
-        if (this.labResult.attachment) {
-          formData.append('attachment', this.labResult.attachment);
-        }
-
         const res = await fetch('/api/lab-results', {
           method: 'POST',
           headers: {
-            ...(localStorage.getItem('token') && {
-              authorization: `Bearer ${localStorage.getItem('token')}`,
-            }),
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            'Content-Type': 'application/json',
+
           },
-          body: formData,
+          body: JSON.stringify(formData),
         });
 
         const data = await res.json();
-
-        if (!res.ok) {
-          this.errors = data || { message: 'Failed to create lab result' };
-          return { success: false };
+        console.log(data);
+        if (data.errors) {
+          this.errors = data.errors;
+        } else {
+          this.errors = {};
         }
-
-        this.errors = {};
-        this.resetForm();
-        router.push({ name: 'LabResults' });
-        return { success: true, message: 'Lab result created successfully!' };
       } catch (err) {
         this.errors = { message: err.message || 'An unexpected error occurred' };
         return { success: false };

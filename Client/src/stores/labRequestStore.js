@@ -16,24 +16,23 @@ export const useLabRequestStore = defineStore('labRequestStore', {
       errors: {},
     };
   },
-  
+
   actions: {
     async getLabRequests() {
       try {
         const res = await fetch('/api/lab-requests', {
+          method: "GET",
           headers: {
-            ...(localStorage.getItem('token') && {
-              authorization: `Bearer ${localStorage.getItem('token')}`,
-            }),
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
         const data = await res.json();
-        if (!res.ok) {
-          this.errors = data || { message: 'Failed to fetch lab requests' };
-          return { success: false };
+        if (data.errors) {
+          this.errors = data.errors;
+        } else {
+          this.errors = {};
+          return data;
         }
-        this.errors = {};
-        return { success: true, data };
       } catch (err) {
         this.errors = { message: err.message || 'An unexpected error occurred' };
         return { success: false };
