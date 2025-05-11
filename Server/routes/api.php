@@ -31,8 +31,10 @@ Route::get('/doctor-status', function (Request $request) {
 
 Route::get('/users/patient', [UserController::class, 'getAllCustomers'])->middleware(AdminMiddleware::class);
 Route::post('/register-doctor', [AuthController::class, 'registerDoctor']);
+Route::get('/doctor/patients', [AppointmentController::class, 'getPatientsWithAppointments'])->middleware('auth:sanctum');
 
 Route::apiResource('/appointments', AppointmentController::class);
+Route::get('/doctor/appointments', [AppointmentController::class, 'getDoctorAppointments'])->middleware('auth:sanctum');
 Route::apiResource('/consultations', ConsultationController::class);
 Route::apiResource('/doctors', DoctorController::class);
 Route::put('/doctors/update-status/{doctor}', [DoctorController::class, 'updateStatus'])->middleware(AdminMiddleware::class);
@@ -41,7 +43,6 @@ Route::get('/doctor-dashboard', [DoctorController::class, 'dashboard'])->middlew
 Route::apiResource('/laboratories', LaboratoryController::class);
 Route::get('/laboratories/status-pending', [LaboratoryController::class, 'getPendingLaboratories']);
 Route::put('/laboratories/update-status/{laboratory}', [LaboratoryController::class, 'updateLaboratoryStatus']);
-
 
 
 Route::apiResource('/lab-requests', LabRequestController::class);

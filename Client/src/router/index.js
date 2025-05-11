@@ -45,6 +45,7 @@ import DoctorStatusPage from "@/views/Doctor/DoctorStatusPage.vue";
 import LaboratoryStatusPage from "@/views/Laboratory/LaboratoryStatusPage.vue";
 import AdminDoctor from "@/views/Admin/AdminDoctor.vue";
 import DoctorHomePage from "@/views/Doctor/DoctorHomePage.vue";
+import DoctorAppointment from "@/views/Doctor/DoctorAppointment.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -110,6 +111,11 @@ const router = createRouter({
       path: "/appointments/:id",
       name: "AppointmentView",
       component: AppointmentView,
+    },
+    {
+      path: "/doctor/appointments",
+      name: "DoctorAppointments",
+      component: DoctorAppointment,
     },
     {
       path: "/consultations",

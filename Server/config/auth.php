@@ -44,6 +44,10 @@ return [
             'driver' => 'session',
             'provider' => 'laboratories'
         ],
+        'sanctum' => [
+            'driver' => 'sanctum',
+            'provider' => 'users', // Set the provider to 'users'
+        ],
     ],
 
     /*

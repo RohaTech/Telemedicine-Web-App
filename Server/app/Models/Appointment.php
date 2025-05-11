@@ -13,7 +13,14 @@ class Appointment extends Model
         'patient_id',
         'doctor_id',
         'appointment_date',
+        'time',
         'status',
+    ];
+
+    protected $casts = [
+        'status' => 'string', // Cast status as string
+        'appointment_date' => 'date', // Cast as date
+        'time' => 'string', // Time as string (HH:mm:ss)
     ];
 
     /**
