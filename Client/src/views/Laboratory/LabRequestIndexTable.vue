@@ -2,24 +2,72 @@
 import { onMounted, ref } from "vue";
 import Modal from "@/components/UI/Modal.vue";
 import { useLabRequestStore } from "@/stores/labRequestStore";
+import { storeToRefs } from "pinia";
+import { useLabResultStore } from "@/stores/labResultStore";
 
 const { getLabRequests } = useLabRequestStore();
+const { createLabResult } = useLabResultStore();
 const labRequests = ref([]);
-const errors = ref({});
+const errors = ref(storeToRefs(useLabResultStore()));
 
 const showPopup = ref(false);
 const showSendResultPopup = ref(false); // New state for send result popup
 const selectedLabRequest = ref(null);
+const isFileUploaded = ref(false);
+
+const labResultData = ref({
+  lab_request_id: "",
+  laboratory_id: "",
+  result_details: "",
+  attachment: "",
+});
 
 onMounted(async () => {
   labRequests.value = await getLabRequests();
   console.log(labRequests.value);
 });
 
+const uploadAttachment = () => {
+  widget.open();
+};
+
+const widget = window.cloudinary.createUploadWidget(
+  {
+    cloud_name: "dqxy77qks",
+    upload_preset: "tenadam-upload",
+    multiple: false,
+    sources: ["local"],
+  },
+  (error, result) => {
+    if (!error && result && result.event === "success") {
+      console.log("uploaded Successfully...  ", result.info.secure_url);
+      labResultData.value.attachment = result.info.secure_url;
+      isFileUploaded.value = true;
+    }
+  },
+);
+
+const handleSubmit = async () => {
+  labResultData.value.lab_request_id = selectedLabRequest.value.id;
+  labResultData.value.laboratory_id = selectedLabRequest.value.laboratory_id;
+
+  createLabResult(labResultData.value);
+  isFileUploaded.value = false;
+  labResultData.value = {
+    lab_request_id: "",
+    laboratory_id: "",
+    result_details: "",
+    attachment: "",
+  };
+  labRequests.value = await getLabRequests();
+
+  closeSendResultPopup();
+};
+
 // Function to open popup with lab request details
 const openDetailPopup = (labRequest) => {
   selectedLabRequest.value = labRequest;
-  console.log(selectedLabRequest.value);
+  console.log(selectedLabRequest.value, "selectedLabRequest");
   showPopup.value = true;
 };
 
@@ -353,17 +401,45 @@ const closeSendResultPopup = () => {
             <!-- Form for sending lab result -->
             <div>
               <label
-                for="resultDetails"
-                class="mb-1.5 block text-sm font-medium text-gray-700"
+                for="result_details"
+                class="mb-1.5 block text-left text-sm font-medium text-gray-700"
               >
                 Result Details
               </label>
               <textarea
-                id="resultDetails"
+                v-model="labResultData.result_details"
+                id="result_details"
                 rows="4"
                 class="ark:bg-gray-800 block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
                 placeholder="Enter result details here..."
               ></textarea>
+            </div>
+
+            <div class="mt-4">
+              <label
+                for="attachment"
+                class="mb-1.5 block text-left text-sm font-medium text-gray-700"
+              >
+                Upload Attachment <span class="text-red-500">*</span>
+              </label>
+              <div
+                :onclick="uploadAttachment"
+                class="mt-1 flex h-11 w-1/2 cursor-pointer justify-center rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 hover:border-2 focus:border-first-accent"
+              >
+                Click to upload
+              </div>
+              <p
+                v-if="isFileUploaded"
+                class="mt-4 text-left font-semibold text-success-400"
+              >
+                Attachment Uploaded Successfully
+              </p>
+              <p
+                v-if="errors?.attachment"
+                class="mt-2 text-xs font-semibold text-red-500"
+              >
+                {{ errors.attachment }}
+              </p>
             </div>
 
             <!-- Action buttons -->
@@ -377,7 +453,7 @@ const closeSendResultPopup = () => {
                 Cancel
               </button>
               <button
-                @click="closeSendResultPopup"
+                @click="handleSubmit"
                 class="ark:border-gray-700 ark:bg-gray-800 ark:hover:bg-white/[0.03] flex w-full justify-center rounded-lg border border-blue-500 bg-blue-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700 sm:w-auto"
               >
                 Send
