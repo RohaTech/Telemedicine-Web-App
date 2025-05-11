@@ -1,14 +1,26 @@
+<script setup lang="ts">
+import { defineProps } from "vue";
+
+interface BreadcrumbProps {
+  pageTitle: string;
+}
+
+defineProps<BreadcrumbProps>();
+</script>
 <template>
-  <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
-    <h2 class="text-xl font-semibold text-gray-800 ark:text-white/90" x-text="pageTitle">
+  <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+    <h2
+      class="ark:text-white/90 text-xl font-semibold text-gray-800"
+      x-text="pageTitle"
+    >
       {{ pageTitle }}
     </h2>
     <nav>
       <ol class="flex items-center gap-1.5">
         <li>
-          <router-link
-            class="inline-flex items-center gap-1.5 text-sm text-gray-500 ark:text-gray-400"
-            to="/"
+          <RouterLink
+            class="ark:text-gray-400 inline-flex items-center gap-1.5 text-sm text-gray-500"
+            :to="{ name: 'Home' }"
           >
             Home
             <svg
@@ -27,22 +39,12 @@
                 stroke-linejoin="round"
               />
             </svg>
-          </router-link>
+          </RouterLink>
         </li>
-        <li class="text-sm text-gray-800 ark:text-white/90">
+        <li class="ark:text-white/90 text-sm text-gray-800">
           {{ pageTitle }}
         </li>
       </ol>
     </nav>
   </div>
 </template>
-
-<script setup lang="ts">
-import { defineProps } from 'vue'
-
-interface BreadcrumbProps {
-  pageTitle: string
-}
-
-defineProps<BreadcrumbProps>()
-</script>

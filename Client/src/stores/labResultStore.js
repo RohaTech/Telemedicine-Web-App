@@ -1,16 +1,10 @@
-// filepath: e:\code files\Final Year\Telemedicine-Web-App\Client\src\Store\labResultStore.js
+
 import { defineStore } from 'pinia';
 import router from '@/router';
 
 export const useLabResultStore = defineStore('labResultStore', {
   state: () => {
     return {
-      labResult: {
-        lab_request_id: "",
-        laboratory_id: "",
-        result_details: "",
-        attachment: null, // File object for upload, null otherwise
-      },
       errors: {},
     };
   },
@@ -19,19 +13,18 @@ export const useLabResultStore = defineStore('labResultStore', {
     async getLabResults() {
       try {
         const res = await fetch('/api/lab-results', {
+          method: "GET",
           headers: {
-            ...(localStorage.getItem('token') && {
-              authorization: `Bearer ${localStorage.getItem('token')}`,
-            }),
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
         const data = await res.json();
-        if (!res.ok) {
-          this.errors = data || { message: 'Failed to fetch lab results' };
-          return { success: false };
+        if (data.errors) {
+          this.errors = data.errors;
+        } else {
+          this.errors = {};
+          return data;
         }
-        this.errors = {};
-        return { success: true, data };
       } catch (err) {
         this.errors = { message: err.message || 'An unexpected error occurred' };
         return { success: false };

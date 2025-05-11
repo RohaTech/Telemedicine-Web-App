@@ -13,7 +13,7 @@ class LabRequestController extends Controller
     public function index()
     {
         try {
-            $labRequests = LabRequest::with(['consultation', 'doctor', 'patient', 'laboratory'])->get();
+            $labRequests = LabRequest::with(['consultation', 'consultation.patient', 'consultation.doctor'])->get();
             return response()->json($labRequests, 200);
         } catch (Exception $e) {
             return response()->json(['error' => 'Failed to fetch lab requests', 'message' => $e->getMessage()], 500);
@@ -24,7 +24,7 @@ class LabRequestController extends Controller
     public function show($id)
     {
         try {
-            $labRequest = LabRequest::with(['consultation', 'doctor', 'patient', 'laboratory'])->findOrFail($id);
+            $labRequest = LabRequest::with(['consultation', 'consultation.patient', 'consultation.doctor'])->findOrFail($id);
             return response()->json($labRequest, 200);
         } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Lab request not found', 'message' => $e->getMessage()], 404);
@@ -39,8 +39,6 @@ class LabRequestController extends Controller
         try {
             $validatedData = $request->validate([
                 'consultation_id' => 'required|exists:consultations,id',
-                'doctor_id' => 'required|exists:users,id',
-                'patient_id' => 'required|exists:users,id',
                 'laboratory_id' => 'required|exists:laboratories,id',
                 'test_type' => 'required|string|max:255',
                 'status' => 'required|in:pending,completed,cancelled',
@@ -61,8 +59,6 @@ class LabRequestController extends Controller
 
             $validatedData = $request->validate([
                 'consultation_id' => 'sometimes|exists:consultations,id',
-                'doctor_id' => 'sometimes|exists:users,id',
-                'patient_id' => 'sometimes|exists:users,id',
                 'laboratory_id' => 'sometimes|exists:laboratories,id',
                 'test_type' => 'sometimes|string|max:255',
                 'status' => 'sometimes|in:pending,completed,cancelled',
