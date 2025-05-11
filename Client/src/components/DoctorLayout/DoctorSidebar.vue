@@ -38,7 +38,7 @@ const menuGroups = [
       {
         icon: CalenderIcon,
         name: "Appointments",
-        path: "DoctorHome",
+        path: "DoctorAppointments",
       },
       {
         icon: UserCircleIcon,

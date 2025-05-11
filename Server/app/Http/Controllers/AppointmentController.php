@@ -41,6 +41,7 @@ class AppointmentController extends Controller
                 'patient_id' => 'required|exists:users,id',
                 'doctor_id' => 'required|exists:users,id',
                 'appointment_date' => 'required|date',
+                'time' => 'required',
                 'status' => 'required|string|in:pending,confirmed,cancelled',
             ]);
 
@@ -61,6 +62,7 @@ class AppointmentController extends Controller
                 'patient_id' => 'sometimes|exists:users,id',
                 'doctor_id' => 'sometimes|exists:users,id',
                 'appointment_date' => 'sometimes|date',
+                'time' => 'sometimes|string',
                 'status' => 'sometimes|string',
             ]);
 
@@ -86,4 +88,74 @@ class AppointmentController extends Controller
             return response()->json(['error' => 'Failed to delete appointment', 'message' => $e->getMessage()], 500);
         }
     }
+
+    public function getDoctorAppointments(Request $request)
+    {
+        try {
+            $doctorId = auth()->id();
+            if (!$doctorId) {
+                return response()->json(['error' => 'Unauthenticated'], 401);
+            }
+    
+            $appointments = Appointment::with('patient')
+                ->where('doctor_id', $doctorId)
+                ->orderBy('appointment_date', 'asc')
+                ->get();
+    
+            if ($appointments->isEmpty()) {
+                return response()->json(['message' => 'No appointments found for this doctor'], 200);
+            }
+    
+            $formattedAppointments = $appointments->map(function ($appointment) {
+                return [
+                    'id' => $appointment->id,
+                    'patientName' => $appointment->patient ? $appointment->patient->name : 'Unknown Patient',
+                    'date' => $appointment->appointment_date->format('Y-m-d'), // e.g., "2025-04-10"
+                    'time' => $appointment->time, // e.g., "14:00:00"
+                    'status' => $appointment->status, // e.g., "pending"
+                ];
+            });
+    
+            return response()->json($formattedAppointments, 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to fetch appointments', 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function getPatientsWithAppointments(Request $request)
+{
+    // dd("request");
+    try {
+        $doctorId = auth('sanctum')->id();
+        // dd($doctorId);
+
+        if (!$doctorId) {
+            return response()->json(['error' => 'Unauthenticated'], 401);
+        }
+
+        // Fetch patients who have appointments with this doctor
+        $patients = Appointment::where('doctor_id', $doctorId)
+            ->with('patient')
+            ->get()
+            ->pluck('patient')
+            ->filter() // Remove null values (if any)
+            ->unique('id') // Ensure unique patients by ID
+            ->values()
+            ->map(function ($patient) {
+                return [
+                    'id' => $patient->id,
+                    'name' => $patient->name,
+                ];
+            });
+
+        if ($patients->isEmpty()) {
+            return response()->json(['message' => 'No patients with prior appointments found'], 200);
+        }
+
+        return response()->json($patients, 200);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Failed to fetch patients', 'message' => $e->getMessage()], 500);
+    }
+}
+
 }

@@ -98,7 +98,7 @@ const greeting = computed(() => {
           class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100"
         >
           <svg
-            class="fill-blue-600"
+            class="fill-[#2FC7A1]"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             width="24"
@@ -123,7 +123,7 @@ const greeting = computed(() => {
           class="flex h-12 w-12 items-center justify-center rounded-xl bg-green-100"
         >
           <svg
-            class="fill-green-600"
+            class="fill-[#048581]"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             width="24"
