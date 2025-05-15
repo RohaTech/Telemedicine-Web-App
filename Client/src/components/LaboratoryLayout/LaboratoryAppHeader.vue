@@ -3,8 +3,9 @@ import { ref } from "vue";
 import SearchBar from "./LaboratorySearchBar.vue";
 import LaboratoryNotificationMenu from "./LaboratoryNotificationMenu.vue";
 import LaboratoryUserMenu from "./LaboratoryUserMenu.vue";
-import Logo from "../UI/Logo.vue";
+
 import { useSidebar } from "@/composables/useSidebar";
+import Logo from "../UI/Logo.vue";
 
 const { toggleSidebar, toggleMobileSidebar, isMobileOpen } = useSidebar();
 
@@ -32,7 +33,7 @@ const toggleApplicationMenu = () => {
 </script>
 <template>
   <header
-    class="sticky top-0 z-99999 flex w-full border-gray-200 bg-white lg:border-b"
+    class="sticky top-0 z-99 flex w-full border-gray-200 bg-white lg:border-b"
   >
     <div
       class="flex grow flex-col items-center justify-between lg:flex-row lg:px-6"
@@ -42,7 +43,7 @@ const toggleApplicationMenu = () => {
       >
         <button
           @click="handleToggle"
-          class="z-99999 flex h-10 w-10 items-center justify-center rounded-lg border-gray-200 text-gray-500 lg:h-11 lg:w-11 lg:border"
+          class="z-99 flex h-10 w-10 items-center justify-center rounded-lg border-gray-200 text-gray-500 lg:h-11 lg:w-11 lg:border"
           :class="[isMobileOpen ? 'bg-gray-100 lg:bg-transparent' : '']"
         >
           <svg
@@ -80,7 +81,7 @@ const toggleApplicationMenu = () => {
         <Logo />
         <button
           @click="toggleApplicationMenu"
-          class="z-99999 flex h-10 w-10 items-center justify-center rounded-lg text-gray-700 hover:bg-gray-100 lg:hidden"
+          class="z-99 flex h-10 w-10 items-center justify-center rounded-lg text-gray-700 hover:bg-gray-100 lg:hidden"
         >
           <svg
             width="24"
