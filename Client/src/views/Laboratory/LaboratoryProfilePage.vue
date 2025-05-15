@@ -1,16 +1,22 @@
 <script setup>
 import LaboratoryLayout from "@/layout/LaboratoryLayout.vue";
 import PageBreadcrumb from "@/components/common/PageBreadcrumb.vue";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import Modal from "@/components/UI/Modal.vue";
 import profileImage from "/images/HomePage/doctor_person.png";
 import { useLaboratoryStore } from "@/stores/laboratoryStore";
+import { useAuthStore } from "@/stores/auth";
 
-const { getLaboratory } = useLaboratoryStore();
+const authStore = useAuthStore();
 
 const currentPageTitle = ref("Your Profile");
 
 const isProfileInfoModal = ref(false);
+
+onMounted(async () => {
+  await authStore.getUser();
+  console.log("User data:", authStore.user);
+});
 
 const saveProfile = () => {
   // Implement save profile logic here
@@ -43,16 +49,14 @@ const saveProfile = () => {
                 <h4
                   class="ark:text-white/90 mb-2 text-center text-lg font-semibold text-gray-800 xl:text-left"
                 >
-                  Musharof Chowdhury
+                  {{ authStore.user?.name }}
                 </h4>
                 <div
                   class="flex flex-col items-center gap-1 text-center xl:flex-row xl:gap-3 xl:text-left"
                 >
-                  <p class="text-sm text-gray-500">Team Manager</p>
-                  <div
-                    class="ark:bg-gray-700 hidden h-3.5 w-px bg-gray-300 xl:block"
-                  ></div>
-                  <p class="text-sm text-gray-500">Arizona, United States</p>
+                  <p class="text-sm text-gray-500">
+                    {{ authStore.user?.region }} , {{ authStore.user?.city }}
+                  </p>
                 </div>
               </div>
             </div>
@@ -294,23 +298,12 @@ const saveProfile = () => {
               >
                 <div>
                   <p class="mb-2 text-xs leading-normal text-gray-500">
-                    First Name
+                    Laboratory Name
                   </p>
                   <p
                     class="ark:text-white/90 text-sm font-medium text-gray-800"
                   >
-                    Musharof
-                  </p>
-                </div>
-
-                <div>
-                  <p class="mb-2 text-xs leading-normal text-gray-500">
-                    Last Name
-                  </p>
-                  <p
-                    class="ark:text-white/90 text-sm font-medium text-gray-800"
-                  >
-                    Chowdhury
+                    {{ authStore.user?.name }}
                   </p>
                 </div>
 
@@ -321,7 +314,7 @@ const saveProfile = () => {
                   <p
                     class="ark:text-white/90 text-sm font-medium text-gray-800"
                   >
-                    randomuser@pimjo.com
+                    {{ authStore.user?.email }}
                   </p>
                 </div>
 
@@ -330,16 +323,7 @@ const saveProfile = () => {
                   <p
                     class="ark:text-white/90 text-sm font-medium text-gray-800"
                   >
-                    +09 363 398 46
-                  </p>
-                </div>
-
-                <div>
-                  <p class="mb-2 text-xs leading-normal text-gray-500">Bio</p>
-                  <p
-                    class="ark:text-white/90 text-sm font-medium text-gray-800"
-                  >
-                    Team Manager
+                    {{ authStore.user?.phone }}
                   </p>
                 </div>
               </div>
@@ -366,46 +350,47 @@ const saveProfile = () => {
               >
                 <div>
                   <p class="mb-2 text-xs leading-normal text-gray-500">
-                    Country
+                    Region
                   </p>
                   <p
                     class="ark:text-white/90 text-sm font-medium text-gray-800"
                   >
-                    United States
+                    {{ authStore.user?.region }}
                   </p>
                 </div>
 
                 <div>
-                  <p class="mb-2 text-xs leading-normal text-gray-500">
-                    City/State
-                  </p>
+                  <p class="mb-2 text-xs leading-normal text-gray-500">City</p>
                   <p
                     class="ark:text-white/90 text-sm font-medium text-gray-800"
                   >
-                    Phoenix, United States
+                    {{ authStore.user?.city }}
                   </p>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="ark:border-gray-800 rounded-2xl border border-gray-200 p-5 lg:p-6"
+        >
+          <div
+            class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between"
+          >
+            <div>
+              <h4
+                class="ark:text-white/90 text-lg font-semibold text-gray-800 lg:mb-6"
+              >
+                Tests Laboratory Offers
+              </h4>
 
-                <div>
-                  <p class="mb-2 text-xs leading-normal text-gray-500">
-                    Postal Code
-                  </p>
-                  <p
-                    class="ark:text-white/90 text-sm font-medium text-gray-800"
-                  >
-                    ERT 2489
-                  </p>
-                </div>
-
-                <div>
-                  <p class="mb-2 text-xs leading-normal text-gray-500">
-                    TAX ID
-                  </p>
-                  <p
-                    class="ark:text-white/90 text-sm font-medium text-gray-800"
-                  >
-                    AS4568384
-                  </p>
+              <div class="grid w-full grid-cols-3 gap-x-16 gap-y-4">
+                <div
+                  v-for="(test, name) in JSON.parse(authStore.user?.tests)"
+                  :key="name"
+                  class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-white px-5 py-3.5 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 transition hover:bg-gray-200"
+                >
+                  {{ name }}
                 </div>
               </div>
             </div>

@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-import WelcomePage from "../views/WelcomePage.vue";
 import AppointmentList from "@/components/Appointment/AppointmentList.vue";
 import CreateAppointment from "@/components/Appointment/CreateAppointment.vue";
 import AppointmentView from "@/components/Appointment/AppointmentView.vue";
@@ -49,6 +48,7 @@ import LaboratoryHome from "@/views/Laboratory/LaboratoryHome.vue";
 import DoctorHomePage from "@/views/Doctor/DoctorHomePage.vue";
 import DoctorAppointment from "@/views/Doctor/DoctorAppointment.vue";
 import LaboratoryProfilePage from "@/views/Laboratory/LaboratoryProfilePage.vue";
+import WelcomePage from "../views/WelcomePage.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
