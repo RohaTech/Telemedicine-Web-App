@@ -113,6 +113,7 @@ class AuthController extends Controller
                 'payment' => 'required|numeric|min:0',
                 'location' => 'required|json', // Expect JSON with lat, lng
                 'certificate_path' => 'required|url',
+                'profile_picture' => 'required|url',
             ]);
 
             // Parse location JSON
@@ -134,6 +135,7 @@ class AuthController extends Controller
                     'city' => $validated['city'],
                     'region' => $validated['region'],
                     'gender' => $validated['gender'],
+                    'profile_picture' => $validated['profile_picture'],
                     'birth_date' => $validated['birth_date'],
                     'role' => 'doctor',
                 ]);

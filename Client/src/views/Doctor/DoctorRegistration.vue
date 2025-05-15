@@ -47,6 +47,7 @@ const doctorData = ref({
   phone: "",
   city: "",
   region: "",
+  profile_picture: null,
   gender: "",
   birth_date: "",
   medical_license_number: "",
@@ -66,6 +67,7 @@ const doctorData = ref({
 const showPassword = ref(false);
 const showConfirmPassword = ref(false);
 const certificatePreviewUrl = ref(null);
+const profileImageUrl = ref(null); // For preview
 const router = useRouter();
 const successMessage = ref(null);
 
@@ -106,6 +108,31 @@ const uploadCertificate = () => {
 const clearCertificate = () => {
   doctorData.value.certificate_path = "";
   certificatePreviewUrl.value = null;
+};
+
+const profileImageWidget = window.cloudinary.createUploadWidget(
+  {
+    cloud_name: "dqxy77qks",
+    upload_preset: "tenadam-upload",
+    multiple: false,
+    sources: ["local"],
+  },
+  (error, result) => {
+    if (!error && result && result.event === "success") {
+      doctorData.value.profile_picture = result.info.secure_url;
+      profileImageUrl.value = result.info.secure_url;
+      console.log("Profile image uploaded: ", result.info.secure_url);
+    }
+  },
+);
+
+const uploadProfileImage = () => {
+  profileImageWidget.open();
+};
+
+const clearProfileImage = () => {
+  doctorData.value.profile_picture = "";
+  profileImageUrl.value = null;
 };
 
 // Validation rules
@@ -177,6 +204,7 @@ const submitForm = async () => {
       password_confirmation: doctorData.value.password_confirmation,
       phone: doctorData.value.phone,
       city: doctorData.value.city,
+      profile_picture: doctorData.value.profile_picture,
       region: doctorData.value.region,
       gender: doctorData.value.gender,
       birth_date: doctorData.value.birth_date,
@@ -574,6 +602,55 @@ onMounted(() => {
                 >
                   {{ errors.city.join(", ") }}
                 </p>
+              </div>
+            </div>
+
+            <!-- Add here the profile_picture upload -->
+            <!-- Profile Image Upload -->
+            <div>
+              <span class="mb-1 block text-sm text-[#0F172A]">
+                Profile Image
+              </span>
+              <div
+                @click="uploadProfileImage"
+                class="mt-2 flex cursor-pointer justify-center rounded-lg border border-dashed border-[#0F172A]/25 px-6 py-10"
+              >
+                <div class="text-center">
+                  <svg
+                    class="mx-auto h-12 w-12 text-[#94A3B8]"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M1.5 6a2.25 2.25 0 0 1 2.25-2.25h16.5A2.25 2.25 0 0 1 22.5 6v12a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 18V6ZM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0 0 21 18v-1.94l-2.69-2.689a1.5 1.5 0 0 0-2.12 0l-.88.879.97.97a.75.75 0 1 1-1.06 1.06l-5.16-5.159a1.5 1.5 0 0 0-2.12 0L3 16.061Zm1.125-7.81a1.125 1.125 0 1 1 2.25 0 1.125 1.125 0 0 1-2.25 0Z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  <div class="mt-4 flex text-sm text-[#64748B]">
+                    <span
+                      class="relative cursor-pointer rounded-md bg-white font-semibold text-[#26C6DA] focus-within:outline-none focus-within:ring-2 focus-within:ring-[#26C6DA] focus-within:ring-offset-2 hover:text-[#00BCD4]"
+                    >
+                      Click to Upload a Profile Image
+                    </span>
+                  </div>
+                  <!-- Image Preview -->
+                  <div v-if="profileImageUrl" class="mt-4">
+                    <img
+                      :src="profileImageUrl"
+                      alt="Profile image preview"
+                      class="mx-auto h-32 w-32 rounded-full border border-[#E2E8F0] object-cover"
+                    />
+                    <button
+                      type="button"
+                      @click.stop="clearProfileImage"
+                      class="mt-2 text-sm text-red-500 hover:text-red-700 focus:outline-none"
+                    >
+                      Remove Image
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
