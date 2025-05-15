@@ -1,9 +1,20 @@
 <script setup>
+import { onMounted, ref } from "vue";
 import doctorImage from "/images/HomePage/doctor_placeholder.png";
 import doctor_profile from "/images/HomePage/doctor_profile.png";
 import { RouterLink } from "vue-router";
+import { useDoctorStore } from "@/stores/doctorStore";
 
-// Define the recently visited categories data
+const doctors = ref([]);
+
+const { getActiveDoctors } = useDoctorStore();
+
+onMounted(async () => {
+  doctors.value = await getActiveDoctors();
+
+  console.log(doctors.value);
+});
+
 const recentlyVisited = [
   {
     category: "Pathology",
