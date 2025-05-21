@@ -9,6 +9,8 @@ const doctors = ref([]);
 
 const fallbackImage =
   "https://res.cloudinary.com/dqxy77qks/image/upload/v1747340223/4b42ed27-d4d8-4205-b44b-595b7060097d.png";
+const fallbackBannerImage =
+  "https://res.cloudinary.com/dqxy77qks/image/upload/v1747728117/fe4b1d1b-62a8-4c84-be50-d78dd76ec00d.png";
 
 const { getActiveDoctors } = useDoctorStore();
 
@@ -79,11 +81,15 @@ const recentlyVisited = [
         v-for="item in doctors"
         :key="item.id"
         :to="{ name: 'Home' }"
-        class="overflow-hidden rounded-lg bg-white shadow-md transition duration-300 hover:shadow-lg"
+        class="w-[330px] overflow-hidden rounded-lg bg-white shadow-md transition duration-300 hover:shadow-lg"
       >
         <!-- Image -->
         <img
-          :src="doctorImage"
+          :src="
+            item.user.profile_picture
+              ? item.user.profile_picture
+              : fallbackBannerImage
+          "
           :alt="`${item.user.name} Image`"
           class="h-40 w-full object-cover md:h-48"
         />
@@ -112,7 +118,7 @@ const recentlyVisited = [
             </div>
             <span class="text-sm text-gray-600"
               >Starting from
-              <span class="font-bold">{{ item.payment }}</span></span
+              <span class="font-bold">{{ item.payment }} Br</span></span
             >
           </div>
 

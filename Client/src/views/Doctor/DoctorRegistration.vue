@@ -62,6 +62,8 @@ const doctorData = ref({
   location: { lat: null, lng: null },
   terms_agreed: false,
   certificate_path: "",
+  languages: [], // Array to store selected languages
+  overview: "", // Text for the doctor's overview
 });
 
 const showPassword = ref(false);
@@ -135,6 +137,28 @@ const clearProfileImage = () => {
   profileImageUrl.value = null;
 };
 
+const customLanguage = ref("");
+
+const toggleLanguage = (language) => {
+  if (doctorData.value.languages.includes(language)) {
+    doctorData.value.languages = doctorData.value.languages.filter(
+      (lang) => lang !== language,
+    );
+  } else {
+    doctorData.value.languages.push(language);
+  }
+};
+
+const addCustomLanguage = () => {
+  if (
+    customLanguage.value.trim() &&
+    !doctorData.value.languages.includes(customLanguage.value.trim())
+  ) {
+    doctorData.value.languages.push(customLanguage.value.trim());
+    customLanguage.value = ""; // Clear input after adding
+  }
+};
+
 // Validation rules
 const rules = {
   name: { required },
@@ -160,6 +184,14 @@ const rules = {
   },
   terms_agreed: { required, checked: (value) => value === true },
   certificate_path: { required, url },
+  languages: { required },
+  overview: {
+    required,
+    minLength: (value) =>
+      value.length >= 100 || "Too short (min 100 characters)",
+    maxLength: (value) =>
+      value.length <= 330 || "Too long (max 330 characters)",
+  },
 };
 
 const v$ = useVuelidate(rules, doctorData);
@@ -221,10 +253,12 @@ const submitForm = async () => {
       location: prepareLocation() || "",
       terms_agreed: doctorData.value.terms_agreed,
       certificate_path: doctorData.value.certificate_path,
+      languages: JSON.stringify(doctorData.value.languages), // Convert to JSON
+      overview: doctorData.value.overview,
     };
 
     console.log("Submission Data:", submissionData);
-    await authStore.authenticate("register-doctor", submissionData);
+    // await authStore.authenticate("register-doctor", submissionData);
 
     successMessage.value =
       "Registration successful. Your account is under review.";
@@ -850,6 +884,104 @@ onMounted(() => {
                   {{ errors.payment.join(", ") }}
                 </p>
               </div>
+              <div class="my-3 md:col-span-2">
+                <label for="overview" class="mb-1 block text-sm text-[#0F172A]">
+                  Overview <span class="text-red-500">*</span>
+                </label>
+                <textarea
+                  id="overview"
+                  v-model="doctorData.overview"
+                  maxlength="330"
+                  class="h-28 w-full rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-first-accent focus:outline-none focus:ring-2 focus:ring-first-accent"
+                  placeholder="Write a brief overview about yourself (100-330 characters)"
+                  required
+                ></textarea>
+                <div class="mt-1 text-sm text-gray-600">
+                  <span
+                    :class="{
+                      'text-red-500': doctorData.overview.length < 100,
+                      'text-green-500': doctorData.overview.length >= 100,
+                    }"
+                  >
+                    {{
+                      doctorData.overview.length < 100 ? "Too short" : "Good"
+                    }}
+                  </span>
+                  - {{ 330 - doctorData.overview.length }} characters left
+                </div>
+              </div>
+
+              <!-- Language Selection -->
+              <div class="md:col-span-2">
+                <label
+                  for="languages"
+                  class="mb-1 block text-sm text-[#0F172A]"
+                >
+                  Languages Spoken <span class="text-red-500">*</span>
+                </label>
+                <div class="space-y-2">
+                  <!-- Predefined and Custom Languages -->
+                  <div class="flex flex-wrap gap-2">
+                    <button
+                      v-for="language in [
+                        'Amharic',
+                        'Afar',
+                        'Wolaytta',
+                        'Oromo',
+                        'Sidama',
+                        'Somali',
+                        'Tigrinya',
+                        'Gurage',
+                        'English',
+                        ...doctorData.languages.filter(
+                          (lang) =>
+                            ![
+                              'Amharic',
+                              'Afar',
+                              'Wolaytta',
+                              'Oromo',
+                              'Sidama',
+                              'Somali',
+                              'Tigrinya',
+                              'Gurage',
+                              'English',
+                            ].includes(lang),
+                        ),
+                      ]"
+                      :key="language"
+                      type="button"
+                      @click="toggleLanguage(language)"
+                      :class="{
+                        'bg-first-accent text-white':
+                          doctorData.languages.includes(language),
+                        'bg-gray-200 text-gray-700':
+                          !doctorData.languages.includes(language),
+                      }"
+                      class="rounded-full px-4 py-2 text-sm font-medium transition hover:bg-second-accent hover:text-white"
+                    >
+                      {{ language }}
+                    </button>
+                  </div>
+
+                  <!-- Add Custom Language -->
+                  <div class="flex items-center gap-2">
+                    <input
+                      v-model="customLanguage"
+                      type="text"
+                      placeholder="Add a more language"
+                      class="h-10 w-full rounded-lg border border-gray-300 px-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-first-accent focus:outline-none focus:ring-2 focus:ring-first-accent"
+                    />
+                    <button
+                      type="button"
+                      @click="addCustomLanguage"
+                      class="rounded-lg bg-first-accent px-4 py-2 text-sm font-medium text-white hover:bg-second-accent"
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
+              </div>
+
               <!-- Map Location -->
               <div class="md:col-span-2">
                 <label class="mb-1 block text-sm text-[#0F172A]">
