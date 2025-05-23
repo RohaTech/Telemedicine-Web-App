@@ -1,3 +1,1 @@
-Build the Front end : Nahom 
-Build the database : Dawit
-Build the API : Natnael
+ 

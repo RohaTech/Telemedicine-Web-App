@@ -258,7 +258,7 @@ const submitForm = async () => {
     };
 
     console.log("Submission Data:", submissionData);
-    // await authStore.authenticate("register-doctor", submissionData);
+    await authStore.authenticate("register-doctor", submissionData);
 
     successMessage.value =
       "Registration successful. Your account is under review.";

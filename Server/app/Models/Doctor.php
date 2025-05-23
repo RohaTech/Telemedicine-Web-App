@@ -22,6 +22,9 @@ class Doctor extends Model
         'payment',
         'location',
         'certificate_path',
+        'languages',
+        'overview',
+        'available',
     ];
 
     /**
