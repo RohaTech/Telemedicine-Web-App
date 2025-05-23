@@ -31,6 +31,27 @@ export const useDoctorStore = defineStore("doctorStore", {
         return [];
       }
     },
+    async getDoctor(id) {
+      try {
+        const response = await fetch(`/api/doctors/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        this.doctors = data;
+        return this.doctors;
+      } catch (error) {
+        console.error("Error fetching doctors:", error);
+        return [];
+      }
+    },
 
     async getActiveDoctors() {
       try {

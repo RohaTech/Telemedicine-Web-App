@@ -49,6 +49,7 @@ import DoctorHomePage from "@/views/Doctor/DoctorHomePage.vue";
 import DoctorAppointment from "@/views/Doctor/DoctorAppointment.vue";
 import LaboratoryProfilePage from "@/views/Laboratory/LaboratoryProfilePage.vue";
 import WelcomePage from "../views/WelcomePage.vue";
+import DoctorDetailPage from "@/views/User/DoctorDetailPage.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -95,6 +96,11 @@ const router = createRouter({
       meta: { guest: true },
     },
 
+    {
+      path: "/doctorDetails/:id",
+      name: "UserDoctorDetail",
+      component: DoctorDetailPage,
+    },
     {
       path: "/appointments",
       name: "Appointments",

@@ -7,6 +7,11 @@ import { useDoctorStore } from "@/stores/doctorStore";
 
 const doctors = ref([]);
 
+const fallbackImage =
+  "https://res.cloudinary.com/dqxy77qks/image/upload/v1747340223/4b42ed27-d4d8-4205-b44b-595b7060097d.png";
+const fallbackBannerImage =
+  "https://res.cloudinary.com/dqxy77qks/image/upload/v1747728117/fe4b1d1b-62a8-4c84-be50-d78dd76ec00d.png";
+
 const { getActiveDoctors } = useDoctorStore();
 
 onMounted(async () => {
@@ -71,17 +76,21 @@ const recentlyVisited = [
     </div>
 
     <!-- Grid of Cards -->
-    <div class="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
+    <div v-if="doctors" class="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
       <RouterLink
-        v-for="item in recentlyVisited"
-        :key="item.slug"
+        v-for="item in doctors"
+        :key="item.id"
         :to="{ name: 'Home' }"
-        class="overflow-hidden rounded-lg bg-white shadow-md transition duration-300 hover:shadow-lg"
+        class="w-[330px] overflow-hidden rounded-lg bg-white shadow-md transition duration-300 hover:shadow-lg"
       >
         <!-- Image -->
         <img
-          :src="doctorImage"
-          :alt="`${item.category} Image`"
+          :src="
+            item.user.profile_picture
+              ? item.user.profile_picture
+              : fallbackBannerImage
+          "
+          :alt="`${item.user.name} Image`"
           class="h-40 w-full object-cover md:h-48"
         />
 
@@ -91,7 +100,7 @@ const recentlyVisited = [
           <div class="mb-2 flex items-center justify-between">
             <div class="flex items-center">
               <svg
-                v-for="n in Math.floor(item.rating)"
+                v-for="n in Math.floor(Math.random() * 5) + 1"
                 :key="n"
                 xmlns="http://www.w3.org/2000/svg"
                 class="size-5 fill-yellow-400"
@@ -101,28 +110,39 @@ const recentlyVisited = [
                   d="M234.29,114.85l-45,38.83L203,211.75a16.4,16.4,0,0,1-24.5,17.82L128,198.49,77.47,229.57A16.4,16.4,0,0,1,53,211.75l13.76-58.07-45-38.83A16.46,16.46,0,0,1,31.08,86l59-4.76,22.76-55.08a16.36,16.36,0,0,1,30.27,0l22.75,55.08,59,4.76a16.46,16.46,0,0,1,9.37,28.86Z"
                 ></path>
               </svg>
-              <span class="ml-1">{{ item.rating }} ({{ item.reviews }})</span>
+              <span class="ml-1"
+                >{{ Math.floor(Math.random() * 5) + 1 }} ({{
+                  Math.floor(Math.random() * 500) + 1
+                }})</span
+              >
             </div>
             <span class="text-sm text-gray-600"
               >Starting from
-              <span class="font-bold">{{ item.price }}</span></span
+              <span class="font-bold">{{ item.payment }} Br</span></span
             >
           </div>
 
           <!-- Category -->
           <h3 class="mb-2 h-[80px] text-lg font-semibold text-gray-800">
-            {{ item.category }}
+            {{ item.specialty }}
           </h3>
 
           <!-- Doctor and View Details -->
           <div class="flex items-center gap-x-4 text-sm text-gray-600">
             <div
               class="size-8 rounded-full bg-cover bg-center"
-              :style="{ backgroundImage: `url(${doctor_profile})` }"
+              :style="{
+                backgroundImage: `url(${
+                  item.user.profile_picture
+                    ? item.user.profile_picture
+                    : fallbackImage
+                })`,
+              }"
             ></div>
-            {{ item.doctor }}
+            {{ item.user.name }}
           </div>
-          <div
+          <RouterLink
+            :to="{ name: 'UserDoctorDetail', params: { id: item.id } }"
             class="mt-3 flex items-center justify-end bg-first-accent px-3 py-2"
           >
             <button
@@ -130,7 +150,7 @@ const recentlyVisited = [
             >
               View Details
             </button>
-          </div>
+          </RouterLink>
         </div>
       </RouterLink>
     </div>
