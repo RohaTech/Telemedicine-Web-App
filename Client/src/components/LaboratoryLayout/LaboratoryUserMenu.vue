@@ -8,19 +8,12 @@ import {
 } from "@/components/UI/Icons";
 import { RouterLink } from "vue-router";
 import { ref, onMounted, onUnmounted } from "vue";
-import owner_image from "/images/AdminLayout/owner.jpg";
 import { useAuthStore } from "@/stores/auth";
 
 const authStore = useAuthStore();
 
 const dropdownOpen = ref(false);
 const dropdownRef = ref(null);
-
-const menuItems = [
-  { href: "/Home", icon: UserCircleIcon, text: "Edit profile" },
-  { href: "/Home", icon: SettingsIcon, text: "Account settings" },
-  { href: "/Home", icon: InfoCircleIcon, text: "Support" },
-];
 
 const toggleDropdown = () => {
   dropdownOpen.value = !dropdownOpen.value;
@@ -84,17 +77,41 @@ onUnmounted(() => {
       <ul
         class="ark:border-gray-800 flex flex-col gap-1 border-b border-gray-200 pb-3 pt-4"
       >
-        <li v-for="item in menuItems" :key="item.href">
+        <!-- Manually added menu items -->
+        <li>
           <RouterLink
-            :to="item.href"
+            :to="{
+              name: 'LaboratoryProfile',
+              params: { id: authStore?.user.id },
+            }"
             class="ark:text-gray-400 ark:hover:bg-white/5 ark:hover:text-gray-300 group flex items-center gap-3 rounded-lg px-3 py-2 text-theme-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700"
           >
-            <!-- SVG icon would go here -->
-            <component
-              :is="item.icon"
+            <UserCircleIcon
               class="ark:group-hover:text-gray-300 text-gray-500 group-hover:text-gray-700"
             />
-            {{ item.text }}
+            Edit profile
+          </RouterLink>
+        </li>
+        <li>
+          <RouterLink
+            :to="{ name: 'Home' }"
+            class="ark:text-gray-400 ark:hover:bg-white/5 ark:hover:text-gray-300 group flex items-center gap-3 rounded-lg px-3 py-2 text-theme-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700"
+          >
+            <SettingsIcon
+              class="ark:group-hover:text-gray-300 text-gray-500 group-hover:text-gray-700"
+            />
+            Account settings
+          </RouterLink>
+        </li>
+        <li>
+          <RouterLink
+            :to="{ name: 'Home' }"
+            class="ark:text-gray-400 ark:hover:bg-white/5 ark:hover:text-gray-300 group flex items-center gap-3 rounded-lg px-3 py-2 text-theme-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700"
+          >
+            <InfoCircleIcon
+              class="ark:group-hover:text-gray-300 text-gray-500 group-hover:text-gray-700"
+            />
+            Support
           </RouterLink>
         </li>
       </ul>

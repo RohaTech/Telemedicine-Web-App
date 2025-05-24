@@ -33,7 +33,7 @@ Route::get('/users/{id}', [UserController::class, 'show']); // For patient detai
 Route::get('/users/patient', [UserController::class, 'getAllCustomers'])->middleware(AdminMiddleware::class);
 Route::post('/register-doctor', [AuthController::class, 'registerDoctor']);
 Route::get('/doctor/patients', [AppointmentController::class, 'getPatientsWithAppointments'])->middleware('auth:sanctum');
-
+Route::get('/doctors/status-active', [DoctorController::class, 'getActiveDoctors']);
 Route::apiResource('/appointments', AppointmentController::class);
 Route::get('/doctor/appointments', [AppointmentController::class, 'getDoctorAppointments'])->middleware('auth:sanctum');
 Route::apiResource('/consultations', ConsultationController::class);

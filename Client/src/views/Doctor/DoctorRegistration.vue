@@ -47,6 +47,7 @@ const doctorData = ref({
   phone: "",
   city: "",
   region: "",
+  profile_picture: null,
   gender: "",
   birth_date: "",
   medical_license_number: "",
@@ -61,11 +62,14 @@ const doctorData = ref({
   location: { lat: null, lng: null },
   terms_agreed: false,
   certificate_path: "",
+  languages: [], // Array to store selected languages
+  overview: "", // Text for the doctor's overview
 });
 
 const showPassword = ref(false);
 const showConfirmPassword = ref(false);
 const certificatePreviewUrl = ref(null);
+const profileImageUrl = ref(null); // For preview
 const router = useRouter();
 const successMessage = ref(null);
 
@@ -108,6 +112,53 @@ const clearCertificate = () => {
   certificatePreviewUrl.value = null;
 };
 
+const profileImageWidget = window.cloudinary.createUploadWidget(
+  {
+    cloud_name: "dqxy77qks",
+    upload_preset: "tenadam-upload",
+    multiple: false,
+    sources: ["local"],
+  },
+  (error, result) => {
+    if (!error && result && result.event === "success") {
+      doctorData.value.profile_picture = result.info.secure_url;
+      profileImageUrl.value = result.info.secure_url;
+      console.log("Profile image uploaded: ", result.info.secure_url);
+    }
+  },
+);
+
+const uploadProfileImage = () => {
+  profileImageWidget.open();
+};
+
+const clearProfileImage = () => {
+  doctorData.value.profile_picture = "";
+  profileImageUrl.value = null;
+};
+
+const customLanguage = ref("");
+
+const toggleLanguage = (language) => {
+  if (doctorData.value.languages.includes(language)) {
+    doctorData.value.languages = doctorData.value.languages.filter(
+      (lang) => lang !== language,
+    );
+  } else {
+    doctorData.value.languages.push(language);
+  }
+};
+
+const addCustomLanguage = () => {
+  if (
+    customLanguage.value.trim() &&
+    !doctorData.value.languages.includes(customLanguage.value.trim())
+  ) {
+    doctorData.value.languages.push(customLanguage.value.trim());
+    customLanguage.value = ""; // Clear input after adding
+  }
+};
+
 // Validation rules
 const rules = {
   name: { required },
@@ -133,6 +184,14 @@ const rules = {
   },
   terms_agreed: { required, checked: (value) => value === true },
   certificate_path: { required, url },
+  languages: { required },
+  overview: {
+    required,
+    minLength: (value) =>
+      value.length >= 100 || "Too short (min 100 characters)",
+    maxLength: (value) =>
+      value.length <= 330 || "Too long (max 330 characters)",
+  },
 };
 
 const v$ = useVuelidate(rules, doctorData);
@@ -177,6 +236,7 @@ const submitForm = async () => {
       password_confirmation: doctorData.value.password_confirmation,
       phone: doctorData.value.phone,
       city: doctorData.value.city,
+      profile_picture: doctorData.value.profile_picture,
       region: doctorData.value.region,
       gender: doctorData.value.gender,
       birth_date: doctorData.value.birth_date,
@@ -193,6 +253,8 @@ const submitForm = async () => {
       location: prepareLocation() || "",
       terms_agreed: doctorData.value.terms_agreed,
       certificate_path: doctorData.value.certificate_path,
+      languages: JSON.stringify(doctorData.value.languages), // Convert to JSON
+      overview: doctorData.value.overview,
     };
 
     console.log("Submission Data:", submissionData);
@@ -576,6 +638,55 @@ onMounted(() => {
                 </p>
               </div>
             </div>
+
+            <!-- Add here the profile_picture upload -->
+            <!-- Profile Image Upload -->
+            <div>
+              <span class="mb-1 block text-sm text-[#0F172A]">
+                Profile Image
+              </span>
+              <div
+                @click="uploadProfileImage"
+                class="mt-2 flex cursor-pointer justify-center rounded-lg border border-dashed border-[#0F172A]/25 px-6 py-10"
+              >
+                <div class="text-center">
+                  <svg
+                    class="mx-auto h-12 w-12 text-[#94A3B8]"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M1.5 6a2.25 2.25 0 0 1 2.25-2.25h16.5A2.25 2.25 0 0 1 22.5 6v12a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 18V6ZM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0 0 21 18v-1.94l-2.69-2.689a1.5 1.5 0 0 0-2.12 0l-.88.879.97.97a.75.75 0 1 1-1.06 1.06l-5.16-5.159a1.5 1.5 0 0 0-2.12 0L3 16.061Zm1.125-7.81a1.125 1.125 0 1 1 2.25 0 1.125 1.125 0 0 1-2.25 0Z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  <div class="mt-4 flex text-sm text-[#64748B]">
+                    <span
+                      class="relative cursor-pointer rounded-md bg-white font-semibold text-[#26C6DA] focus-within:outline-none focus-within:ring-2 focus-within:ring-[#26C6DA] focus-within:ring-offset-2 hover:text-[#00BCD4]"
+                    >
+                      Click to Upload a Profile Image
+                    </span>
+                  </div>
+                  <!-- Image Preview -->
+                  <div v-if="profileImageUrl" class="mt-4">
+                    <img
+                      :src="profileImageUrl"
+                      alt="Profile image preview"
+                      class="mx-auto h-32 w-32 rounded-full border border-[#E2E8F0] object-cover"
+                    />
+                    <button
+                      type="button"
+                      @click.stop="clearProfileImage"
+                      class="mt-2 text-sm text-red-500 hover:text-red-700 focus:outline-none"
+                    >
+                      Remove Image
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Professional Information Section -->
@@ -773,6 +884,104 @@ onMounted(() => {
                   {{ errors.payment.join(", ") }}
                 </p>
               </div>
+              <div class="my-3 md:col-span-2">
+                <label for="overview" class="mb-1 block text-sm text-[#0F172A]">
+                  Overview <span class="text-red-500">*</span>
+                </label>
+                <textarea
+                  id="overview"
+                  v-model="doctorData.overview"
+                  maxlength="330"
+                  class="h-28 w-full rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-first-accent focus:outline-none focus:ring-2 focus:ring-first-accent"
+                  placeholder="Write a brief overview about yourself (100-330 characters)"
+                  required
+                ></textarea>
+                <div class="mt-1 text-sm text-gray-600">
+                  <span
+                    :class="{
+                      'text-red-500': doctorData.overview.length < 100,
+                      'text-green-500': doctorData.overview.length >= 100,
+                    }"
+                  >
+                    {{
+                      doctorData.overview.length < 100 ? "Too short" : "Good"
+                    }}
+                  </span>
+                  - {{ 330 - doctorData.overview.length }} characters left
+                </div>
+              </div>
+
+              <!-- Language Selection -->
+              <div class="md:col-span-2">
+                <label
+                  for="languages"
+                  class="mb-1 block text-sm text-[#0F172A]"
+                >
+                  Languages Spoken <span class="text-red-500">*</span>
+                </label>
+                <div class="space-y-2">
+                  <!-- Predefined and Custom Languages -->
+                  <div class="flex flex-wrap gap-2">
+                    <button
+                      v-for="language in [
+                        'Amharic',
+                        'Afar',
+                        'Wolaytta',
+                        'Oromo',
+                        'Sidama',
+                        'Somali',
+                        'Tigrinya',
+                        'Gurage',
+                        'English',
+                        ...doctorData.languages.filter(
+                          (lang) =>
+                            ![
+                              'Amharic',
+                              'Afar',
+                              'Wolaytta',
+                              'Oromo',
+                              'Sidama',
+                              'Somali',
+                              'Tigrinya',
+                              'Gurage',
+                              'English',
+                            ].includes(lang),
+                        ),
+                      ]"
+                      :key="language"
+                      type="button"
+                      @click="toggleLanguage(language)"
+                      :class="{
+                        'bg-first-accent text-white':
+                          doctorData.languages.includes(language),
+                        'bg-gray-200 text-gray-700':
+                          !doctorData.languages.includes(language),
+                      }"
+                      class="rounded-full px-4 py-2 text-sm font-medium transition hover:bg-second-accent hover:text-white"
+                    >
+                      {{ language }}
+                    </button>
+                  </div>
+
+                  <!-- Add Custom Language -->
+                  <div class="flex items-center gap-2">
+                    <input
+                      v-model="customLanguage"
+                      type="text"
+                      placeholder="Add a more language"
+                      class="h-10 w-full rounded-lg border border-gray-300 px-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-first-accent focus:outline-none focus:ring-2 focus:ring-first-accent"
+                    />
+                    <button
+                      type="button"
+                      @click="addCustomLanguage"
+                      class="rounded-lg bg-first-accent px-4 py-2 text-sm font-medium text-white hover:bg-second-accent"
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
+              </div>
+
               <!-- Map Location -->
               <div class="md:col-span-2">
                 <label class="mb-1 block text-sm text-[#0F172A]">
