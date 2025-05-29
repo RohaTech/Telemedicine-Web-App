@@ -30,6 +30,20 @@ class DoctorController extends Controller
         }
     }
 
+    public function getDoctorsByCategory($category)
+    {
+        // Convert slug to name
+        $specialty = ucwords(str_replace('-', ' ', $category));
+        try {
+            $doctors = Doctor::with('user')
+                ->where('specialty', $specialty)
+                ->where('status', 'active')
+                ->get();
+            return response()->json($doctors, 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to fetch doctors by category', 'message' => $e->getMessage()], 500);
+        }
+    }
     public function getActiveDoctors()
     {
         try {
