@@ -34,6 +34,7 @@ Route::get('/users/patient', [UserController::class, 'getAllCustomers'])->middle
 Route::post('/register-doctor', [AuthController::class, 'registerDoctor']);
 Route::get('/doctor/patients', [AppointmentController::class, 'getPatientsWithAppointments'])->middleware('auth:sanctum');
 Route::get('/doctors/status-active', [DoctorController::class, 'getActiveDoctors']);
+Route::get('/appointments/user', [AppointmentController::class, 'getUserAppointments'])->middleware('auth:sanctum');
 Route::apiResource('/appointments', AppointmentController::class);
 Route::get('/doctor/appointments', [AppointmentController::class, 'getDoctorAppointments'])->middleware('auth:sanctum');
 Route::apiResource('/consultations', ConsultationController::class);

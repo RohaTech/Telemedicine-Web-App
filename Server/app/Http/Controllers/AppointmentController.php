@@ -19,6 +19,14 @@ class AppointmentController extends Controller
             return response()->json(['error' => 'Failed to fetch appointments', 'message' => $e->getMessage()], 500);
         }
     }
+    public function getUserAppointments(Request $request)
+    {
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['error' => 'Unauthenticated'], 401);
+        }
+        return $user->appointments()->with('doctor.doctor')->get();
+    }
 
     // Get a single appointment by ID
     public function show($id)

@@ -20,8 +20,7 @@ const fallbackBannerImage =
   "https://res.cloudinary.com/dqxy77qks/image/upload/v1747602382/Flux_Dev_Create_a_highresolution_wideangle_realistic_image_for_0_wve4x4.jpg";
 
 const { getDoctor } = useDoctorStore();
-const { createAppointment } = useAppointmentStore();
-const { getAppointments } = useAppointmentStore();
+const { createAppointment, getAppointments } = useAppointmentStore();
 const authStore = useAuthStore();
 
 const route = useRoute();
@@ -60,6 +59,8 @@ const handleBook = async () => {
 
   if (result && result.success) {
     toast.success("Appointment booked successfully!");
+    isAppointed.value = true;
+
     showPopup.value = false;
   } else {
     toast.error("Error Booking . Try Again!");
@@ -208,7 +209,7 @@ const openPopup = () => {
             <div v-else class="my-6 flex w-full flex-col gap-y-1">
               <p class="text-sm font-semibold">Already Have Appointment</p>
               <RouterLink
-                :to="{ name: 'Home' }"
+                :to="{ name: 'UserAppointment' }"
                 class="w-full rounded-md border border-first-accent px-4 py-2 text-center text-first-accent shadow-sm transition duration-300 hover:bg-first-accent hover:text-white"
               >
                 Go To Appointment
