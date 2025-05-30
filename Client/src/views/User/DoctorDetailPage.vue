@@ -1,24 +1,79 @@
 <script setup>
 import UserLayout from "@/layout/UserLayout.vue";
+import { useAppointmentStore } from "@/stores/appointmentStore";
+import { useAuthStore } from "@/stores/auth";
 import { useDoctorStore } from "@/stores/doctorStore";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
+import Modal from "@/components/UI/Modal.vue";
+import { useToast } from "vue-toastification"; // <-- Import useToast
+
+const appointmentData = ref({
+  doctor_id: "",
+  patient_id: "",
+  date: "",
+  time: "",
+  status: "waiting",
+});
 
 const fallbackBannerImage =
   "https://res.cloudinary.com/dqxy77qks/image/upload/v1747602382/Flux_Dev_Create_a_highresolution_wideangle_realistic_image_for_0_wve4x4.jpg";
 
 const { getDoctor } = useDoctorStore();
+const { createAppointment } = useAppointmentStore();
+const { getAppointments } = useAppointmentStore();
+const authStore = useAuthStore();
+
 const route = useRoute();
 const doctor = ref(null);
+const showPopup = ref(false);
+const appointments = ref([]);
+const isAppointed = ref(false);
 
 const ratingValue = Math.floor(Math.random() * 5) + 1;
 const ratingCount = Math.floor(Math.random() * 500) + 1;
 
+const toast = useToast(); // <-- Initialize toast
+
 onMounted(async () => {
   window.scrollTo(0, 0);
   doctor.value = await getDoctor(route.params.id);
-  console.log(doctor.value);
+  appointments.value = await getAppointments();
+  await authStore.getUser();
+
+  // Check if the current user already has an appointment with this doctor
+  isAppointed.value = appointments.value.data?.some(
+    (a) =>
+      a.patient_id === authStore.user.id && a.doctor_id === doctor.value.id,
+  );
 });
+
+const handleBook = async () => {
+  const now = new Date();
+  appointmentData.value.doctor_id = doctor.value?.id;
+  appointmentData.value.patient_id = authStore?.user.id;
+  appointmentData.value.date = now.toISOString().split("T")[0]; // YYYY-MM-DD
+  appointmentData.value.time = now.toTimeString().split(" ")[0]; // HH:mm:ss
+
+  const result = await createAppointment(appointmentData.value);
+  console.log(appointmentData.value);
+
+  if (result && result.success) {
+    toast.success("Appointment booked successfully!");
+    showPopup.value = false;
+  } else {
+    toast.error("Error Booking . Try Again!");
+    showPopup.value = false;
+  }
+};
+
+const closePopup = () => {
+  showPopup.value = false;
+};
+
+const openPopup = () => {
+  showPopup.value = true;
+};
 </script>
 
 <template>
@@ -144,11 +199,22 @@ onMounted(async () => {
               <span class="font-semibold">Br {{ doctor.payment }}</span>
             </div>
             <button
-              type="button"
+              v-if="!isAppointed"
+              @click="openPopup"
               class="my-6 w-full rounded-md border border-first-accent px-4 py-2 text-first-accent shadow-sm transition duration-300 hover:bg-first-accent hover:text-white"
             >
               Book Now
             </button>
+            <div v-else class="my-6 flex w-full flex-col gap-y-1">
+              <p class="text-sm font-semibold">Already Have Appointment</p>
+              <RouterLink
+                :to="{ name: 'Home' }"
+                class="w-full rounded-md border border-first-accent px-4 py-2 text-center text-first-accent shadow-sm transition duration-300 hover:bg-first-accent hover:text-white"
+              >
+                Go To Appointment
+              </RouterLink>
+            </div>
+
             <div class="space-y-4">
               <div class="">
                 <h1 class="font-semibold uppercase text-first-accent">
@@ -178,5 +244,38 @@ onMounted(async () => {
         </div>
       </div>
     </div>
+
+    <Modal v-if="showPopup" @close="closePopup" :fullScreenBackdrop="true">
+      <template #body>
+        <div
+          class="relative max-h-[700px] w-full max-w-[700px] overflow-y-auto overflow-x-hidden rounded-3xl bg-white p-4 lg:p-11"
+        >
+          <h5
+            class="modal-title mb-2 text-theme-xl font-semibold text-gray-800 lg:text-2xl"
+          >
+            Book Doctor Appointment
+          </h5>
+          <p class="text-sm text-gray-500">
+            confirm your appointment with Dr.
+            {{ doctor?.user?.name }}.
+          </p>
+
+          <div class="mt-4 flex gap-x-4">
+            <button
+              @click="closePopup"
+              class="my-6 w-fit rounded-md border border-gray-400 px-4 py-2 text-black shadow-sm transition duration-300 hover:bg-first-accent hover:text-white"
+            >
+              Cancel
+            </button>
+            <button
+              @click="handleBook"
+              class="my-6 w-fit rounded-md border border-gray-400 px-4 py-2 text-black shadow-sm transition duration-300 hover:bg-success-400 hover:text-white"
+            >
+              Confirm
+            </button>
+          </div>
+        </div>
+      </template>
+    </Modal>
   </UserLayout>
 </template>
