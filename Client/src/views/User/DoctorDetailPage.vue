@@ -40,7 +40,7 @@ onMounted(async () => {
 
       <div
         v-if="doctor"
-        class="mx-auto mt-16 flex max-w-[1250px] justify-between px-16"
+        class="mx-auto mt-16 flex max-w-[1250px] justify-between bg-gray-200/50 p-16 shadow-theme-xl"
       >
         <div class="max-w-[600px]">
           <div
