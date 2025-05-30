@@ -13,6 +13,7 @@ class Consultation extends Model
         'patient_id',
         'doctor_id',
         'prescription_id',
+        'appointment_id',
         'consultation_date',
         'notes',
     ];
@@ -39,5 +40,12 @@ class Consultation extends Model
     public function prescription()
     {
         return $this->hasOne(Prescription::class);
+    }
+    /**
+     * A consultation belongs to an appointment.
+     */
+    public function appointment()
+    {
+        return $this->belongsTo(Appointment::class);
     }
 }
