@@ -34,13 +34,13 @@ onMounted(async () => {
             >Home</RouterLink
           >
           <span class="text-second-accent"> //</span>
-          <span>Doctor</span>
+          <span>{{ doctor?.user?.name }}</span>
         </div>
       </div>
 
       <div
         v-if="doctor"
-        class="mx-auto mt-16 flex max-w-[1250px] justify-between px-16"
+        class="mx-auto mt-16 flex max-w-[1250px] justify-between bg-gray-200/50 p-16 shadow-theme-xl"
       >
         <div class="max-w-[600px]">
           <div
@@ -69,12 +69,11 @@ onMounted(async () => {
 
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="ml-6 size-8"
-                fill="#161313"
+                class="ml-6 size-8 cursor-pointer fill-[#f9fafb] stroke-black hover:fill-red-600"
                 viewBox="0 0 256 256"
               >
                 <path
-                  d="M178,40c-20.65,0-38.73,8.88-50,23.89C116.73,48.88,98.65,40,78,40a62.07,62.07,0,0,0-62,62c0,70,103.79,126.66,108.21,129a8,8,0,0,0,7.58,0C136.21,228.66,240,172,240,102A62.07,62.07,0,0,0,178,40ZM128,214.8C109.74,204.16,32,155.69,32,102A46.06,46.06,0,0,1,78,56c19.45,0,35.78,10.36,42.6,27a8,8,0,0,0,14.8,0c6.82-16.67,23.15-27,42.6-27a46.06,46.06,0,0,1,46,46C224,155.61,146.24,204.15,128,214.8Z"
+                  d="M240,102c0,70-103.79,126.66-108.21,129a8,8,0,0,1-7.58,0C119.79,228.66,16,172,16,102A62.07,62.07,0,0,1,78,40c20.65,0,38.73,8.88,50,23.89C139.27,48.88,157.35,40,178,40A62.07,62.07,0,0,1,240,102Z"
                 ></path>
               </svg>
             </div>
@@ -122,29 +121,13 @@ onMounted(async () => {
             <div class="mt-10">
               <h1 class="text-xl font-semibold uppercase">Overview</h1>
               <p class="mt-3 text-sm">
-                With over 10 years of experience, Dr. Melkamu Tebeje specializes
-                in orthopedic care, focusing on joint reconstruction, trauma
-                management, and rehabilitation. Based in Addis Ababa, he offers
-                virtual consultations through Tenadam to help patients across
-                Ethiopia regain mobility and live pain-free.
-              </p>
-            </div>
-            <div class="mt-10">
-              <h1 class="text-xl font-semibold uppercase">
-                Qualifications and Certifications
-              </h1>
-              <p class="mt-3 text-sm">
-                With over 10 years of experience, Dr. Melkamu Tebeje specializes
-                in orthopedic care, focusing on joint reconstruction, trauma
-                management, and rehabilitation. Based in Addis Ababa, he offers
-                virtual consultations through Tenadam to help patients across
-                Ethiopia regain mobility and live pain-free.
+                {{ doctor.overview }}
               </p>
             </div>
           </div>
         </div>
 
-        <div class="h-[500px] w-[300px] rounded-lg bg-[#e8e8f4] shadow-md">
+        <div class="h-fit w-[300px] rounded-lg bg-[#e8e8f4] pb-4 shadow-md">
           <div
             class="h-[200px] w-full bg-cover bg-center"
             :style="{
@@ -166,6 +149,31 @@ onMounted(async () => {
             >
               Book Now
             </button>
+            <div class="space-y-4">
+              <div class="">
+                <h1 class="font-semibold uppercase text-first-accent">
+                  Location
+                </h1>
+
+                <div class="mt-2">
+                  {{ doctor.user.city }} , {{ doctor.user.region }}
+                </div>
+              </div>
+              <div class="">
+                <h1 class="font-semibold uppercase text-first-accent">
+                  Languages
+                </h1>
+                <div class="grid grid-cols-3 gap-x-2">
+                  <div
+                    class="mt-2 rounded-md bg-second-accent px-2 py-1 text-sm text-white shadow-sm"
+                    v-for="(language, index) in JSON.parse(doctor.languages)"
+                    :key="index"
+                  >
+                    {{ language }}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

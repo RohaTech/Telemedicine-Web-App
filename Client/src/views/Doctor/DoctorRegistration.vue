@@ -12,28 +12,30 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 // Specialties list
-const specialties = ref([
-  "Cardiology",
+const specialties = [
+  "Obstetrics and Gynecology",
+  "Pediatrics",
   "Dermatology",
+  "Cardiology",
+  "Orthopedics",
+  "Pathology",
+  "Oncology",
+  "Hematology",
+  "Pulmonology",
+  "Hepatology",
   "Endocrinology",
   "Gastroenterology",
-  "Hematology",
   "Infectious Disease",
   "Internal Medicine",
   "Nephrology",
   "Neurology",
-  "Obstetrics and Gynecology",
-  "Oncology",
   "Ophthalmology",
-  "Orthopedics",
   "Otolaryngology",
-  "Pediatrics",
   "Psychiatry",
-  "Pulmonology",
   "Rheumatology",
   "Surgery",
   "Urology",
-]);
+];
 
 const authStore = useAuthStore();
 const { errors } = storeToRefs(authStore);

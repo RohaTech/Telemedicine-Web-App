@@ -20,40 +20,6 @@ onMounted(async () => {
   console.log(doctors.value);
 });
 
-const recentlyVisited = [
-  {
-    category: "Pathology",
-    rating: 4.7,
-    reviews: 187,
-    price: "1200Br",
-    doctor: "Dr. Melkamu Tebeje",
-    slug: "pathology",
-  },
-  {
-    category: "Pulmonology Obstetrics and Gynecology",
-    rating: 4.4,
-    reviews: 536,
-    price: "1200Br",
-    doctor: "Dr. Melkamu Tebeje",
-    slug: "pulmonology-obstetrics-and-gynecology",
-  },
-  {
-    category: "Pediatrics",
-    rating: 4.7,
-    reviews: 641,
-    price: "1200Br",
-    doctor: "Dr. Melkamu Tebeje",
-    slug: "pediatrics",
-  },
-  {
-    category: "Dermatology",
-    rating: 4.4,
-    reviews: 601,
-    price: "1200Br",
-    doctor: "Dr. Melkamu Tebeje",
-    slug: "dermatology",
-  },
-];
 </script>
 
 <template>

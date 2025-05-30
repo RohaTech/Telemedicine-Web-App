@@ -37,6 +37,7 @@ Route::get('/doctors/status-active', [DoctorController::class, 'getActiveDoctors
 Route::apiResource('/appointments', AppointmentController::class);
 Route::get('/doctor/appointments', [AppointmentController::class, 'getDoctorAppointments'])->middleware('auth:sanctum');
 Route::apiResource('/consultations', ConsultationController::class);
+Route::get('/doctors/categories/{category}', [DoctorController::class, 'getDoctorsByCategory']);
 Route::apiResource('/doctors', DoctorController::class);
 Route::put('/doctors/update-status/{doctor}', [DoctorController::class, 'updateStatus'])->middleware(AdminMiddleware::class);
 Route::get('/doctor-dashboard', [DoctorController::class, 'dashboard'])->middleware('auth:sanctum');

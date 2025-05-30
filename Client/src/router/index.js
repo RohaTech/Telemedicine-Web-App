@@ -53,7 +53,9 @@ import DoctorConsultation from "@/views/Doctor/DoctorConsultation.vue";
 import LaboratoryProfilePage from "@/views/Laboratory/LaboratoryProfilePage.vue";
 import WelcomePage from "../views/WelcomePage.vue";
 import DoctorDetailPage from "@/views/User/DoctorDetailPage.vue";
-
+import MoreCategories from "@/views/User/MoreCategories.vue";
+import CategoriesFilterPage from "@/views/User/CategoriesFilterPage.vue";
+ 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -100,6 +102,16 @@ const router = createRouter({
       meta: { guest: true },
     },
 
+    {
+      path: "/more-categories",
+      name: "MoreCategories",
+      component: MoreCategories,
+    },
+    {
+      path: "/more-categories/:slug",
+      name: "CategoriesFilter",
+      component: CategoriesFilterPage,
+    },
     {
       path: "/doctorDetails/:id",
       name: "UserDoctorDetail",

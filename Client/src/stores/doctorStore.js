@@ -74,6 +74,24 @@ export const useDoctorStore = defineStore("doctorStore", {
         return [];
       }
     },
+    async getDoctorsByCategory(category) {
+
+      const response = await fetch(`/api/doctors/categories/${category}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      console.log(data);
+      if (data.errors) {
+        this.errors = data.errors;
+      } else {
+        this.errors = {};
+        return data;
+      }
+
+    },
 
     async updateDoctorStatus(status, doctorId) {
       try {
