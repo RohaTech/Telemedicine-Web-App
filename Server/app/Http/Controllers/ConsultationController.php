@@ -43,6 +43,7 @@ class ConsultationController extends Controller
                 'prescription_id' => 'nullable|exists:prescriptions,id',
                 'consultation_date' => 'required|date',
                 'notes' => 'nullable|string',
+                'appointment_id' => 'required|exists:appointments,id',
             ]);
 
             $consultation = Consultation::create($validatedData);
@@ -64,6 +65,7 @@ class ConsultationController extends Controller
                 'prescription_id' => 'nullable|exists:prescriptions,id',
                 'consultation_date' => 'sometimes|date',
                 'notes' => 'nullable|string',
+                'appointment_id' => 'sometimes|exists:appointments,id', 
             ]);
 
             $consultation->update($validatedData);

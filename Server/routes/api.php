@@ -11,6 +11,7 @@ use App\Http\Controllers\LabRequestController;
 use App\Http\Controllers\LabResultController;
 use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Http\Request;
@@ -28,7 +29,7 @@ Route::get('/doctor-status', function (Request $request) {
 // Route::middleware('auth:sanctum')->group(function () {
 //     Route::apiResource('/users', UserController::class);
 // });
-
+Route::get('/users/{id}', [UserController::class, 'show']); // For patient details
 Route::get('/users/patient', [UserController::class, 'getAllCustomers'])->middleware(AdminMiddleware::class);
 Route::post('/register-doctor', [AuthController::class, 'registerDoctor']);
 Route::get('/doctor/patients', [AppointmentController::class, 'getPatientsWithAppointments'])->middleware('auth:sanctum');
@@ -55,6 +56,10 @@ Route::apiResource('/prescriptions', PrescriptionController::class);
 Route::apiResource('/payments', PaymentController::class);
 Route::apiResource('/notifications', NotificationController::class);
 
+Route::apiResource('/consultations', ConsultationController::class);
+Route::post('/messages', [ChatController::class, 'message']);
+Route::apiResource('/chats', ChatController::class);
+Route::get('/chats/consultation/{consultation_id}', [ChatController::class, 'getByConsultation']);
 
 
 

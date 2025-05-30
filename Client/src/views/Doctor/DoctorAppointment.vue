@@ -277,12 +277,13 @@ const checkConsultationTime = () => {
   const timeDiff = Math.abs(appointmentDateTime.getTime() - now.getTime());
   const isSameDate = now.toISOString().split("T")[0] === eventStartDate.value;
 
-  isConsultationTime.value = isSameDate && timeDiff <= timeWindow;
+  isConsultationTime.value = isSameDate;
 };
 
 const goToConsultation = () => {
   if (selectedEvent.value && isConsultationTime.value) {
     const appointmentId = selectedEvent.value.id;
+    console.log(appointmentId);
     router.push(`/consultation/${appointmentId}`);
   }
 };
