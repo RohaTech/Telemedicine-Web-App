@@ -37,19 +37,21 @@ const toast = useToast(); // <-- Initialize toast
 onMounted(async () => {
   window.scrollTo(0, 0);
   doctor.value = await getDoctor(route.params.id);
+  console.log("  doctor.value", doctor.value);
   appointments.value = await getAppointments();
   await authStore.getUser();
 
   // Check if the current user already has an appointment with this doctor
   isAppointed.value = appointments.value.data?.some(
     (a) =>
-      a.patient_id === authStore.user.id && a.doctor_id === doctor.value.id,
+      a.patient_id === authStore.user.id &&
+      a.doctor_id === doctor.value.user.id,
   );
 });
 
 const handleBook = async () => {
   const now = new Date();
-  appointmentData.value.doctor_id = doctor.value?.id;
+  appointmentData.value.doctor_id = doctor.value?.user?.id;
   appointmentData.value.patient_id = authStore?.user.id;
   appointmentData.value.date = now.toISOString().split("T")[0]; // YYYY-MM-DD
   appointmentData.value.time = now.toTimeString().split(" ")[0]; // HH:mm:ss
