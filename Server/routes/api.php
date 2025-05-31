@@ -34,6 +34,7 @@ Route::get('/users/patient', [UserController::class, 'getAllCustomers'])->middle
 Route::post('/register-doctor', [AuthController::class, 'registerDoctor']);
 Route::get('/doctor/patients', [AppointmentController::class, 'getPatientsWithAppointments'])->middleware('auth:sanctum');
 Route::get('/doctors/status-active', [DoctorController::class, 'getActiveDoctors']);
+Route::get('/appointments/user', [AppointmentController::class, 'getUserAppointments'])->middleware('auth:sanctum');
 Route::apiResource('/appointments', AppointmentController::class);
 Route::get('/doctor/appointments', [AppointmentController::class, 'getDoctorAppointments'])->middleware('auth:sanctum');
 Route::apiResource('/consultations', ConsultationController::class);
@@ -44,7 +45,7 @@ Route::get('/doctor-dashboard', [DoctorController::class, 'dashboard'])->middlew
 
 Route::apiResource('/laboratories', LaboratoryController::class);
 Route::get('/laboratories/status-pending', [LaboratoryController::class, 'getPendingLaboratories']);
-Route::put('/laboratories/update-status/{laboratory}', [LaboratoryController::class, 'updateLaboratoryStatus'])->middleware(AdminMiddleware::class);
+Route::put('/laboratories/update-status/{laboratory}', [LaboratoryController::class, 'updateLaboratoryStatus']);
 Route::get('/laboratories/login', [LaboratoryController::class, 'login']);
 Route::get('/laboratories/register', [LaboratoryController::class, 'store']);
 Route::get('/laboratories/logout', [LaboratoryController::class, 'logout']);

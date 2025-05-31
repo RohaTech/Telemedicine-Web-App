@@ -55,7 +55,8 @@ import WelcomePage from "../views/WelcomePage.vue";
 import DoctorDetailPage from "@/views/User/DoctorDetailPage.vue";
 import MoreCategories from "@/views/User/MoreCategories.vue";
 import CategoriesFilterPage from "@/views/User/CategoriesFilterPage.vue";
- 
+import UserAppointment from "@/views/User/UserAppointment.vue";
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -116,6 +117,11 @@ const router = createRouter({
       path: "/doctorDetails/:id",
       name: "UserDoctorDetail",
       component: DoctorDetailPage,
+    },
+    {
+      path: "/user/appointment",
+      name: "UserAppointment",
+      component: UserAppointment,
     },
     {
       path: "/appointments",
