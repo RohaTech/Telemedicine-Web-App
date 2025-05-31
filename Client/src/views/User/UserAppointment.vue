@@ -83,32 +83,30 @@ const changeStatus = (status) => {
       </div>
 
       <div class="custom-scrollbar max-w-full overflow-x-auto">
-        <table class="min-w-full">
+        <table class="min-w-full text-center">
           <thead>
             <tr class="ark:border-gray-70 0 border-b border-gray-200">
-              <th class="w-2/11 px-5 py-3 text-left sm:px-6">
+              <th class="w-2/11 text- px-5 py-3 sm:px-6">
                 <p class="text-theme-xs font-medium text-gray-500">
                   Doctor Name
                 </p>
               </th>
 
-              <th class="w-2/11 px-5 py-3 text-left sm:px-6">
+              <th class="w-2/11 text- px-5 py-3 sm:px-6">
                 <p class="text-theme-xs font-medium text-gray-500">
                   Doctor Email
                 </p>
               </th>
-              <th class="w-2/11 px-5 py-3 text-left sm:px-6">
+              <th class="w-2/11 text- px-5 py-3 sm:px-6">
                 <p class="text-theme-xs font-medium text-gray-500">
                   Doctor Phone
                 </p>
               </th>
-              <th class="w-2/11 px-5 py-3 text-left sm:px-6">
-                <p class="text-theme-xs font-medium text-gray-500">
-                  Booked Date
-                </p>
+              <th class="w-2/11 text- px-5 py-3 sm:px-6">
+                <p class="text-theme-xs font-medium text-gray-500">Date</p>
               </th>
               <th class="w-2/11 px-5 py-3 sm:px-6">
-                <p class="text-left text-theme-xs font-medium text-gray-500">
+                <p class="text- text-theme-xs font-medium text-gray-500">
                   Status
                 </p>
               </th>
@@ -158,12 +156,10 @@ const changeStatus = (status) => {
               class="ark:border-gray-800 border-t border-gray-100"
             >
               <td class="px-5 py-4 sm:px-6">
-                <div class="flex items-center gap-3">
-                  <div>
-                    <span class="block text-theme-sm font-medium text-gray-800">
-                      {{ appointment.doctor?.name }}
-                    </span>
-                  </div>
+                <div class="gap-3">
+                  <span class="block text-theme-sm font-medium text-gray-800">
+                    {{ appointment.doctor?.name }}
+                  </span>
                 </div>
               </td>
               <td class="px-5 py-4 sm:px-6">
@@ -171,19 +167,21 @@ const changeStatus = (status) => {
                   {{ appointment.doctor?.email }}
                 </p>
               </td>
-              <td class="px-5 py-4 sm:px-6">
-                <div class="flex -space-x-2">
+              <td class="px-5 py-4 text-center sm:px-6">
+                <div class=" ">
                   {{ appointment.doctor?.phone }}
                 </div>
               </td>
               <td class="px-5 py-4 sm:px-6">
-                <span>
+                <span v-if="appointment.status !== 'waiting'">
                   {{
                     appointment.appointment_date
                       ? appointment.appointment_date.split("T")[0]
                       : ""
                   }}
                 </span>
+
+                <span v-else class="ml-4">---</span>
               </td>
               <td class="px-5 py-4 sm:px-6">
                 <p class="text-theme-sm text-gray-500">
@@ -261,7 +259,7 @@ const changeStatus = (status) => {
                 </div>
                 <div
                   v-if="appointment.status === 'cancelled'"
-                  class="ml-2 flex w-[200px] cursor-pointer justify-center gap-x-2 bg-error-50 p-2"
+                  class="ml-2 flex w-[200px] cursor-not-allowed justify-center gap-x-2 bg-error-50 p-2"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
