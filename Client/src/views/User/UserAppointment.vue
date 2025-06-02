@@ -38,7 +38,9 @@ const changeStatus = (status) => {
     >
       <!-- Status Filter -->
       <div class="border-b border-gray-200 p-4">
-        <h3 class="my-4 mb-2 border-b py-8 text-2xl font-semibold">
+        <h3
+          class="my-4 mb-2 border-b border-gray-400/60 py-8 text-2xl font-semibold"
+        >
           All Your Appointments
         </h3>
         <div class="flex flex-wrap gap-3 py-3">
@@ -223,7 +225,8 @@ const changeStatus = (status) => {
                     >Waiting Confirmation</span
                   >
                 </div>
-                <div
+                <RouterLink
+                  :to="{ name: 'UserConsultation' }"
                   v-if="appointment.status === 'pending'"
                   class="ml-2 flex w-[200px] cursor-pointer justify-center gap-x-2 bg-blue-50 p-2"
                 >
@@ -239,7 +242,7 @@ const changeStatus = (status) => {
                   <span class="text-sm text-blue-600"
                     >Consultation Reserved</span
                   >
-                </div>
+                </RouterLink>
                 <div
                   v-if="appointment.status === 'confirmed'"
                   class="ml-2 flex w-[200px] cursor-pointer justify-center gap-x-2 bg-success-50 p-2"
