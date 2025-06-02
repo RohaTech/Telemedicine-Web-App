@@ -25,7 +25,7 @@ const authStore = useAuthStore();
           >Home</RouterLink
         >
         <RouterLink
-          :to="{ name: 'Consultations' }"
+          :to="{ name: 'UserConsultation' }"
           class="cursor-pointer hover:font-semibold"
           >Consultations</RouterLink
         >

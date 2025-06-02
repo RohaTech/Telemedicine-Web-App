@@ -57,7 +57,9 @@ Route::apiResource('/prescriptions', PrescriptionController::class);
 Route::apiResource('/payments', PaymentController::class);
 Route::apiResource('/notifications', NotificationController::class);
 
-Route::apiResource('/consultations', ConsultationController::class);
+
+Route::get('/patient/consultations', [ConsultationController::class, 'getUserConsultations'])->middleware('auth:sanctum');
+Route::apiResource('/consultations', ConsultationController::class)->middleware('auth:sanctum');
 Route::post('/messages', [ChatController::class, 'message']);
 Route::apiResource('/chats', ChatController::class);
 Route::get('/chats/consultation/{consultation_id}', [ChatController::class, 'getByConsultation']);

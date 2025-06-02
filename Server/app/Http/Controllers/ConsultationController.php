@@ -10,14 +10,28 @@ use Exception;
 class ConsultationController extends Controller
 {
     // Get all consultations
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $consultations = Consultation::all();
+
+            $user = $request->user();
+            $consultations = $user->consultations()->with(['doctor', 'appointment'])->get();
             return response()->json($consultations, 200);
         } catch (Exception $e) {
             return response()->json(['error' => 'Failed to fetch consultations', 'message' => $e->getMessage()], 500);
         }
+    }
+
+    public function getUserConsultations(Request $request)
+    {
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['error' => 'Unauthenticated'], 401);
+        }
+
+        $consultations = $user->consultations()->with('doctor')->get();
+
+        return response()->json($consultations, 200);
     }
 
     // Get a single consultation by ID
@@ -65,7 +79,7 @@ class ConsultationController extends Controller
                 'prescription_id' => 'nullable|exists:prescriptions,id',
                 'consultation_date' => 'sometimes|date',
                 'notes' => 'nullable|string',
-                'appointment_id' => 'sometimes|exists:appointments,id', 
+                'appointment_id' => 'sometimes|exists:appointments,id',
             ]);
 
             $consultation->update($validatedData);

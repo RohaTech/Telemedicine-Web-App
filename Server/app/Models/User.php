@@ -66,6 +66,11 @@ class User extends Authenticatable
         return $this->hasMany(Consultation::class, 'patient_id');
     }
 
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class, 'patient_id');
+    }
+
     /**
      * A user can be a doctor and have multiple consultations.
      */
@@ -109,10 +114,7 @@ class User extends Authenticatable
     /**
      * A user can have multiple appointments.
      */
-    public function appointments()
-    {
-        return $this->hasMany(Appointment::class, 'patient_id');
-    }
+
 
     /**
      * A doctor can have multiple appointments.
