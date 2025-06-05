@@ -58,6 +58,7 @@ import CategoriesFilterPage from "@/views/User/CategoriesFilterPage.vue";
 import UserAppointment from "@/views/User/UserAppointment.vue";
 import UserConsultation from "@/views/User/UserConsultation.vue";
 import UserConsultationDetail from "@/views/User/UserConsultationDetail.vue";
+import VideoCallTest from "@/views/VideoCallTest.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -350,6 +351,11 @@ const router = createRouter({
       name: "DoctorHome",
       component: DoctorHomePage,
       meta: { requiresAuth: true, role: "doctor" },
+    },
+    {
+      path: "/video-test",
+      name: "VideoCallTest",
+      component: VideoCallTest,
     },
   ],
 });
