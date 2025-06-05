@@ -11,6 +11,24 @@ export const useAuthStore = defineStore("authStore", {
   actions: {
     /********************* Get Authenticated User  ********************** */
 
+    async getAllUsers() {
+
+
+      const res = await fetch("/api/users", {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      const data = await res.json();
+      if (data.errors) {
+        this.errors = data.errors;
+      } else {
+        this.errors = {};
+        return data;
+      }
+
+
+    },
     async getUser() {
       if (localStorage.getItem("token")) {
         try {

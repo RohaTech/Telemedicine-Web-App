@@ -30,6 +30,7 @@ Route::get('/doctor-status', function (Request $request) {
 // Route::middleware('auth:sanctum')->group(function () {
 //     Route::apiResource('/users', UserController::class);
 // });
+Route::get('/users', [UserController::class, 'index']); // For patient details
 Route::get('/users/{id}', [UserController::class, 'show']); // For patient details
 Route::get('/users/patient', [UserController::class, 'getAllCustomers'])->middleware(AdminMiddleware::class);
 Route::post('/register-doctor', [AuthController::class, 'registerDoctor']);
