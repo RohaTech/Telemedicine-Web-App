@@ -38,7 +38,7 @@ class ConsultationController extends Controller
     public function show($id)
     {
         try {
-            $consultation = Consultation::findOrFail($id);
+            $consultation = Consultation::findOrFail($id)->with(['doctor.doctor', 'prescription', 'appointment'])->first();
             return response()->json($consultation, 200);
         } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Consultation not found', 'message' => $e->getMessage()], 404);
