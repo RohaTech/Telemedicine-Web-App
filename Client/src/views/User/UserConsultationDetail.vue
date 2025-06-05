@@ -218,74 +218,6 @@ const getVitalIcon = (iconType) => {
   <UserLayout>
     <div class="min-h-screen bg-gray-50">
       <!-- Header -->
-      <header class="border-b border-gray-200 bg-white px-6 py-4">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-3">
-            <div
-              class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600"
-            >
-              <div class="h-4 w-4 rounded-full bg-white"></div>
-            </div>
-            <h1 class="text-xl font-semibold text-gray-900">MediConnect</h1>
-          </div>
-          <div class="flex items-center space-x-4">
-            <!-- Chat Toggle Button -->
-            <button
-              @click="toggleChat"
-              class="rounded-lg bg-gray-100 p-2 text-gray-600 transition-colors hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-              :title="isChatVisible ? 'Hide Chat' : 'Show Chat'"
-            >
-              <svg
-                class="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a8.955 8.955 0 01-2.345-.306c-.52.263-1.5.634-3.345.905-1.64.24-2.577-.747-2.336-2.388.24-1.644.643-2.775.906-3.345A8.955 8.955 0 014 12c0-4.418 3.582-8 8-8s8 3.582 8 8z"
-                />
-              </svg>
-            </button>
-
-            <div v-if="!isCallActive" class="flex items-center space-x-2">
-              <!-- Clock Icon -->
-              <svg
-                class="h-4 w-4 text-gray-500"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <span class="text-sm text-gray-600"
-                >Appointment in 5 minutes</span
-              >
-            </div>
-            <div class="flex items-center space-x-2">
-              <!-- Circle Icon -->
-              <svg
-                :class="`h-3 w-3 fill-current ${isCallActive ? 'text-green-500' : 'text-yellow-500'}`"
-                viewBox="0 0 24 24"
-              >
-                <circle cx="12" cy="12" r="10" />
-              </svg>
-              <span
-                :class="`text-sm font-medium ${isCallActive ? 'text-green-600' : 'text-yellow-600'}`"
-              >
-                {{ isCallActive ? "In Call" : "Waiting" }}
-              </span>
-            </div>
-          </div>
-        </div>
-      </header>
 
       <div class="flex h-[calc(100vh-80px)]">
         <!-- Static Sidebar -->
@@ -499,7 +431,7 @@ const getVitalIcon = (iconType) => {
         </div>
 
         <!-- Main Content Area -->
-        <div class="relative flex flex-1">
+        <div class="relative flex flex-1 pb-10">
           <!-- Pre-Call Page -->
           <div v-if="!isCallActive" class="flex flex-1 flex-col">
             <div class="flex-1 p-8">
@@ -511,6 +443,45 @@ const getVitalIcon = (iconType) => {
                   <p class="text-gray-600">
                     Your doctor will be with you shortly
                   </p>
+
+                  <div class="flex items-center justify-center space-x-4">
+                    <div
+                      v-if="!isCallActive"
+                      class="flex items-center space-x-2"
+                    >
+                      <!-- Clock Icon -->
+                      <svg
+                        class="h-4 w-4 text-gray-500"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      <span class="text-sm text-gray-600"
+                        >Appointment in 5 minutes</span
+                      >
+                    </div>
+                    <div class="flex items-center space-x-2">
+                      <!-- Circle Icon -->
+                      <svg
+                        :class="`h-3 w-3 fill-current ${isCallActive ? 'text-green-500' : 'text-yellow-500'}`"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle cx="12" cy="12" r="10" />
+                      </svg>
+                      <span
+                        :class="`text-sm font-medium ${isCallActive ? 'text-green-600' : 'text-yellow-600'}`"
+                      >
+                        {{ isCallActive ? "In Call" : "Waiting" }}
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
                 <!-- Appointment Card -->
