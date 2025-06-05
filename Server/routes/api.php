@@ -13,6 +13,7 @@ use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\VideoCallController;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -73,3 +74,11 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::post('/laboratories/login', [LaboratoryAuthController::class, 'login']);
 Route::post('/laboratories/register', [LaboratoryAuthController::class, 'register']);
 Route::post('/laboratories/logout', [LaboratoryAuthController::class, 'logout'])->middleware('auth:sanctum');
+
+
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/video-call/request/{user}', [VideoCallController::class, 'requestVideoCall']);
+    Route::post('/video-call/request/status/{user}', [VideoCallController::class, 'requestVideoCallStatus']);
+});
