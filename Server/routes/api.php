@@ -84,3 +84,22 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/video-call/request/{user}', [VideoCallController::class, 'requestVideoCall']);
     Route::post('/video-call/request/status/{user}', [VideoCallController::class, 'requestVideoCallStatus']);
 });
+
+
+Route::middleware('auth:sanctum')->post('/send-sms', function (Request $request) {
+    $request->validate([
+        'to' => 'required|string',
+        'message' => 'required|string',
+    ]);
+
+    try {
+        $twilio = new TwilioService();
+        $result = $twilio->sendSMS($request->to, $request->message);
+        return response()->json($result);
+    } catch (Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => 'Twilio service error: ' . $e->getMessage()
+        ], 500);
+    }
+});

@@ -59,6 +59,7 @@ import UserAppointment from "@/views/User/UserAppointment.vue";
 import UserConsultation from "@/views/User/UserConsultation.vue";
 import UserConsultationDetail from "@/views/User/UserConsultationDetail.vue";
 import VideoCallTest from "@/views/VideoCallTest.vue";
+import SmsTest from "@/views/User/SmsTest.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -356,6 +357,11 @@ const router = createRouter({
       path: "/video-test",
       name: "VideoCallTest",
       component: VideoCallTest,
+    },
+    {
+      path: "/sms-test",
+      name: "SmsTest",
+      component: SmsTest,
     },
   ],
 });
