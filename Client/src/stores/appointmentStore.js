@@ -113,6 +113,31 @@ export const useAppointmentStore = defineStore("appointmentStore", {
         return { success: false };
       }
     },
+    async getUserAppointments() {
+      try {
+        const res = await fetch(`/api/appointments/user`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        const data = await res.json();
+        console.log(data);
+        if (!res.ok || data.errors) {
+          this.errors = data.errors || {
+            message: "Failed to fetch appointments",
+          };
+          return { success: false };
+        }
+        this.errors = {};
+        return { success: true, data };
+      } catch (err) {
+        this.errors = {
+          message: err.message || "An unexpected error occurred",
+        };
+        return { success: false };
+      }
+    },
 
     async fetchPatientsWithAppointments() {
       try {

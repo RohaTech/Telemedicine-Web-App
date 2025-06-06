@@ -1,22 +1,17 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
-import { useLaboratoryStore } from "@/stores/laboratoryStore";
+import { ref } from "vue";
+import { useToast } from "vue-toastification"; // Import useToast
 import LaboratoryLayout from "@/layout/LaboratoryLayout.vue";
 import PageBreadcrumb from "@/components/common/PageBreadcrumb.vue";
 import LabRequestIndexTable from "./LabRequestIndexTable.vue";
 
 const currentPageTitle = ref("Lab Requests");
-const route = useRoute();
-const laboratoryStore = useLaboratoryStore();
-const laboratory = ref(null);
-
-// onMounted(async () => {
-//   laboratory.value = await laboratoryStore.getLaboratory(route.params.id);
-
-//   // console.log(laboratory.value);
-// });
+// const toast = useToast();
+// const triggerCustomToast = () => {
+//   toast.success("You clicked the toast button!", {});
+// };
 </script>
+
 <template>
   <LaboratoryLayout>
     <PageBreadcrumb :pageTitle="currentPageTitle" />

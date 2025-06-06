@@ -16,9 +16,8 @@ return new class extends Migration
             $table->foreignId('patient_id')->constrained('users');
             $table->foreignId('doctor_id')->constrained('users');
             $table->timestamp('appointment_date');
-            $table->enum('status', ['pending', 'confirmed', 'cancelled'])->default('pending');
+            $table->string('status')->default('pending');
             $table->timestamps();
-
         });
     }
 

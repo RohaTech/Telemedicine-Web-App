@@ -32,7 +32,7 @@ const menuGroups = [
       {
         icon: GridIcon,
         name: "Home",
-        path: "LaboratoryHome",
+        path: "Home",
       },
       {
         icon: CalenderIcon,

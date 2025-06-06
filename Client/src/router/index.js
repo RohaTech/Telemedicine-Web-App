@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-import WelcomePage from "../views/WelcomePage.vue";
 import AppointmentList from "@/components/Appointment/AppointmentList.vue";
 import CreateAppointment from "@/components/Appointment/CreateAppointment.vue";
 import AppointmentView from "@/components/Appointment/AppointmentView.vue";
@@ -48,6 +47,19 @@ import LaboratoryLoginPage from "@/views/Laboratory/LaboratoryLoginPage.vue";
 import LaboratoryHome from "@/views/Laboratory/LaboratoryHome.vue";
 import DoctorHomePage from "@/views/Doctor/DoctorHomePage.vue";
 import DoctorAppointment from "@/views/Doctor/DoctorAppointment.vue";
+
+import DoctorConsultation from "@/views/Doctor/DoctorConsultation.vue";
+
+import LaboratoryProfilePage from "@/views/Laboratory/LaboratoryProfilePage.vue";
+import WelcomePage from "../views/WelcomePage.vue";
+import DoctorDetailPage from "@/views/User/DoctorDetailPage.vue";
+import MoreCategories from "@/views/User/MoreCategories.vue";
+import CategoriesFilterPage from "@/views/User/CategoriesFilterPage.vue";
+import UserAppointment from "@/views/User/UserAppointment.vue";
+import UserConsultation from "@/views/User/UserConsultation.vue";
+import UserConsultationDetail from "@/views/User/UserConsultationDetail.vue";
+import VideoCallTest from "@/views/VideoCallTest.vue";
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -95,6 +107,31 @@ const router = createRouter({
     },
 
     {
+      path: "/more-categories",
+      name: "MoreCategories",
+      component: MoreCategories,
+    },
+    {
+      path: "/more-categories/:slug",
+      name: "CategoriesFilter",
+      component: CategoriesFilterPage,
+    },
+    {
+      path: "/doctorDetails/:id",
+      name: "UserDoctorDetail",
+      component: DoctorDetailPage,
+    },
+    {
+      path: "/user/appointment",
+      name: "UserAppointment",
+      component: UserAppointment,
+    },
+    {
+      path: "/user/consultation",
+      name: "UserConsultation",
+      component: UserConsultation,
+    },
+    {
       path: "/appointments",
       name: "Appointments",
       component: AppointmentList,
@@ -120,14 +157,19 @@ const router = createRouter({
       component: DoctorAppointment,
     },
     {
+      path: "/consultation/:appointmentId",
+      name: "DoctorConsultation",
+      component: DoctorConsultation,
+    },
+    {
       path: "/consultations",
       name: "Consultations",
       component: ConsultationList,
     },
     {
       path: "/consultations/:id",
-      name: "ConsultationView",
-      component: ConsultationView,
+      name: "UserConsultationDetail",
+      component: UserConsultationDetail,
     },
     {
       path: "/consultations/:id/edit",
@@ -145,10 +187,16 @@ const router = createRouter({
       component: LaboratoryList,
     },
     {
+      path: "/laboratories/profile/:id",
+      name: "LaboratoryProfile",
+      component: LaboratoryProfilePage,
+      meta: { laboratory: true }
+    },
+    {
       path: "/laboratories/:id",
       name: "LaboratoryHome",
       component: LaboratoryHome,
-      meta: { laboratory: true }
+      meta: { laboratory: true },
     },
     {
       path: "/laboratories/:id/edit",
@@ -179,8 +227,7 @@ const router = createRouter({
       path: "/lab-requests/create",
       name: "CreateLabRequest",
       component: CreateLabRequest,
-      meta: { laboratory: true }
-
+      meta: { laboratory: true },
     },
     {
       path: "/lab-results",
@@ -305,6 +352,11 @@ const router = createRouter({
       component: DoctorHomePage,
       meta: { requiresAuth: true, role: "doctor" },
     },
+    {
+      path: "/video-test",
+      name: "VideoCallTest",
+      component: VideoCallTest,
+    },
   ],
 });
 
@@ -326,11 +378,18 @@ router.beforeEach(async (to, from) => {
   if (authStore.user?.role === "doctor" && to.meta.home) {
     return { name: "DoctorHome" };
   }
-  if (authStore.user?.status === "pending" && to.name !== "LaboratoryStatusPage") {
+  if (
+    authStore.user?.status === "pending" &&
+    to.name !== "LaboratoryStatusPage"
+  ) {
     return { name: "LaboratoryStatusPage" };
   }
 
-  if (authStore.user?.status === "active" && authStore.user.tests && !to.meta.laboratory) {
+  if (
+    authStore.user?.status === "active" &&
+    authStore.user.tests &&
+    !to.meta.laboratory
+  ) {
     return { name: "LaboratoryHome", params: { id: authStore.user.id } };
   }
 

@@ -113,6 +113,9 @@ class AuthController extends Controller
                 'payment' => 'required|numeric|min:0',
                 'location' => 'required|json', // Expect JSON with lat, lng
                 'certificate_path' => 'required|url',
+                'profile_picture' => 'required|url',
+                'languages' => 'nullable|json',
+                'overview' => 'required|string',
             ]);
 
             // Parse location JSON
@@ -123,8 +126,14 @@ class AuthController extends Controller
                 ]);
             }
 
+            // Parse languages JSON (if present)
+            $languages = null;
+            if (isset($validated['languages'])) {
+                $languages = json_decode($validated['languages'], true);
+            }
+
             // Use a transaction to ensure atomicity
-            return DB::transaction(function () use ($validated, $locationData) {
+            return DB::transaction(function () use ($validated, $locationData, $languages) {
                 // Create User
                 $user = User::create([
                     'name' => $validated['name'],
@@ -134,6 +143,7 @@ class AuthController extends Controller
                     'city' => $validated['city'],
                     'region' => $validated['region'],
                     'gender' => $validated['gender'],
+                    'profile_picture' => $validated['profile_picture'],
                     'birth_date' => $validated['birth_date'],
                     'role' => 'doctor',
                 ]);
@@ -155,6 +165,9 @@ class AuthController extends Controller
                         'lng' => $locationData['lng'],
                     ]), // Store only lat and lng
                     'certificate_path' => $validated['certificate_path'],
+                    'languages' => $languages ? json_encode($languages) : null,
+                    'overview' => $validated['overview'],
+                    'available' => false,
                 ]);
 
                 // Generate an API token

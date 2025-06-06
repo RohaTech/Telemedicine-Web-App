@@ -10,7 +10,7 @@ const authStore = useAuthStore();
 <template>
   <div class="border-b py-4">
     <div class="flex w-full items-center justify-between bg-white px-10">
-      <Logo class="w-[150px] fill-first-accent" />
+      <Logo class="w-[160px] fill-first-accent" />
       <ul class="flex items-center gap-x-12 text-lg">
         <RouterLink
           v-if="authStore.user"
@@ -25,12 +25,12 @@ const authStore = useAuthStore();
           >Home</RouterLink
         >
         <RouterLink
-          :to="{ name: 'Consultations' }"
+          :to="{ name: 'UserConsultation' }"
           class="cursor-pointer hover:font-semibold"
           >Consultations</RouterLink
         >
         <RouterLink
-          :to="{ name: 'Appointments' }"
+          :to="{ name: 'UserAppointment' }"
           class="cursor-pointer hover:font-semibold"
           >Appointments</RouterLink
         >

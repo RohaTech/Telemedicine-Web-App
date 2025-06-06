@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Doctor;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -16,6 +17,7 @@ use App\Models\Notification;
 use App\Models\User;
 use App\Models\Laboratory;
 use App\Models\LaboratoryAuth;
+
 class DoctorController extends Controller
 {
     public function index()
@@ -25,6 +27,30 @@ class DoctorController extends Controller
             return response()->json($doctors, 200);
         } catch (Exception $e) {
             return response()->json(['error' => 'Failed to fetch doctors', 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function getDoctorsByCategory($category)
+    {
+        // Convert slug to name
+        $specialty = ucwords(str_replace('-', ' ', $category));
+        try {
+            $doctors = Doctor::with('user')
+                ->where('specialty', $specialty)
+                ->where('status', 'active')
+                ->get();
+            return response()->json($doctors, 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to fetch doctors by category', 'message' => $e->getMessage()], 500);
+        }
+    }
+    public function getActiveDoctors()
+    {
+        try {
+            $doctors = Doctor::with('user')->where('status', 'active')->get();
+            return response()->json($doctors, 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to fetch active doctors', 'message' => $e->getMessage()], 500);
         }
     }
 
@@ -119,8 +145,8 @@ class DoctorController extends Controller
             $doctor->update($validatedData);
             // dd($doctor->user->email);
             try {
-            Mail::to($doctor->user->email)->send(new DoctorStatusUpdated($doctor->user, $validatedData['status']));
-            Log::info('Email sent successfully', ['user_id' => $doctor->id]);
+                Mail::to($doctor->user->email)->send(new DoctorStatusUpdated($doctor->user, $validatedData['status']));
+                Log::info('Email sent successfully', ['user_id' => $doctor->id]);
             } catch (\Exception $e) {
                 Log::error('Failed to send email', ['error' => $e->getMessage()]);
                 return response()->json([
