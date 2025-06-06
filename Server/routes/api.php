@@ -15,6 +15,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Services\TwilioService;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -64,3 +65,14 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::post('/laboratories/login', [LaboratoryAuthController::class, 'login']);
 Route::post('/laboratories/register', [LaboratoryAuthController::class, 'register']);
 Route::post('/laboratories/logout', [LaboratoryAuthController::class, 'logout'])->middleware('auth:sanctum');
+
+
+Route::post('/send-sms', function (Request $request) {
+    $request->validate([
+        'phone_number' => 'required|string',
+        'message' => 'required|string',
+    ]);
+    $twilio = new TwilioService();
+    $result = $twilio->sendSMS($request->phone_number, $request->message);
+    return response()->json($result);
+});
