@@ -97,7 +97,7 @@ class AuthController extends Controller
                 'name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:users',
                 'password' => 'required|string|min:8|confirmed',
-                'phone' => 'required|string|max:20|unique:users',
+                'phone' => ['required', 'string', 'regex:/^09\d{8}$/', 'unique:users'],
                 'city' => 'required|string|max:255',
                 'region' => 'required|string|max:255',
                 'gender' => 'nullable|in:male,female,other',
@@ -111,7 +111,7 @@ class AuthController extends Controller
                 'license_expiry_date' => 'required|date|after:license_issue_date',
                 'status' => 'nullable|in:pending,active,suspended,expired',
                 'payment' => 'required|numeric|min:0',
-                'location' => 'required|json', // Expect JSON with lat, lng
+                'location' => 'required|json',
                 'certificate_path' => 'required|url',
                 'profile_picture' => 'required|url',
                 'languages' => 'nullable|json',
@@ -203,8 +203,4 @@ class AuthController extends Controller
             ], 500);
         }
     }
-
-    /*
-        
-    */
 }

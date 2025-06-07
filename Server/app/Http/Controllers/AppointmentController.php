@@ -165,4 +165,44 @@ class AppointmentController extends Controller
             return response()->json(['error' => 'Failed to fetch patients', 'message' => $e->getMessage()], 500);
         }
     }
+
+    // Get appointments by status
+    public function getByStatus(Request $request, $status)
+    {
+        try {
+            $user = $request->user();
+            if (!$user) {
+                return response()->json(['error' => 'Unauthenticated'], 401);
+            }
+
+            // Validate status
+            $validStatuses = ['pending', 'confirmed', 'cancelled', 'waiting'];
+            if (!in_array($status, $validStatuses)) {
+                return response()->json(['error' => 'Invalid status'], 400);
+            }
+
+            // Get appointments based on user role
+            if ($user->role === 'doctor') {
+                $appointments = Appointment::with('patient')
+                    ->where('doctor_id', $user->id)
+                    ->where('status', $status)
+                    ->orderBy('appointment_date', 'asc')
+                    ->get();
+            } else {
+                // Patient view
+                $appointments = Appointment::with('doctor.doctor')
+                    ->where('patient_id', $user->id)
+                    ->where('status', $status)
+                    ->orderBy('appointment_date', 'asc')
+                    ->get();
+            }
+
+            return response()->json($appointments, 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => 'Failed to fetch appointments',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

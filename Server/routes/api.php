@@ -17,6 +17,7 @@ use App\Http\Controllers\VideoCallController;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Services\TwilioService;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -34,6 +35,7 @@ Route::get('/users', [UserController::class, 'index']); // For patient details
 Route::get('/users/{id}', [UserController::class, 'show']); // For patient details
 Route::get('/users/patient', [UserController::class, 'getAllCustomers'])->middleware(AdminMiddleware::class);
 Route::post('/register-doctor', [AuthController::class, 'registerDoctor']);
+Route::get('/appointments/status/{status}', [AppointmentController::class, 'getByStatus'])->middleware('auth:sanctum');
 Route::get('/doctor/patients', [AppointmentController::class, 'getPatientsWithAppointments'])->middleware('auth:sanctum');
 Route::get('/doctors/status-active', [DoctorController::class, 'getActiveDoctors']);
 Route::get('/appointments/user', [AppointmentController::class, 'getUserAppointments'])->middleware('auth:sanctum');
@@ -82,4 +84,23 @@ Route::post('/laboratories/logout', [LaboratoryAuthController::class, 'logout'])
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/video-call/request/{user}', [VideoCallController::class, 'requestVideoCall']);
     Route::post('/video-call/request/status/{user}', [VideoCallController::class, 'requestVideoCallStatus']);
+});
+
+
+Route::middleware('auth:sanctum')->post('/send-sms', function (Request $request) {
+    $request->validate([
+        'to' => 'required|string',
+        'message' => 'required|string',
+    ]);
+
+    try {
+        $twilio = new TwilioService();
+        $result = $twilio->sendSMS($request->to, $request->message);
+        return response()->json($result);
+    } catch (Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => 'Twilio service error: ' . $e->getMessage()
+        ], 500);
+    }
 });

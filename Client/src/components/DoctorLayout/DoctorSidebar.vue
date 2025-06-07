@@ -20,6 +20,7 @@ import {
 import LaboratoryIcon from "@/components/UI/Icons/LaboratoryIcon.vue";
 
 import { useSidebar } from "@/composables/useSidebar";
+import AppointmentsIcon from "../UI/Icons/AppointmentsIcon.vue";
 
 const route = useRoute();
 
@@ -39,6 +40,11 @@ const menuGroups = [
         icon: CalenderIcon,
         name: "Appointments",
         path: "DoctorAppointments",
+      },
+      {
+        icon: AppointmentsIcon,
+        name: "Waiting Appointments",
+        path: "DoctorWaitingAppointments",
       },
       {
         icon: UserCircleIcon,
@@ -154,7 +160,7 @@ const endTransition = (el) => {
 <template>
   <aside
     :class="[
-      'fixed left-0 top-0 z-99999 mt-16 flex h-screen flex-col border-r border-gray-200 bg-white px-5 text-gray-900 transition-all duration-300 ease-in-out lg:mt-0',
+      'fixed left-0 top-0 mt-16 flex h-screen flex-col border-r border-gray-200 bg-white px-5 text-gray-900 transition-all duration-300 ease-in-out lg:mt-0',
       {
         'lg:w-[290px]': isExpanded || isMobileOpen || isHovered,
         'lg:w-[90px]': !isExpanded && !isHovered,
