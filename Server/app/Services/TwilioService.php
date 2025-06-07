@@ -16,7 +16,6 @@ class TwilioService
     $token = config('services.twilio.token');
     $this->from = config('services.twilio.from');
 
-    // Validate credentials exist
     if (!$sid || !$token || !$this->from) {
       throw new Exception('Twilio credentials are not properly configured');
     }

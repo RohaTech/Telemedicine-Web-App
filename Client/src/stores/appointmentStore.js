@@ -13,6 +13,7 @@ export const useAppointmentStore = defineStore("appointmentStore", {
         status: "pending",
       },
       appointments: [],
+      appointmentsByStatus: [], // New property for filtered appointments
       patients: [],
       errors: {},
       isLoading: false,
@@ -344,6 +345,56 @@ export const useAppointmentStore = defineStore("appointmentStore", {
         status: "pending",
       };
       this.errors = {};
+    },
+
+    // New method to get appointments by status
+    async getAppointmentsByStatus(status) {
+      try {
+        this.isLoading = true;
+        const res = await fetch(`/api/appointments/status/${status}`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || data.errors) {
+          this.errors = data.errors || {
+            message: "Failed to fetch appointments",
+          };
+          return { success: false };
+        }
+
+        this.appointmentsByStatus = data;
+        this.errors = {};
+        return { success: true, data };
+      } catch (err) {
+        this.errors = {
+          message: err.message || "An unexpected error occurred",
+        };
+        return { success: false };
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    // Helper methods for specific statuses
+    async getPendingAppointments() {
+      return await this.getAppointmentsByStatus('pending');
+    },
+
+    async getConfirmedAppointments() {
+      return await this.getAppointmentsByStatus('confirmed');
+    },
+
+    async getCancelledAppointments() {
+      return await this.getAppointmentsByStatus('cancelled');
+    },
+
+    async getWaitingAppointments() {
+      return await this.getAppointmentsByStatus('waiting');
     },
   },
 });

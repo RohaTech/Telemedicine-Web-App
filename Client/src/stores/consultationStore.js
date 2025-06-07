@@ -15,31 +15,7 @@ export const useConsultationStore = defineStore("consultation", {
 
   actions: {
 
-    async getAllAppointments() {
-      try {
-        const res = await fetch("/api/consultations", {
-          headers: {
-            ...(localStorage.getItem("token") && {
-              authorization: `Bearer ${localStorage.getItem("token")}`,
-            }),
-          },
-        });
-        const data = await res.json();
-        if (!res.ok || data.errors) {
-          this.errors = data.errors || {
-            message: "Failed to fetch appointments",
-          };
-          return { success: false };
-        }
-        this.errors = {};
-        return { success: true, data };
-      } catch (err) {
-        this.errors = {
-          message: err.message || "An unexpected error occurred",
-        };
-        return { success: false };
-      }
-    },
+
 
     async getAConsultation(consultation) {
       try {

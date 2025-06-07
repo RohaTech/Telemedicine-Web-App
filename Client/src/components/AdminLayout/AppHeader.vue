@@ -1,4 +1,4 @@
-<script setup >
+<script setup>
 import { ref } from "vue";
 import SearchBar from "./SearchBar.vue";
 import NotificationMenu from "./NotificationMenu.vue";
@@ -31,9 +31,7 @@ const toggleApplicationMenu = () => {
 };
 </script>
 <template>
-  <header
-    class="z-99999 sticky top-0 flex w-full border-gray-200 bg-white lg:border-b"
-  >
+  <header class="sticky top-0 flex w-full border-gray-200 bg-white lg:border-b">
     <div
       class="flex grow flex-col items-center justify-between lg:flex-row lg:px-6"
     >
@@ -102,9 +100,9 @@ const toggleApplicationMenu = () => {
 
       <div
         :class="[isApplicationMenuOpen ? 'flex' : 'hidden']"
-        class="shadow-theme-md w-full items-center justify-between gap-4 px-5 py-4 lg:flex lg:justify-end lg:px-0 lg:shadow-none"
+        class="w-full items-center justify-between gap-4 px-5 py-4 shadow-theme-md lg:flex lg:justify-end lg:px-0 lg:shadow-none"
       >
-        <div class="2xsm:gap-3 flex items-center gap-2">
+        <div class="flex items-center gap-2 2xsm:gap-3">
           <div class=""></div>
           <NotificationMenu />
         </div>

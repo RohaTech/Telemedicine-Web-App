@@ -60,6 +60,7 @@ import UserConsultation from "@/views/User/UserConsultation.vue";
 import UserConsultationDetail from "@/views/User/UserConsultationDetail.vue";
 import VideoCallTest from "@/views/VideoCallTest.vue";
 import SmsTest from "@/views/User/SmsTest.vue";
+import DoctorWaitingAppointments from "@/views/Doctor/DoctorWaitingAppointments.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -118,11 +119,6 @@ const router = createRouter({
       component: CategoriesFilterPage,
     },
     {
-      path: "/doctorDetails/:id",
-      name: "UserDoctorDetail",
-      component: DoctorDetailPage,
-    },
-    {
       path: "/user/appointment",
       name: "UserAppointment",
       component: UserAppointment,
@@ -142,6 +138,7 @@ const router = createRouter({
       name: "AppointmentEdit",
       component: AppointmentEdit,
     },
+
     {
       path: "/appointments/create",
       name: "CreateAppointment",
@@ -156,6 +153,18 @@ const router = createRouter({
       path: "/doctor/appointments",
       name: "DoctorAppointments",
       component: DoctorAppointment,
+    },
+
+    {
+      path: "/doctor/appointments-waiting",
+      name: "DoctorWaitingAppointments",
+      component: DoctorWaitingAppointments,
+    },
+
+    {
+      path: "/doctorDetails/:id",
+      name: "UserDoctorDetail",
+      component: DoctorDetailPage,
     },
     {
       path: "/consultation/:appointmentId",
