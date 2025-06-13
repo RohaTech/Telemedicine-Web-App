@@ -159,12 +159,16 @@ onMounted(async () => {
                 </span>
 
                 <!-- Past consultation - Disabled state -->
-                <span
+                <RouterLink
+                  :to="{
+                    name: 'UserConsultationDetail',
+                    params: { id: consultation.id },
+                  }"
                   v-else
-                  class="rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-600"
+                  class="ark:bg-gray-800 ark:text-white rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                 >
-                  Consultation Ended
-                </span>
+                  Go to Consultation
+                </RouterLink>
               </td>
             </tr>
           </tbody>

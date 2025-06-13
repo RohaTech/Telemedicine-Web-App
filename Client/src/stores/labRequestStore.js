@@ -61,7 +61,7 @@ export const useLabRequestStore = defineStore('labRequestStore', {
       }
     },
 
-    async createLabRequest() {
+    async createLabRequest(labRequest) {
       try {
         const res = await fetch('/api/lab-requests', {
           method: 'post',
@@ -71,7 +71,7 @@ export const useLabRequestStore = defineStore('labRequestStore', {
               authorization: `Bearer ${localStorage.getItem('token')}`,
             }),
           },
-          body: JSON.stringify(this.labRequest),
+          body: JSON.stringify(thislabRequest),
         });
 
         const data = await res.json();
@@ -83,7 +83,6 @@ export const useLabRequestStore = defineStore('labRequestStore', {
 
         this.errors = {};
         this.resetForm();
-        router.push({ name: 'LabRequests' });
         return { success: true, message: 'Lab request created successfully!' };
       } catch (err) {
         this.errors = { message: err.message || 'An unexpected error occurred' };

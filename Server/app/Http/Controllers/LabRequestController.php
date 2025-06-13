@@ -39,7 +39,7 @@ class LabRequestController extends Controller
         try {
             $validatedData = $request->validate([
                 'consultation_id' => 'required|exists:consultations,id',
-                'laboratory_id' => 'required|exists:laboratories,id',
+                'laboratory_id' => 'sometimes|exists:laboratories,id',
                 'test_type' => 'required|string|max:255',
                 'status' => 'required|in:pending,completed,cancelled',
             ]);
