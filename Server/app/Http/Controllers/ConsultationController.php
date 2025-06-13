@@ -104,4 +104,45 @@ class ConsultationController extends Controller
             return response()->json(['error' => 'Failed to delete consultation', 'message' => $e->getMessage()], 500);
         }
     }
+
+    // Get consultations for a specific patient
+    public function getPatientConsultations($patientId)
+    {
+        try {
+            $consultations = Consultation::where('patient_id', $patientId)
+                ->with(['doctor.doctor', 'prescription', 'appointment'])
+                ->orderBy('consultation_date', 'desc')
+                ->get();
+
+            // Transform the data to include doctor specialty and other details
+            $transformedConsultations = $consultations->map(function ($consultation) {
+                return [
+                    'id' => $consultation->id,
+                    'date' => $consultation->consultation_date,
+                    'notes' => $consultation->notes,
+                    'doctor_name' => $consultation->doctor->name ?? 'Unknown Doctor',
+                    'doctor_specialty' => optional($consultation->doctor->doctor)->specialty ?? 'General Practice',
+                    'appointment_type' => optional($consultation->appointment)->appointment_type ?? 'General Consultation',
+                    'prescription' => $consultation->prescription ? [
+                        'medications' => $consultation->prescription->medications ?? [],
+                        'instructions' => $consultation->prescription->instructions ?? ''
+                    ] : null,
+                    'created_at' => $consultation->created_at,
+                    'updated_at' => $consultation->updated_at
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'data' => $transformedConsultations,
+                'count' => $transformedConsultations->count()
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Failed to fetch patient consultations', 
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
