@@ -9,3 +9,6 @@ use Illuminate\Support\Facades\Broadcast;
 Broadcast::channel('video-call.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
+
+// Note: consultation.{consultationId} is a public channel
+// No authentication needed for public channels

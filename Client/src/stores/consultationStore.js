@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { useAppointmentStore } from "./appointmentStore";
+import echo from "@/plugins/echo";
 
 export const useConsultationStore = defineStore("consultation", {
   state: () => ({
@@ -15,6 +16,9 @@ export const useConsultationStore = defineStore("consultation", {
     patientConsultations: [],
     isLoadingConsultations: false,
     consultationsError: "",
+    // Real-time chat
+    chatChannel: null,
+    isConnectedToChat: false,
   }),
 
   actions: {
@@ -249,9 +253,7 @@ export const useConsultationStore = defineStore("consultation", {
       } finally {
         this.isSavingNotes = false;
       }
-    },
-
-    async sendMessage(text) {
+    },    async sendMessage(text, sender = "Doctor") {
       if (!this.consultation?.id || !text.trim()) return;
       this.isSendingMessage = true;
       try {
@@ -263,7 +265,7 @@ export const useConsultationStore = defineStore("consultation", {
           },
           body: JSON.stringify({
             consultation_id: this.consultation.id,
-            sender: "Doctor",
+            sender: sender,
             text,
             timestamp: new Date().toISOString(),
           }),
@@ -271,9 +273,10 @@ export const useConsultationStore = defineStore("consultation", {
         if (!response.ok) {
           throw new Error("Failed to send message");
         }
-        const message = await response.json();
-        this.chatMessages.push(message);
+        // Don't add message locally - it will come through the real-time channel
+        console.log("Message sent successfully as", sender);
       } catch (error) {
+        console.error("Error sending message:", error);
         this.errorMessage = "Failed to send message. Please try again.";
       } finally {
         this.isSendingMessage = false;
@@ -392,11 +395,66 @@ export const useConsultationStore = defineStore("consultation", {
             weight: "190 lbs"
           }
         }
-      ];
-      console.log('Loaded sample consultation data from store:', this.patientConsultations);
+      ];      console.log('Loaded sample consultation data from store:', this.patientConsultations);
+    },
+
+    // Real-time chat methods
+    connectToChat(consultationId) {
+      if (this.chatChannel) {
+        this.disconnectFromChat();
+      }
+
+      try {
+        console.log('Connecting to chat channel for consultation:', consultationId);
+        this.chatChannel = echo.channel(`consultation.${consultationId}`);
+        
+        this.chatChannel.listen('.message', (data) => {
+          console.log('Received real-time message:', data);
+          // Add the message to the chat if it's not already there
+          const messageExists = this.chatMessages.find(
+            msg => msg.timestamp === data.timestamp && msg.sender === data.sender
+          );
+          
+          if (!messageExists) {
+            this.chatMessages.push({
+              text: data.text,
+              sender: data.sender,
+              timestamp: data.timestamp,
+              consultation_id: data.consultation_id
+            });
+          }
+        });
+
+        this.chatChannel.subscribed(() => {
+          console.log('Successfully subscribed to consultation chat channel');
+          this.isConnectedToChat = true;
+        });
+
+        this.chatChannel.error((error) => {
+          console.error('Chat channel error:', error);
+          this.isConnectedToChat = false;
+        });
+
+      } catch (error) {
+        console.error('Error connecting to chat:', error);
+        this.isConnectedToChat = false;
+      }
+    },
+
+    disconnectFromChat() {
+      if (this.chatChannel) {
+        console.log('Disconnecting from chat channel');
+        this.chatChannel.stopListening('.message');
+        echo.leaveChannel(this.chatChannel.name);
+        this.chatChannel = null;
+        this.isConnectedToChat = false;
+      }
     },
 
     clearData() {
+      // Disconnect from real-time chat
+      this.disconnectFromChat();
+      
       this.appointment = null;
       this.patient = null;
       this.consultation = null;
