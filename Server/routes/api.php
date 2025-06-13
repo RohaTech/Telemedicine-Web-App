@@ -15,6 +15,8 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\VideoCallController;
 use App\Http\Middleware\AdminMiddleware;
+use App\Models\Consultation;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Services\TwilioService;
