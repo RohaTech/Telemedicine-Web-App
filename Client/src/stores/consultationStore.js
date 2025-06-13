@@ -253,7 +253,7 @@ export const useConsultationStore = defineStore("consultation", {
       } finally {
         this.isSavingNotes = false;
       }
-    },    async sendMessage(text) {
+    },    async sendMessage(text, sender = "Doctor") {
       if (!this.consultation?.id || !text.trim()) return;
       this.isSendingMessage = true;
       try {
@@ -265,7 +265,7 @@ export const useConsultationStore = defineStore("consultation", {
           },
           body: JSON.stringify({
             consultation_id: this.consultation.id,
-            sender: "Doctor",
+            sender: sender,
             text,
             timestamp: new Date().toISOString(),
           }),
@@ -274,7 +274,7 @@ export const useConsultationStore = defineStore("consultation", {
           throw new Error("Failed to send message");
         }
         // Don't add message locally - it will come through the real-time channel
-        console.log("Message sent successfully");
+        console.log("Message sent successfully as", sender);
       } catch (error) {
         console.error("Error sending message:", error);
         this.errorMessage = "Failed to send message. Please try again.";
