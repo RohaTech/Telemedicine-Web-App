@@ -35,9 +35,9 @@ const authStore = useAuthStore();
           >Appointments</RouterLink
         >
         <RouterLink
-          :to="{ name: 'Welcome' }"
+          :to="{ name: 'UserLabRequests' }"
           class="cursor-pointer hover:font-semibold"
-          >Reservation</RouterLink
+          >Lab Requests</RouterLink
         >
         <RouterLink
           :to="{ name: 'Welcome' }"

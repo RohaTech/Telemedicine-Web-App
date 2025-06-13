@@ -31,7 +31,7 @@ const menuGroups = [
     items: [
       {
         icon: GridIcon,
-        name: "Home",
+        name: "Lab Requests",
         path: "Home",
       },
       {
@@ -39,69 +39,12 @@ const menuGroups = [
         name: "Customers",
         path: "AdminHome",
       },
-      {
-        icon: UserCircleIcon,
-        name: "Doctors",
-        path: "AdminDoctors",
-      },
-      {
-        icon: LaboratoryIcon,
-        name: "Laboratories",
-        path: "AdminLaboratories",
-      },
 
-      {
-        name: "Forms",
-        icon: ListIcon,
-        subItems: [{ name: "Form Elements", path: "AdminHome", pro: false }],
-      },
-      {
-        name: "Tables",
-        icon: TableIcon,
-        subItems: [{ name: "Basic Tables", path: "AdminHome", pro: false }],
-      },
-      {
-        name: "Pages",
-        icon: PageIcon,
-        subItems: [
-          { name: "Black Page", path: "AdminHome", pro: false },
-          { name: "404 Page", path: "/error-404", pro: false },
-        ],
-      },
-    ],
-  },
-  {
-    title: "Others",
-    items: [
-      {
-        icon: PieChartIcon,
-        name: "Charts",
-        subItems: [
-          { name: "Line Chart", path: "/line-chart", pro: false },
-          { name: "Bar Chart", path: "/bar-chart", pro: false },
-        ],
-      },
-      {
-        icon: CalenderIcon,
-        name: "Ui Elements",
-        subItems: [
-          { name: "Alerts", path: "/alerts", pro: false },
-          { name: "Avatars", path: "/avatars", pro: false },
-          { name: "Badge", path: "/badge", pro: false },
-          { name: "Buttons", path: "/buttons", pro: false },
-          { name: "Images", path: "/images", pro: false },
-          { name: "Videos", path: "/videos", pro: false },
-        ],
-      },
-      {
-        icon: PlugInIcon,
-        name: "Authentication",
-        subItems: [
-          { name: "Signin", path: "/signin", pro: false },
-          { name: "Signup", path: "/signup", pro: false },
-        ],
-      },
-      // ... Add other menu items here
+      // {
+      //   icon: LaboratoryIcon,
+      //   name: "Lab Result",
+      //   path: "LabResult",
+      // },
     ],
   },
 ];

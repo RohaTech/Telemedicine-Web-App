@@ -61,6 +61,9 @@ import UserConsultationDetail from "@/views/User/UserConsultationDetail.vue";
 import VideoCallTest from "@/views/VideoCallTest.vue";
 import SmsTest from "@/views/User/SmsTest.vue";
 import DoctorWaitingAppointments from "@/views/Doctor/DoctorWaitingAppointments.vue";
+import LaboratorySuspend from "@/views/Laboratory/LaboratorySuspend.vue";
+import LabResult from "@/views/Laboratory/LabResult.vue";
+import UserLabRequest from "@/views/User/UserLabRequest.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -127,6 +130,11 @@ const router = createRouter({
       path: "/user/consultation",
       name: "UserConsultation",
       component: UserConsultation,
+    },
+    {
+      path: "/user/lab-requests",
+      name: "UserLabRequests",
+      component: UserLabRequest,
     },
     {
       path: "/appointments",
@@ -209,6 +217,13 @@ const router = createRouter({
       meta: { laboratory: true },
     },
     {
+      path: "/lab-result",
+      name: "LabResult",
+      component: LabResult,
+      meta: { laboratory: true },
+
+    },
+    {
       path: "/laboratories/:id/edit",
       name: "LaboratoryEdit",
       component: LaboratoryEdit,
@@ -218,6 +233,7 @@ const router = createRouter({
       name: "CreateLaboratory",
       component: CreateLaboratory,
     },
+
     {
       path: "/lab-requests",
       name: "LabRequests",
@@ -270,6 +286,11 @@ const router = createRouter({
       name: "LaboratoryStatusPage",
       component: LaboratoryStatusPage,
       meta: { laboratoryStatus: true },
+    },
+    {
+      path: "/laboratory/suspend",
+      name: "LaboratorySuspend",
+      component: LaboratorySuspend,
     },
     {
       path: "/laboratory/register",
@@ -401,12 +422,25 @@ router.beforeEach(async (to, from) => {
   }
 
   if (
+    authStore.user?.status === "suspended" &&
+    to.name !== "LaboratorySuspend"
+  ) {
+    return { name: "LaboratorySuspend" };
+  }
+
+
+
+
+  if (
     authStore.user?.status === "active" &&
     authStore.user.tests &&
     !to.meta.laboratory
   ) {
     return { name: "LaboratoryHome", params: { id: authStore.user.id } };
   }
+
+
+
 
   if (authStore.user && to.meta.welcome) {
     return { name: "Home" };
