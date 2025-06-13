@@ -13,8 +13,15 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias(['is_laboratory', \App\Http\Middleware\IsLaboratory::class]);
-        // You can also register global middleware here if needed
-        // $middleware->append(\App\Http\Middleware\YourGlobalMiddleware::class);
+
+        // Add CORS handling
+        $middleware->web(append: [
+            \Illuminate\Http\Middleware\HandleCors::class,
+        ]);
+
+        $middleware->api(append: [
+            \Illuminate\Http\Middleware\HandleCors::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

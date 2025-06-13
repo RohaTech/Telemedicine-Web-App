@@ -42,9 +42,10 @@ Route::get('/appointments/user', [AppointmentController::class, 'getUserAppointm
 Route::apiResource('/appointments', AppointmentController::class);
 Route::get('/doctor/appointments', [AppointmentController::class, 'getDoctorAppointments'])->middleware('auth:sanctum');
 Route::apiResource('/consultations', ConsultationController::class);
+Route::get('/patients/{patientId}/consultations', [ConsultationController::class, 'getPatientConsultations'])->middleware('auth:sanctum');
 Route::get('/doctors/categories/{category}', [DoctorController::class, 'getDoctorsByCategory']);
 Route::apiResource('/doctors', DoctorController::class);
-Route::put('/doctors/update-status/{doctor}', [DoctorController::class, 'updateStatus'])->middleware(AdminMiddleware::class);
+Route::put('/doctors/update-status/{doctor}', [DoctorController::class, 'updateStatus']);
 Route::get('/doctor-dashboard', [DoctorController::class, 'dashboard'])->middleware('auth:sanctum');
 
 Route::apiResource('/laboratories', LaboratoryController::class);
@@ -103,4 +104,36 @@ Route::middleware('auth:sanctum')->post('/send-sms', function (Request $request)
             'error' => 'Twilio service error: ' . $e->getMessage()
         ], 500);
     }
+});
+
+// Test routes for debugging consultation functionality
+Route::get('/test-consultations/{patientId}', function ($patientId) {
+    try {
+        $consultations = Consultation::where('patient_id', $patientId)
+            ->with(['doctor.doctor', 'prescription', 'appointment'])
+            ->orderBy('consultation_date', 'desc')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'patient_id' => $patientId,
+            'consultations_count' => $consultations->count(),
+            'consultations' => $consultations,
+            'raw_data' => $consultations->toArray()
+        ]);
+    } catch (Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage(),
+            'patient_id' => $patientId
+        ]);
+    }
+});
+
+Route::get('/test-patients', function () {
+    $patients = User::where('role', 'patient')->get(['id', 'name', 'email']);
+    return response()->json([
+        'success' => true,
+        'patients' => $patients
+    ]);
 });
