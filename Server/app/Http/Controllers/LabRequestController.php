@@ -39,13 +39,30 @@ class LabRequestController extends Controller
         try {
             $validatedData = $request->validate([
                 'consultation_id' => 'required|exists:consultations,id',
-                'laboratory_id' => 'required|exists:laboratories,id',
+                'doctor_id' => 'nullable|exists:users,id',
+                'patient_id' => 'nullable|exists:users,id',
+                'laboratory_id' => 'nullable|exists:laboratories,id',
                 'test_type' => 'required|string|max:255',
-                'status' => 'required|in:pending,completed,cancelled',
+                'status' => 'nullable|in:pending,completed,cancelled',
             ]);
 
+            // Set default status if not provided
+            if (!isset($validatedData['status'])) {
+                $validatedData['status'] = 'pending';
+            }
+
             $labRequest = LabRequest::create($validatedData);
+            
+            // Load relationships for response
+            $labRequest->load(['consultation', 'consultation.patient', 'consultation.doctor', 'laboratory']);
+            
             return response()->json($labRequest, 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'error' => 'Validation failed',
+                'message' => 'The given data was invalid.',
+                'errors' => $e->errors()
+            ], 422);
         } catch (Exception $e) {
             return response()->json(['error' => 'Failed to create lab request', 'message' => $e->getMessage()], 500);
         }

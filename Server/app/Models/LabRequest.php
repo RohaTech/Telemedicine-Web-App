@@ -11,8 +11,8 @@ class LabRequest extends Model
 
     protected $fillable = [
         'consultation_id',
-        'doctor_id',
-        'patient_id',
+        // 'doctor_id',
+        // 'patient_id',
         'laboratory_id',
         'test_type',
         'status',
