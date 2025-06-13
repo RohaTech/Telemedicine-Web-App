@@ -43,6 +43,8 @@ Route::apiResource('/appointments', AppointmentController::class);
 Route::get('/doctor/appointments', [AppointmentController::class, 'getDoctorAppointments'])->middleware('auth:sanctum');
 Route::apiResource('/consultations', ConsultationController::class);
 Route::get('/patients/{patientId}/consultations', [ConsultationController::class, 'getPatientConsultations'])->middleware('auth:sanctum');
+Route::get('/consultations/appointment/{appointmentId}', [ConsultationController::class, 'getByAppointmentId'])->middleware('auth:sanctum');
+Route::post('/consultations/create-for-appointment', [ConsultationController::class, 'createForAppointment'])->middleware('auth:sanctum');
 Route::get('/doctors/categories/{category}', [DoctorController::class, 'getDoctorsByCategory']);
 Route::apiResource('/doctors', DoctorController::class);
 Route::put('/doctors/update-status/{doctor}', [DoctorController::class, 'updateStatus']);

@@ -145,4 +145,72 @@ class ConsultationController extends Controller
             ], 500);
         }
     }
+
+    // Get consultation by appointment ID
+    public function getByAppointmentId($appointmentId)
+    {
+        try {
+            $consultation = Consultation::where('appointment_id', $appointmentId)
+                ->with(['doctor.doctor', 'prescription', 'appointment'])
+                ->first();
+
+            if (!$consultation) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Consultation not found for this appointment'
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $consultation
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Failed to fetch consultation',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // Create consultation for appointment
+    public function createForAppointment(Request $request)
+    {
+        try {
+            $validatedData = $request->validate([
+                'appointment_id' => 'required|exists:appointments,id',
+                'patient_id' => 'required|exists:users,id',
+                'doctor_id' => 'required|exists:users,id',
+                'notes' => 'nullable|string',
+            ]);
+
+            // Check if consultation already exists for this appointment
+            $existingConsultation = Consultation::where('appointment_id', $validatedData['appointment_id'])->first();
+            if ($existingConsultation) {
+                return response()->json([
+                    'success' => true,
+                    'data' => $existingConsultation,
+                    'message' => 'Consultation already exists for this appointment'
+                ], 200);
+            }
+
+            // Set consultation date to current time
+            $validatedData['consultation_date'] = now();
+
+            $consultation = Consultation::create($validatedData);
+            $consultation->load(['doctor.doctor', 'prescription', 'appointment']);
+
+            return response()->json([
+                'success' => true,
+                'data' => $consultation
+            ], 201);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Failed to create consultation',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

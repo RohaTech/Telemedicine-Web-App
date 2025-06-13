@@ -100,11 +100,9 @@ export const useConsultationStore = defineStore("consultation", {
         if (!patientResponse.ok) {
           throw new Error("Failed to fetch patient data");
         }
-        this.patient = await patientResponse.json();
-
-        // Fetch or create consultation
+        this.patient = await patientResponse.json();        // Fetch or create consultation
         const consultationResponse = await fetch(
-          `/api/consultations?appointment_id=${appointmentId}`,
+          `/api/consultations/appointment/${appointmentId}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -112,10 +110,16 @@ export const useConsultationStore = defineStore("consultation", {
             },
           },
         );
-        if (consultationResponse.ok) {
-          this.consultation = await consultationResponse.json();
-        } else if (consultationResponse.status === 404) {
-          const createResponse = await fetch("/api/consultations", {
+        
+        const consultationData = await consultationResponse.json();
+        
+        if (consultationResponse.ok && consultationData.success) {
+          this.consultation = consultationData.data;
+          console.log('Found existing consultation:', this.consultation);
+        } else if (consultationResponse.status === 404 || !consultationData.success) {
+          // Create new consultation for this appointment
+          console.log('Creating new consultation for appointment:', appointmentId);
+          const createResponse = await fetch("/api/consultations/create-for-appointment", {
             method: "POST",
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -125,14 +129,24 @@ export const useConsultationStore = defineStore("consultation", {
               appointment_id: appointmentId,
               patient_id: this.appointment.patient_id,
               doctor_id: this.appointment.doctor_id,
-              consultation_date: new Date().toISOString(),
               notes: "",
             }),
           });
+          
           if (!createResponse.ok) {
-            throw new Error("Failed to create consultation");
+            const errorData = await createResponse.json().catch(() => ({}));
+            throw new Error(errorData.message || "Failed to create consultation");
           }
-          this.consultation = await createResponse.json();
+          
+          const createData = await createResponse.json();
+          if (createData.success) {
+            this.consultation = createData.data;
+            console.log('Created new consultation:', this.consultation);
+          } else {
+            throw new Error(createData.error || "Failed to create consultation");
+          }
+        } else {
+          throw new Error(consultationData.message || "Failed to fetch consultation");
         }
 
         // Fetch chat messages
@@ -143,10 +157,13 @@ export const useConsultationStore = defineStore("consultation", {
       } finally {
         this.isLoading = false;
       }
-    },
-
-    async fetchChatMessages() {
-      if (!this.consultation?.id) return;
+    },    async fetchChatMessages() {
+      // Don't fetch if no consultation is available
+      if (!this.consultation?.id) {
+        console.log('No consultation ID available for fetching chat messages');
+        return;
+      }
+      
       try {
         const response = await fetch(
           `/api/chats/consultation/${this.consultation.id}`,
@@ -157,23 +174,50 @@ export const useConsultationStore = defineStore("consultation", {
             },
           },
         );
+        
         if (!response.ok) {
-          throw new Error("Failed to fetch chat messages");
+          // Handle different response codes differently
+          if (response.status === 404) {
+            // No messages found yet - this is normal, not an error
+            console.log('No chat messages found for consultation:', this.consultation.id);
+            this.chatMessages = [];
+            return;
+          } else if (response.status === 401) {
+            throw new Error("Authentication failed - please log in again");
+          } else {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+          }
         }
-        this.chatMessages = await response.json();
+        
+        const messages = await response.json();
+        this.chatMessages = Array.isArray(messages) ? messages : [];
+        console.log(`Fetched ${this.chatMessages.length} chat messages`);
       } catch (error) {
         console.error("Error fetching chat messages:", error);
-        this.errorMessage = error.message || "Failed to fetch chat messages";
+        
+        // Only set error message for authentication or critical errors
+        // Don't show error for normal 404 or network issues during polling
+        if (error.message.includes('Authentication failed')) {
+          this.errorMessage = error.message;
+        } else {
+          // For non-critical errors, just log them but don't show to user
+          console.warn('Chat messages fetch failed (will retry):', error.message);
+        }
       }
-    },    async saveNotes(notes) {
+    },async saveNotes(notes) {
       if (!this.consultation?.id) {
-        return { success: false, error: "No consultation found" };
+        console.error('No consultation found to save notes to');
+        return { success: false, error: "No consultation found. Please refresh the page and try again." };
       }
       
       this.isSavingNotes = true;
       this.errorMessage = "";
       
       try {
+        console.log('Saving notes for consultation ID:', this.consultation.id);
+        console.log('Notes content:', notes);
+        
         const response = await fetch(
           `/api/consultations/${this.consultation.id}`,
           {
@@ -192,9 +236,11 @@ export const useConsultationStore = defineStore("consultation", {
         }
         
         const updatedConsultation = await response.json();
+        console.log('Notes saved successfully, updated consultation:', updatedConsultation);
+        
+        // Update the local consultation with the saved notes
         this.consultation.notes = notes;
         
-        console.log('Notes saved successfully');
         return { success: true, data: updatedConsultation };
       } catch (error) {
         console.error("Error saving notes:", error);
