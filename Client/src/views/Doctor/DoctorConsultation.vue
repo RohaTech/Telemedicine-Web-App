@@ -2,7 +2,7 @@
   <DoctorLayout>
     <div class="min-h-screen bg-gray-50">
       <!-- Header -->
-      <div class="flex p-4 border-b border-gray-200">
+      <div class="flex border-b border-gray-200 p-4">
         <h2 class="text-2xl font-semibold text-gray-900">
           Consultation with {{ consultationStore.patient?.name || "Patient" }}
         </h2>
@@ -65,51 +65,94 @@
               <div class="space-y-2 text-sm">
                 <div class="flex justify-between">
                   <span class="text-gray-600">Email:</span>
-                  <span class="font-medium">{{ consultationStore.patient?.email || "N/A" }}</span>
+                  <span class="font-medium">{{
+                    consultationStore.patient?.email || "N/A"
+                  }}</span>
                 </div>
                 <div class="flex justify-between">
                   <span class="text-gray-600">Phone:</span>
-                  <span class="font-medium">{{ consultationStore.patient?.phone || "N/A" }}</span>
+                  <span class="font-medium">{{
+                    consultationStore.patient?.phone || "N/A"
+                  }}</span>
                 </div>
               </div>
             </div>
 
             <!-- Patient Vitals -->
-                  <!-- Previous Consultations -->
+            <!-- Previous Consultations -->
             <div class="border-b border-gray-200 p-4">
-              <h3 class="mb-3 font-semibold text-gray-900">Previous Consultations</h3>
-              <div class="space-y-3">                <!-- Loading State -->
-                <div v-if="consultationStore.isLoadingConsultations" class="text-center py-4">
-                  <div class="inline-block h-6 w-6 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"></div>
-                  <p class="text-sm text-gray-600 mt-2">Loading consultations...</p>
+              <h3 class="mb-3 font-semibold text-gray-900">
+                Previous Consultations
+              </h3>
+              <div class="space-y-3">
+                <!-- Loading State -->
+                <div
+                  v-if="consultationStore.isLoadingConsultations"
+                  class="py-4 text-center"
+                >
+                  <div
+                    class="inline-block h-6 w-6 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"
+                  ></div>
+                  <p class="mt-2 text-sm text-gray-600">
+                    Loading consultations...
+                  </p>
                 </div>
-                
+
                 <!-- No consultations -->
-                <div v-else-if="consultationStore.patientConsultations.length === 0" class="text-sm text-gray-600">
+                <div
+                  v-else-if="
+                    consultationStore.patientConsultations.length === 0
+                  "
+                  class="text-sm text-gray-600"
+                >
                   No previous consultations found
                 </div>
-                
+
                 <!-- Consultations list -->
                 <div
                   v-else
                   v-for="consultation in consultationStore.patientConsultations"
                   :key="consultation.id"
                   @click="openConsultationModal(consultation)"
-                  class="cursor-pointer rounded-lg border border-gray-200 bg-gray-50 p-3 transition-colors hover:bg-gray-100 hover:border-gray-300"
+                  class="cursor-pointer rounded-lg border border-gray-200 bg-gray-50 p-3 transition-colors hover:border-gray-300 hover:bg-gray-100"
                 >
-                  <div class="flex items-center justify-between mb-2">
-                    <div class="text-xs font-medium text-blue-600">{{ consultation.specialty }}</div>
-                    <div class="text-xs text-gray-500">{{ consultation.date }}</div>
+                  <div class="mb-2 flex items-center justify-between">
+                    <div class="text-xs font-medium text-blue-600">
+                      {{ consultation.specialty }}
+                    </div>
+                    <div class="text-xs text-gray-500">
+                      {{ consultation.date }}
+                    </div>
                   </div>
-                  <div class="text-sm font-medium text-gray-900 mb-1">{{ consultation.type }}</div>
-                  <div class="text-xs text-gray-600 mb-2">{{ consultation.doctorName }}</div>
-                  <div class="text-xs text-gray-600 line-clamp-2">
-                    {{ consultation.notes.substring(0, 100) }}{{ consultation.notes.length > 100 ? '...' : '' }}
+                  <div class="mb-1 text-sm font-medium text-gray-900">
+                    {{ consultation.type }}
+                  </div>
+                  <div class="mb-2 text-xs text-gray-600">
+                    {{ consultation.doctorName }}
+                  </div>
+                  <div class="line-clamp-2 text-xs text-gray-600">
+                    {{ consultation.notes.substring(0, 100)
+                    }}{{ consultation.notes.length > 100 ? "..." : "" }}
                   </div>
                   <div class="mt-2 flex items-center text-xs text-blue-500">
-                    <svg class="h-3 w-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    <svg
+                      class="mr-1 h-3 w-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                      />
                     </svg>
                     Click to view details
                   </div>
@@ -118,14 +161,16 @@
             </div>
 
             <!-- Allergies -->
-            
           </div>
         </div>
 
         <!-- Main Content Area -->
         <div class="flex-1">
           <!-- Loading State -->
-          <div v-if="consultationStore.isLoading" class="flex h-full items-center justify-center">
+          <div
+            v-if="consultationStore.isLoading"
+            class="flex h-full items-center justify-center"
+          >
             <div class="text-center">
               <div
                 class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"
@@ -150,22 +195,43 @@
             <div class="relative flex-1 bg-gray-50 p-4">
               <div class="flex h-full flex-col space-y-4">
                 <!-- Video Call Card -->
-                <div class="flex-1 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+                <div
+                  class="flex-1 rounded-lg border border-gray-200 bg-white p-6 shadow-sm"
+                >
                   <h3 class="mb-4 text-lg font-semibold text-gray-800">
                     Video Consultation
                   </h3>
-                  
+
                   <!-- Pre-Call State -->
-                  <div v-if="!isCallActive" class="flex h-[calc(100%-4rem)] flex-col items-center justify-center">
+                  <div
+                    v-if="!isCallActive"
+                    class="flex h-[calc(100%-4rem)] flex-col items-center justify-center"
+                  >
                     <div class="mb-6 py-6 text-center">
-                      <div class="mx-auto mb-4 h-24 w-24 rounded-full bg-blue-100 p-6">
-                        <svg class="h-full w-full text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                            d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      <div
+                        class="mx-auto mb-4 h-24 w-24 rounded-full bg-blue-100 p-6"
+                      >
+                        <svg
+                          class="h-full w-full text-blue-500"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                          />
                         </svg>
                       </div>
-                      <h3 class="text-lg font-medium text-gray-900">Ready to start the consultation?</h3>
-                      <p class="mt-1 text-gray-500">Click the button below to initiate the video call with your patient</p>
+                      <h3 class="text-lg font-medium text-gray-900">
+                        Ready to start the consultation?
+                      </h3>
+                      <p class="mt-1 text-gray-500">
+                        Click the button below to initiate the video call with
+                        your patient
+                      </p>
                       <button
                         @click="startCall"
                         class="mt-6 rounded-lg bg-second-accent px-6 py-3 text-center font-medium text-white hover:bg-second-accent/90 focus:outline-none focus:ring-2 focus:ring-second-accent focus:ring-offset-2"
@@ -174,62 +240,129 @@
                       </button>
                     </div>
                   </div>
-                  
+
                   <!-- Active Call State -->
-                  <div v-else class="relative aspect-video h-[calc(100%-4rem)] overflow-hidden rounded-lg bg-gray-900">
+                  <div
+                    v-else
+                    class="relative aspect-video h-[calc(100%-4rem)] overflow-hidden rounded-lg bg-gray-900"
+                  >
                     <!-- Video Content -->
                     <div class="flex h-full w-full items-center justify-center">
                       <div class="text-center">
-                        <div class="mx-auto mb-4 h-24 w-24 rounded-full bg-blue-100 p-6">
-                          <svg class="h-full w-full text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                              d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        <div
+                          class="mx-auto mb-4 h-24 w-24 rounded-full bg-blue-100 p-6"
+                        >
+                          <svg
+                            class="h-full w-full text-blue-500"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                            />
                           </svg>
                         </div>
-                        <h3 class="text-lg font-medium text-white">Video call with Patient</h3>
+                        <h3 class="text-lg font-medium text-white">
+                          Video call with Patient
+                        </h3>
                         <p class="text-gray-300">
                           The video consultation will appear here
                         </p>
                       </div>
 
                       <!-- Patient Video (Inset) -->
-                      <div class="absolute right-4 top-4 h-36 w-48 overflow-hidden rounded-lg border-2 border-gray-600 bg-gray-700">
-                        <div class="flex h-full w-full items-center justify-center">
-                          <svg class="h-12 w-12 text-white opacity-75" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      <div
+                        class="absolute right-4 top-4 h-36 w-48 overflow-hidden rounded-lg border-2 border-gray-600 bg-gray-700"
+                      >
+                        <div
+                          class="flex h-full w-full items-center justify-center"
+                        >
+                          <svg
+                            class="h-12 w-12 text-white opacity-75"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                            />
                           </svg>
                         </div>
                       </div>
 
                       <!-- Video Controls -->
-                      <div class="absolute bottom-4 left-1/2 -translate-x-1/2 transform">
-                        <div class="flex items-center space-x-4 rounded-full bg-white bg-opacity-10 px-6 py-3 backdrop-blur-sm">
+                      <div
+                        class="absolute bottom-4 left-1/2 -translate-x-1/2 transform"
+                      >
+                        <div
+                          class="flex items-center space-x-4 rounded-full bg-white bg-opacity-10 px-6 py-3 backdrop-blur-sm"
+                        >
                           <button
                             @click="isMuted = !isMuted"
                             :class="`rounded-full p-3 transition-colors ${
-                              isMuted ? 'bg-red-500 text-white' : 'bg-gray-100 text-gray-900'
+                              isMuted
+                                ? 'bg-red-500 text-white'
+                                : 'bg-gray-100 text-gray-900'
                             }`"
                           >
-                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path v-if="isMuted" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                d="M5.586 15.414a8 8 0 1011.314 0M17 20h3m-3-3h3M3 3l18 18" />
-                              <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0-11V3" />
+                            <svg
+                              class="h-5 w-5"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                v-if="isMuted"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M5.586 15.414a8 8 0 1011.314 0M17 20h3m-3-3h3M3 3l18 18"
+                              />
+                              <path
+                                v-else
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0-11V3"
+                              />
                             </svg>
                           </button>
 
                           <button
                             @click="isVideoOn = !isVideoOn"
                             :class="`rounded-full p-3 transition-colors ${
-                              !isVideoOn ? 'bg-red-500 text-white' : 'bg-gray-100 text-gray-900'
+                              !isVideoOn
+                                ? 'bg-red-500 text-white'
+                                : 'bg-gray-100 text-gray-900'
                             }`"
                           >
-                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path v-if="!isVideoOn" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M7.5 3.186c-.259.032-.516.07-.77.114M4.5 3.75v16.5a2.25 2.25 0 002.25 2.25h6.055c.749 0 1.471-.29 2.01-.804l4.5-4.5a2.25 2.25 0 00.659-1.591V7.5a2.25 2.25 0 00-2.25-2.25h-2.25l-2.1-2.1a2.25 2.25 0 00-1.591-.659h-4.5a2.25 2.25 0 00-2.25 2.25v.5" />
-                              <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            <svg
+                              class="h-5 w-5"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                v-if="!isVideoOn"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M7.5 3.186c-.259.032-.516.07-.77.114M4.5 3.75v16.5a2.25 2.25 0 002.25 2.25h6.055c.749 0 1.471-.29 2.01-.804l4.5-4.5a2.25 2.25 0 00.659-1.591V7.5a2.25 2.25 0 00-2.25-2.25h-2.25l-2.1-2.1a2.25 2.25 0 00-1.591-.659h-4.5a2.25 2.25 0 00-2.25 2.25v.5"
+                              />
+                              <path
+                                v-else
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                              />
                             </svg>
                           </button>
 
@@ -237,9 +370,18 @@
                             @click="endCall"
                             class="rounded-full bg-red-600 p-3 transition-colors hover:bg-red-700"
                           >
-                            <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                d="M16 8l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M5 3a2 2 0 00-2 2v1c0 8.284 6.716 15 15 15h1a2 2 0 002-2v-3.28a1 1 0 00-.684-.948l-4.493-1.498a1 1 0 00-1.21.502l-1.13 2.257a11.042 11.042 0 01-5.516-5.517l2.257-1.128a1 1 0 00.502-1.21L9.228 3.683A1 1 0 008.279 3H5z" />
+                            <svg
+                              class="h-5 w-5 text-white"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M16 8l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M5 3a2 2 0 00-2 2v1c0 8.284 6.716 15 15 15h1a2 2 0 002-2v-3.28a1 1 0 00-.684-.948l-4.493-1.498a1 1 0 00-1.21.502l-1.13 2.257a11.042 11.042 0 01-5.516-5.517l2.257-1.128a1 1 0 00.502-1.21L9.228 3.683A1 1 0 008.279 3H5z"
+                              />
                             </svg>
                           </button>
                         </div>
@@ -247,37 +389,54 @@
                     </div>
                   </div>
                 </div>
-                
+
                 <!-- Consultation Notes -->
-                <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+                <div
+                  class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm"
+                >
                   <h3 class="mb-4 text-lg font-semibold text-gray-800">
                     Consultation Notes
-                  </h3>                  <textarea
+                  </h3>
+                  <textarea
                     v-model="consultationNotes"
                     placeholder="Enter consultation notes..."
-                    class="h-32 w-full rounded-lg border border-gray-300 p-3 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
+                    class="h-32 w-full rounded-lg border border-gray-300 p-3 text-sm transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:bg-gray-100"
                     :disabled="consultationStore.isSavingNotes"
                     @keydown.ctrl.s.prevent="saveConsultationNotes"
                     @keydown.meta.s.prevent="saveConsultationNotes"
                   ></textarea>
                   <div class="mt-2 text-xs text-gray-500">
                     Tip: Use Ctrl+S (or Cmd+S on Mac) to save notes quickly
-                  </div><div class="mt-4 flex justify-end gap-3">                    <button
-                      @click="requestLabTest"
+                  </div>
+                  <div class="mt-4 flex justify-end gap-3">
+                    <button
+                      @click="showLabRequestModal = true"
                       class="rounded-lg bg-first-accent px-4 py-2 text-sm font-medium text-white hover:bg-first-accent/90 focus:outline-none focus:ring-2 focus:ring-first-accent focus:ring-offset-2"
                     >
-                      <svg class="mr-2 h-4 w-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                          d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                      <svg
+                        class="mr-2 inline h-4 w-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+                        />
                       </svg>
                       Request Lab Test
-                    </button>                    <button
+                    </button>
+                    <button
                       @click="saveConsultationNotes"
                       :disabled="consultationStore.isSavingNotes"
-                      class="rounded-lg bg-second-accent px-4 py-2 text-sm font-medium text-white hover:bg-second-accent/90 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                      class="rounded-lg bg-second-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-second-accent/90 disabled:cursor-not-allowed disabled:bg-gray-400"
                     >
                       {{
-                        consultationStore.isSavingNotes ? "Saving..." : "Save Notes"
+                        consultationStore.isSavingNotes
+                          ? "Saving..."
+                          : "Save Notes"
                       }}
                     </button>
                   </div>
@@ -293,10 +452,7 @@
                     Chat with Patient
                   </h3>
                 </div>
-                <div
-                  ref="chatContainer"
-                  class="flex-1 overflow-y-auto p-4"
-                >
+                <div ref="chatContainer" class="flex-1 overflow-y-auto p-4">
                   <div
                     v-if="consultationStore.chatMessages.length === 0"
                     class="text-center text-gray-500"
@@ -312,7 +468,8 @@
                         : 'mb-3 flex justify-start'
                     "
                   >
-                    <div                      :class="
+                    <div
+                      :class="
                         msg.sender === 'Doctor'
                           ? 'max-w-xs rounded-lg bg-second-accent p-3 text-sm text-white'
                           : 'max-w-xs rounded-lg bg-gray-200 p-3 text-sm text-gray-800'
@@ -335,18 +492,24 @@
                       class="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                       @keyup.enter="sendMessage"
                       :disabled="consultationStore.isSendingMessage"
-                    />                    <button
+                    />
+                    <button
                       @click="sendMessage"
                       :disabled="consultationStore.isSendingMessage"
                       class="rounded-lg bg-second-accent px-4 py-2 text-sm font-medium text-white hover:bg-second-accent/90 disabled:bg-gray-400"
                     >
-                      {{ consultationStore.isSendingMessage ? "Sending..." : "Send" }}
+                      {{
+                        consultationStore.isSendingMessage
+                          ? "Sending..."
+                          : "Send"
+                      }}
                     </button>
                   </div>
                 </div>
               </div>
             </div>
-          </div>        </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -357,57 +520,88 @@
       @click="closeConsultationModal"
     >
       <div
-        class="relative max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-xl"
+        class="relative mx-4 max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-lg bg-white shadow-xl"
         @click.stop
       >
         <!-- Modal Header -->
-        <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+        <div
+          class="sticky top-0 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4"
+        >
           <div>
-            <h2 class="text-xl font-semibold text-gray-900">Consultation Details</h2>
-            <p class="text-sm text-gray-600">{{ selectedConsultation?.doctorName }} • {{ selectedConsultation?.specialty }}</p>
+            <h2 class="text-xl font-semibold text-gray-900">
+              Consultation Details
+            </h2>
+            <p class="text-sm text-gray-600">
+              {{ selectedConsultation?.doctorName }} •
+              {{ selectedConsultation?.specialty }}
+            </p>
           </div>
           <button
             @click="closeConsultationModal"
-            class="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100"
+            class="rounded-full p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
           >
-            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            <svg
+              class="h-6 w-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
 
         <!-- Modal Content -->
         <div class="p-6">
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <!-- Left Column -->
             <div class="space-y-6">
               <!-- Consultation Info -->
-              <div class="bg-gray-50 rounded-lg p-4">
-                <h3 class="text-lg font-medium text-gray-900 mb-3">Consultation Information</h3>
+              <div class="rounded-lg bg-gray-50 p-4">
+                <h3 class="mb-3 text-lg font-medium text-gray-900">
+                  Consultation Information
+                </h3>
                 <div class="space-y-2">
                   <div class="flex justify-between">
                     <span class="text-gray-600">Date:</span>
-                    <span class="font-medium">{{ selectedConsultation?.date }}</span>
+                    <span class="font-medium">{{
+                      selectedConsultation?.date
+                    }}</span>
                   </div>
                   <div class="flex justify-between">
                     <span class="text-gray-600">Type:</span>
-                    <span class="font-medium">{{ selectedConsultation?.type }}</span>
+                    <span class="font-medium">{{
+                      selectedConsultation?.type
+                    }}</span>
                   </div>
                   <div class="flex justify-between">
                     <span class="text-gray-600">Doctor:</span>
-                    <span class="font-medium">{{ selectedConsultation?.doctorName }}</span>
+                    <span class="font-medium">{{
+                      selectedConsultation?.doctorName
+                    }}</span>
                   </div>
                   <div class="flex justify-between">
                     <span class="text-gray-600">Specialty:</span>
-                    <span class="font-medium">{{ selectedConsultation?.specialty }}</span>
+                    <span class="font-medium">{{
+                      selectedConsultation?.specialty
+                    }}</span>
                   </div>
                 </div>
               </div>
 
               <!-- Diagnosis -->
-              <div class="bg-green-50 rounded-lg p-4">
-                <h3 class="text-lg font-medium text-gray-900 mb-3">Diagnosis</h3>
-                <p class="text-gray-700">{{ selectedConsultation?.diagnosis }}</p>
+              <div class="rounded-lg bg-green-50 p-4">
+                <h3 class="mb-3 text-lg font-medium text-gray-900">
+                  Diagnosis
+                </h3>
+                <p class="text-gray-700">
+                  {{ selectedConsultation?.diagnosis }}
+                </p>
               </div>
             </div>
 
@@ -415,25 +609,42 @@
             <div class="space-y-6">
               <!-- Notes -->
               <div>
-                <h3 class="text-lg font-medium text-gray-900 mb-3">Consultation Notes</h3>
-                <div class="bg-gray-50 rounded-lg p-4">
-                  <p class="text-gray-700 leading-relaxed">{{ selectedConsultation?.notes }}</p>
+                <h3 class="mb-3 text-lg font-medium text-gray-900">
+                  Consultation Notes
+                </h3>
+                <div class="rounded-lg bg-gray-50 p-4">
+                  <p class="leading-relaxed text-gray-700">
+                    {{ selectedConsultation?.notes }}
+                  </p>
                 </div>
               </div>
 
               <!-- Prescriptions -->
               <div>
-                <h3 class="text-lg font-medium text-gray-900 mb-3">Prescriptions</h3>
+                <h3 class="mb-3 text-lg font-medium text-gray-900">
+                  Prescriptions
+                </h3>
                 <div class="space-y-2">
                   <div
-                    v-for="(prescription, index) in selectedConsultation?.prescriptions"
+                    v-for="(
+                      prescription, index
+                    ) in selectedConsultation?.prescriptions"
                     :key="index"
-                    class="bg-yellow-50 border border-yellow-200 rounded-lg p-3"
+                    class="rounded-lg border border-yellow-200 bg-yellow-50 p-3"
                   >
                     <div class="flex items-center">
-                      <svg class="h-5 w-5 text-yellow-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                          d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                      <svg
+                        class="mr-2 h-5 w-5 text-yellow-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+                        />
                       </svg>
                       <span class="text-gray-700">{{ prescription }}</span>
                     </div>
@@ -445,16 +656,28 @@
         </div>
 
         <!-- Modal Footer -->
-        <div class="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex justify-end">
+        <div
+          class="sticky bottom-0 flex justify-end border-t border-gray-200 bg-gray-50 px-6 py-4"
+        >
           <button
             @click="closeConsultationModal"
-            class="px-4 py-2 bg-second-accent text-white rounded-lg hover:bg-second-accent/90 focus:outline-none focus:ring-2 focus:ring-second-accent focus:ring-offset-2"
+            class="rounded-lg bg-second-accent px-4 py-2 text-white hover:bg-second-accent/90 focus:outline-none focus:ring-2 focus:ring-second-accent focus:ring-offset-2"
           >
             Close
           </button>
         </div>
       </div>
     </div>
+
+    <!-- Lab Request Modal - New Component -->
+    <DoctorLabRequestModal
+      v-if="showLabRequestModal"
+      :consultation-id="consultationData.id"
+      :patient-id="consultationData.patient_id"
+      :doctor-id="consultationData.doctor_id"
+      @close="closeLabRequestModal"
+      @success="handleLabRequestSuccess"
+    />
   </DoctorLayout>
 </template>
 
@@ -464,6 +687,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useConsultationStore } from "@/stores/consultationStore";
 import { useToast } from "vue-toastification";
 import DoctorLayout from "@/layout/DoctorLayout.vue";
+import DoctorLabRequestModal from "@/components/Doctor/DoctorLabRequestModal.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -480,7 +704,13 @@ const isMuted = ref(false);
 const isVideoOn = ref(true);
 const isCallActive = ref(false);
 const showConsultationModal = ref(false);
-const selectedConsultation = ref(null);// Added for call state management
+const selectedConsultation = ref(null); // Added for call state management
+const showLabRequestModal = ref(false);
+const consultationData = ref({
+  id: 1, // consultation ID
+  patient_id: 2,
+  doctor_id: 3,
+});
 
 // Format timestamp
 const formatDate = (timestamp) => {
@@ -528,10 +758,13 @@ const requestLabTest = () => {
     hideProgressBar: false,
     closeButton: "button",
     icon: true,
-    rtl: false
+    rtl: false,
   });
-  
-  console.log("Lab test requested for patient:", consultationStore.patient?.name);
+
+  console.log(
+    "Lab test requested for patient:",
+    consultationStore.patient?.name,
+  );
 };
 
 // Save consultation notes function
@@ -539,7 +772,7 @@ const saveConsultationNotes = async () => {
   if (!consultationNotes.value.trim()) {
     toast.warning("Please enter some notes before saving.", {
       position: "top-right",
-      timeout: 3000
+      timeout: 3000,
     });
     return;
   }
@@ -556,7 +789,7 @@ const saveConsultationNotes = async () => {
   try {
     console.log('Attempting to save notes for consultation:', consultationStore.consultation.id);
     const result = await consultationStore.saveNotes(consultationNotes.value);
-    
+
     if (result.success) {
       lastSavedNotes.value = consultationNotes.value;
       toast.success("Consultation notes saved successfully!", {
@@ -571,13 +804,16 @@ const saveConsultationNotes = async () => {
         hideProgressBar: false,
         closeButton: "button",
         icon: true,
-        rtl: false
+        rtl: false,
       });
-      console.log("Notes saved successfully for consultation:", consultationStore.consultation?.id);
+      console.log(
+        "Notes saved successfully for consultation:",
+        consultationStore.consultation?.id,
+      );
     } else {
       toast.error(`Failed to save notes: ${result.error}`, {
         position: "top-right",
-        timeout: 5000
+        timeout: 5000,
       });
       console.error('Save failed:', result.error);
     }
@@ -585,7 +821,7 @@ const saveConsultationNotes = async () => {
     console.error("Error saving consultation notes:", error);
     toast.error("An unexpected error occurred while saving notes.", {
       position: "top-right",
-      timeout: 5000
+      timeout: 5000,
     });
   }
 };
@@ -599,9 +835,10 @@ const triggerAutoSave = () => {
   if (autoSaveTimer.value) {
     clearTimeout(autoSaveTimer.value);
   }
-  
+
   // Set new timer for auto-save after 10 seconds of inactivity
   autoSaveTimer.value = setTimeout(async () => {
+
     // Check if consultation exists and notes have changed
     if (!consultationStore.consultation?.id) {
       console.log('Auto-save skipped: No consultation found');
@@ -609,6 +846,7 @@ const triggerAutoSave = () => {
     }
     
     if (consultationNotes.value !== lastSavedNotes.value && consultationNotes.value.trim()) {
+
       console.log("Auto-saving notes...");
       const result = await consultationStore.saveNotes(consultationNotes.value);
       if (result.success) {
@@ -616,7 +854,7 @@ const triggerAutoSave = () => {
         toast.info("Notes auto-saved", {
           position: "bottom-right",
           timeout: 2000,
-          hideProgressBar: true
+          hideProgressBar: true,
         });
       } else {
         console.error('Auto-save failed:', result.error);
@@ -639,6 +877,20 @@ const openConsultationModal = (consultation) => {
 const closeConsultationModal = () => {
   showConsultationModal.value = false;
   selectedConsultation.value = null;
+};
+
+// Lab Request Modal functions
+const openLabRequestModal = () => {
+  showLabRequestModal.value = true;
+};
+
+const closeLabRequestModal = () => {
+  showLabRequestModal.value = false;
+};
+
+const handleLabRequestSuccess = () => {
+  // Handle success (e.g., refresh data, show success message)
+  console.log("Lab request created successfully!");
 };
 
 // Vitals data (placeholder)
@@ -708,15 +960,16 @@ let pollInterval;
 onMounted(async () => {
   try {
     await consultationStore.fetchConsultationData(appointmentId);
-    
+
     // Load existing notes if available
     consultationNotes.value = consultationStore.consultation?.notes || "";
     // Initialize lastSavedNotes with current notes
     lastSavedNotes.value = consultationNotes.value;
-    
+
     console.log('Consultation loaded:', consultationStore.consultation);
     console.log('Initial notes:', consultationNotes.value);
-    
+    console.log("Patient data:", consultationStore.patient);
+
     // Show success message if consultation was created
     if (consultationStore.consultation) {
       if (!consultationNotes.value) {
@@ -726,27 +979,25 @@ onMounted(async () => {
         });
       }
     }
-    
-    console.log('Patient data:', consultationStore.patient);
-    
+
     // Fetch patient consultation history using store
     if (consultationStore.patient?.id) {
       console.log('Fetching consultations for patient ID:', consultationStore.patient.id);
       const result = await consultationStore.fetchPatientConsultations(consultationStore.patient.id);
-      
+
       if (!result.success) {
         if (result.usedFallback) {
-          toast.info('Using sample data due to API issues');
+          toast.info("Using sample data due to API issues");
         } else {
-          toast.error('Failed to load consultation history');
+          toast.error("Failed to load consultation history");
         }
       }
     } else {
-      console.warn('No patient ID found, loading sample consultation data for demo');
+      console.warn("No patient ID found, loading sample consultation data for demo");
       // Load sample data for demonstration
       consultationStore.loadSampleConsultationData();
     }
-    
+
     pollInterval = setInterval(() => consultationStore.fetchChatMessages(), 5000);
   } catch (error) {
     console.error('Error during component initialization:', error);
@@ -765,7 +1016,6 @@ onUnmounted(() => {
   }
   consultationStore.clearData();
 });
-
 </script>
 
 <style scoped>
@@ -780,10 +1030,12 @@ onUnmounted(() => {
 
 /* Additional styling for better UI experience */
 /* Message transition effects */
-.message-enter-active, .message-leave-active {
+.message-enter-active,
+.message-leave-active {
   transition: all 0.3s ease;
 }
-.message-enter-from, .message-leave-to {
+.message-enter-from,
+.message-leave-to {
   opacity: 0;
   transform: translateY(20px);
 }
