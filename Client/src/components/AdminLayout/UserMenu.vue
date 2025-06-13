@@ -70,7 +70,7 @@ onUnmounted(() => {
     <!-- Dropdown Start -->
     <div
       v-if="dropdownOpen"
-      class="ark:bg-gray-dark ark:border-gray-800 absolute right-0 mt-[17px] flex w-[260px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg"
+      class="ark:bg-gray-dark ark:border-gray-800 absolute right-0 mt-[17px] flex w-[260px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg z-10"
     >
       <div>
         <span

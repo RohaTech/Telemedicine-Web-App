@@ -15,8 +15,7 @@ class CreateChatsTable extends Migration
             $table->text('text');
             $table->timestamp('timestamp');
             $table->timestamps();
-        }
-    );
+        });
     }
 
     public function down()

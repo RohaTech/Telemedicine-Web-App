@@ -45,7 +45,7 @@ class ChatController extends Controller
         $chat = Chat::create($validated);
         return response()->json($chat, 201);
     }
-    
+
     public function show($id)
     {
         $chat = Chat::find($id);
@@ -63,5 +63,21 @@ class ChatController extends Controller
         }
         $chat->delete();
         return response()->json(['message' => 'Chat deleted successfully']);
+    }
+
+    public function getByConsultation($consultation_id)
+    {
+        try {
+            $chats = Chat::where('consultation_id', $consultation_id)
+                        ->orderBy('timestamp', 'asc')
+                        ->get();
+
+            return response()->json($chats);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to fetch chat messages',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

@@ -777,10 +777,21 @@ const saveConsultationNotes = async () => {
     return;
   }
 
+  // Check if consultation exists
+  if (!consultationStore.consultation?.id) {
+    toast.error("No consultation found. Please refresh the page and try again.", {
+      position: "top-right",
+      timeout: 5000
+    });
+    return;
+  }
+
   try {
+    console.log('Attempting to save notes for consultation:', consultationStore.consultation.id);
     const result = await consultationStore.saveNotes(consultationNotes.value);
 
     if (result.success) {
+      lastSavedNotes.value = consultationNotes.value;
       toast.success("Consultation notes saved successfully!", {
         position: "top-right",
         timeout: 3000,
@@ -804,6 +815,7 @@ const saveConsultationNotes = async () => {
         position: "top-right",
         timeout: 5000,
       });
+      console.error('Save failed:', result.error);
     }
   } catch (error) {
     console.error("Error saving consultation notes:", error);
@@ -826,10 +838,15 @@ const triggerAutoSave = () => {
 
   // Set new timer for auto-save after 10 seconds of inactivity
   autoSaveTimer.value = setTimeout(async () => {
-    if (
-      consultationNotes.value !== lastSavedNotes.value &&
-      consultationNotes.value.trim()
-    ) {
+
+    // Check if consultation exists and notes have changed
+    if (!consultationStore.consultation?.id) {
+      console.log('Auto-save skipped: No consultation found');
+      return;
+    }
+    
+    if (consultationNotes.value !== lastSavedNotes.value && consultationNotes.value.trim()) {
+
       console.log("Auto-saving notes...");
       const result = await consultationStore.saveNotes(consultationNotes.value);
       if (result.success) {
@@ -839,6 +856,8 @@ const triggerAutoSave = () => {
           timeout: 2000,
           hideProgressBar: true,
         });
+      } else {
+        console.error('Auto-save failed:', result.error);
       }
     }
   }, 10000); // 10 seconds delay
@@ -939,39 +958,54 @@ const getVitalIcon = (iconType) => {
 // Poll for new messages
 let pollInterval;
 onMounted(async () => {
-  await consultationStore.fetchConsultationData(appointmentId);
-  consultationNotes.value = consultationStore.consultation?.notes || "";
-  // Initialize lastSavedNotes with current notes
-  lastSavedNotes.value = consultationNotes.value;
+  try {
+    await consultationStore.fetchConsultationData(appointmentId);
 
-  console.log("Patient data:", consultationStore.patient);
+    // Load existing notes if available
+    consultationNotes.value = consultationStore.consultation?.notes || "";
+    // Initialize lastSavedNotes with current notes
+    lastSavedNotes.value = consultationNotes.value;
 
-  // Fetch patient consultation history using store
-  if (consultationStore.patient?.id) {
-    console.log(
-      "Fetching consultations for patient ID:",
-      consultationStore.patient.id,
-    );
-    const result = await consultationStore.fetchPatientConsultations(
-      consultationStore.patient.id,
-    );
+    console.log('Consultation loaded:', consultationStore.consultation);
+    console.log('Initial notes:', consultationNotes.value);
+    console.log("Patient data:", consultationStore.patient);
 
-    if (!result.success) {
-      if (result.usedFallback) {
-        toast.info("Using sample data due to API issues");
-      } else {
-        toast.error("Failed to load consultation history");
+    // Show success message if consultation was created
+    if (consultationStore.consultation) {
+      if (!consultationNotes.value) {
+        toast.info('New consultation created. You can now start adding notes.', {
+          position: "top-right",
+          timeout: 4000
+        });
       }
     }
-  } else {
-    console.warn(
-      "No patient ID found, loading sample consultation data for demo",
-    );
-    // Load sample data for demonstration
-    consultationStore.loadSampleConsultationData();
-  }
 
-  pollInterval = setInterval(() => consultationStore.fetchChatMessages(), 5000);
+    // Fetch patient consultation history using store
+    if (consultationStore.patient?.id) {
+      console.log('Fetching consultations for patient ID:', consultationStore.patient.id);
+      const result = await consultationStore.fetchPatientConsultations(consultationStore.patient.id);
+
+      if (!result.success) {
+        if (result.usedFallback) {
+          toast.info("Using sample data due to API issues");
+        } else {
+          toast.error("Failed to load consultation history");
+        }
+      }
+    } else {
+      console.warn("No patient ID found, loading sample consultation data for demo");
+      // Load sample data for demonstration
+      consultationStore.loadSampleConsultationData();
+    }
+
+    pollInterval = setInterval(() => consultationStore.fetchChatMessages(), 5000);
+  } catch (error) {
+    console.error('Error during component initialization:', error);
+    toast.error('Failed to initialize consultation. Please refresh the page.', {
+      position: "top-right",
+      timeout: 5000
+    });
+  }
 });
 
 onUnmounted(() => {
