@@ -33,6 +33,13 @@ const labRequestData = ref({
   status: "pending",
 });
 
+// Debug log to check props
+console.log('DoctorLabRequestModal props:', {
+  consultationId: props.consultationId,
+  patientId: props.patientId,
+  doctorId: props.doctorId
+});
+
 // Loading state
 const isSubmitting = ref(false);
 
@@ -70,13 +77,29 @@ const handleSubmit = async () => {
   if (!isFormValid.value) return;
 
   isSubmitting.value = true;
+
+  // Debug log to see what data is being sent
+  console.log('Submitting lab request data:', labRequestData.value);
+
   try {
-    await createLabRequest(labRequestData.value);
-    emit("success");
-    emit("close");
+    const result = await createLabRequest(labRequestData.value);
+
+    if (result.success) {
+      emit("success");
+      emit("close");
+    } else {
+      // Handle validation errors
+      console.error('Lab request creation failed:', result);
+      if (result.errors) {
+        const errorMessages = Object.values(result.errors).flat().join('\n');
+        alert(`Validation errors:\n${errorMessages}`);
+      } else {
+        alert(result.error || "Failed to create lab request. Please try again.");
+      }
+    }
   } catch (error) {
     console.error("Error creating lab request:", error);
-    alert("Failed to create lab request. Please try again.");
+    alert("An unexpected error occurred. Please try again.");
   } finally {
     isSubmitting.value = false;
   }
