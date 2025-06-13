@@ -38,11 +38,28 @@ class Message implements ShouldBroadcast
      */
     public function broadcastOn(): array
     {
-        return ['Chat'];
+        return [
+            new Channel('consultation.' . $this->consultation_id)
+        ];
     }
 
     public function broadcastAs(): string
     {
         return 'message';
+    }
+
+    /**
+     * Get the data to broadcast.
+     *
+     * @return array
+     */
+    public function broadcastWith(): array
+    {
+        return [
+            'text' => $this->text,
+            'sender' => $this->sender,
+            'timestamp' => $this->timestamp,
+            'consultation_id' => $this->consultation_id,
+        ];
     }
 }
