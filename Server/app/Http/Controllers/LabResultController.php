@@ -12,13 +12,67 @@ use Exception;
 class LabResultController extends Controller
 {
     // Get all lab results
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $labResults = LabResult::with(['labRequest', 'laboratory'])->get();
-            return response()->json($labResults, 200);
+            $query = LabResult::with(['labRequest.patient', 'labRequest.doctor', 'laboratory']);
+
+            // Filter by doctor if doctor_id is provided
+            if ($request->has('doctor_id')) {
+                $query->whereHas('labRequest', function($q) use ($request) {
+                    $q->where('doctor_id', $request->doctor_id);
+                });
+            }
+
+            // Filter by patient if patient_id is provided
+            if ($request->has('patient_id')) {
+                $query->whereHas('labRequest', function($q) use ($request) {
+                    $q->where('patient_id', $request->patient_id);
+                });
+            }
+
+            // Filter by status if provided
+            if ($request->has('status')) {
+                $query->whereHas('labRequest', function($q) use ($request) {
+                    $q->where('status', $request->status);
+                });
+            }
+
+            $labResults = $query->orderBy('created_at', 'desc')->get();
+
+            // Transform the data to include patient information
+            $labResults = $labResults->map(function ($result) {
+                return [
+                    'id' => $result->id,
+                    'lab_request_id' => $result->lab_request_id,
+                    'laboratory_id' => $result->laboratory_id,
+                    'result_details' => $result->result_details,
+                    'attachment' => $result->attachment,
+                    'created_at' => $result->created_at,
+                    'updated_at' => $result->updated_at,
+                    'status' => $result->labRequest->status ?? 'unknown',
+                    'lab_request' => $result->labRequest ? [
+                        'id' => $result->labRequest->id,
+                        'test_type' => $result->labRequest->test_type,
+                        'status' => $result->labRequest->status,
+                        'created_at' => $result->labRequest->created_at,
+                    ] : null,
+                    'patient' => $result->labRequest->patient ?? null,
+                    'doctor' => $result->labRequest->doctor ?? null,
+                    'laboratory' => $result->laboratory ?? null,
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'data' => $labResults
+            ], 200);
         } catch (Exception $e) {
-            return response()->json(['error' => 'Failed to fetch lab results', 'message' => $e->getMessage()], 500);
+            return response()->json([
+                'success' => false,
+                'error' => 'Failed to fetch lab results',
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 

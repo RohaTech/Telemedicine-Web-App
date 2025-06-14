@@ -49,6 +49,9 @@ import DoctorHomePage from "@/views/Doctor/DoctorHomePage.vue";
 import DoctorAppointment from "@/views/Doctor/DoctorAppointment.vue";
 
 import DoctorConsultation from "@/views/Doctor/DoctorConsultation.vue";
+import DoctorLabRequests from "@/views/Doctor/DoctorLabRequests.vue";
+import DoctorLabResults from "@/views/Doctor/DoctorLabResults.vue";
+import DoctorPatients from "@/views/Doctor/DoctorPatients.vue";
 
 import LaboratoryProfilePage from "@/views/Laboratory/LaboratoryProfilePage.vue";
 import WelcomePage from "../views/WelcomePage.vue";
@@ -161,12 +164,26 @@ const router = createRouter({
       path: "/doctor/appointments",
       name: "DoctorAppointments",
       component: DoctorAppointment,
-    },
-
-    {
+    },    {
       path: "/doctor/appointments-waiting",
       name: "DoctorWaitingAppointments",
       component: DoctorWaitingAppointments,
+    },    {
+      path: "/doctor/lab-requests",
+      name: "DoctorLabRequests",
+      component: DoctorLabRequests,
+      meta: { auth: true, doctor: true },
+    },    {
+      path: "/doctor/lab-results",
+      name: "DoctorLabResults",
+      component: DoctorLabResults,
+      meta: { auth: true, doctor: true },
+    },
+    {
+      path: "/doctor/patients",
+      name: "DoctorPatients",
+      component: DoctorPatients,
+      meta: { auth: true, doctor: true },
     },
 
     {

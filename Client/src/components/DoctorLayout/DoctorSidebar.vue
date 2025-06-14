@@ -45,18 +45,15 @@ const menuGroups = [
         icon: AppointmentsIcon,
         name: "Waiting Appointments",
         path: "DoctorWaitingAppointments",
-      },
-      {
+      },      {
         icon: UserCircleIcon,
         name: "Patients",
-        path: "DoctorHome",
-      },
-      {
+        path: "DoctorPatients",
+      },{
         icon: LaboratoryIcon,
-        name: "Laboratory",
-        subItems: [
-          { name: "Lab Requests", path: "DoctorHome", pro: false },
-          { name: "Lab Results", path: "DoctorHome", pro: false },
+        name: "Laboratory",        subItems: [
+          { name: "Lab Requests", path: "DoctorLabRequests", pro: false },
+          { name: "Lab Results", path: "DoctorLabResults", pro: false },
         ],
         path: "AdminLaboratories",
       },
@@ -280,10 +277,9 @@ const endTransition = (el) => {
                       (isExpanded || isHovered || isMobileOpen)
                     "
                   >
-                    <ul class="ml-9 mt-2 space-y-1">
-                      <li v-for="subItem in item.subItems" :key="subItem.name">
+                    <ul class="ml-9 mt-2 space-y-1">                      <li v-for="subItem in item.subItems" :key="subItem.name">
                         <RouterLink
-                          :to="{ name: 'Home' }"
+                          :to="{ name: subItem.path }"
                           :class="[
                             'menu-dropdown-item',
                             {

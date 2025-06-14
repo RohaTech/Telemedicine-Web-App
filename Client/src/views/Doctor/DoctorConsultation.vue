@@ -588,14 +588,12 @@
           </button>
         </div>
       </div>
-    </div>
-
-    <!-- Lab Request Modal - New Component -->
+    </div>    <!-- Lab Request Modal - New Component -->
     <DoctorLabRequestModal
       v-if="showLabRequestModal"
-      :consultation-id="consultationData.id"
-      :patient-id="consultationData.patient_id"
-      :doctor-id="consultationData.doctor_id"
+      :consultation-id="consultationStore.consultation?.id"
+      :patient-id="consultationStore.patient?.id"
+      :doctor-id="consultationStore.consultation?.doctor_id"
       @close="closeLabRequestModal"
       @success="handleLabRequestSuccess"
     />
@@ -669,11 +667,6 @@ const isCallActive = ref(false);
 const showConsultationModal = ref(false);
 const selectedConsultation = ref(null); // Added for call state management
 const showLabRequestModal = ref(false);
-const consultationData = ref({
-  id: 1, // consultation ID
-  patient_id: 2,
-  doctor_id: 3,
-});
 
 // Format timestamp
 const formatDate = (timestamp) => {
@@ -886,6 +879,29 @@ const closeConsultationModal = () => {
 
 // Lab Request Modal functions
 const openLabRequestModal = () => {
+  // Check if we have the required data before opening the modal
+  if (!consultationStore.consultation?.id) {
+    toast.error('Consultation data not available. Please refresh the page.', {
+      position: "top-right",
+      timeout: 3000
+    });
+    return;
+  }
+  
+  if (!consultationStore.patient?.id) {
+    toast.error('Patient data not available. Please refresh the page.', {
+      position: "top-right",
+      timeout: 3000
+    });
+    return;
+  }
+  
+  console.log('Opening lab request modal with:', {
+    consultationId: consultationStore.consultation.id,
+    patientId: consultationStore.patient.id,
+    doctorId: consultationStore.consultation.doctor_id
+  });
+  
   showLabRequestModal.value = true;
 };
 

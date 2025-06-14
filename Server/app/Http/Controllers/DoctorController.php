@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
 use App\Mail\DoctorStatusUpdated;
 use App\Mail\DoctorRegistrationPending;
 use Illuminate\Support\Facades\Auth;
@@ -184,6 +185,141 @@ class DoctorController extends Controller
             return response()->json($dashboardData, 200);
         } catch (Exception $e) {
             return response()->json(['error' => 'Failed to fetch dashboard data', 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function getPatients(Request $request)
+    {
+        try {
+            // Get the doctor ID from the authenticated user
+            $doctorId = $request->user()->id;
+
+            // Get all unique patients that have had consultations with this doctor
+            $patients = User::whereHas('consultations', function ($query) use ($doctorId) {
+                $query->where('doctor_id', $doctorId);
+            })
+            ->withCount([
+                'consultations as consultation_count' => function ($query) use ($doctorId) {
+                    $query->where('doctor_id', $doctorId);
+                }
+            ])
+            ->with([
+                'consultations' => function ($query) use ($doctorId) {
+                    $query->where('doctor_id', $doctorId)
+                          ->orderBy('created_at', 'desc')
+                          ->take(1);
+                }
+            ])
+            ->get()
+            ->map(function ($patient) use ($doctorId) {
+                // Get first and last consultation dates
+                $consultations = $patient->consultations()
+                    ->where('doctor_id', $doctorId)
+                    ->orderBy('created_at')
+                    ->get(['created_at']);
+
+                $firstConsultation = $consultations->first();
+                $lastConsultation = $consultations->last();
+
+                // Get lab request count through consultations
+                $labRequestCount = \DB::table('lab_requests')
+                    ->join('consultations', 'lab_requests.consultation_id', '=', 'consultations.id')
+                    ->where('consultations.patient_id', $patient->id)
+                    ->where('consultations.doctor_id', $doctorId)
+                    ->count();
+
+                return [
+                    'id' => $patient->id,
+                    'name' => $patient->name,
+                    'email' => $patient->email,
+                    'phone' => $patient->phone,
+                    'age' => $patient->age,
+                    'gender' => $patient->gender,
+                    'address' => $patient->address,
+                    'profile_picture' => $patient->profile_picture,
+                    'consultation_count' => $patient->consultation_count,
+                    'lab_request_count' => $labRequestCount,
+                    'first_consultation_date' => $firstConsultation ? $firstConsultation->created_at : null,
+                    'last_consultation_date' => $lastConsultation ? $lastConsultation->created_at : null,
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'data' => $patients
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Failed to fetch patients',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getDoctorPatients($doctorId)
+    {
+        try {
+            // Get all unique patients that have had consultations with this doctor
+            $patients = User::whereHas('consultations', function ($query) use ($doctorId) {
+                $query->where('doctor_id', $doctorId);
+            })
+            ->withCount([
+                'consultations as consultation_count' => function ($query) use ($doctorId) {
+                    $query->where('doctor_id', $doctorId);
+                }
+            ])
+            ->with([
+                'consultations' => function ($query) use ($doctorId) {
+                    $query->where('doctor_id', $doctorId)
+                          ->orderBy('created_at', 'desc')
+                          ->take(1);
+                }
+            ])
+            ->get()
+            ->map(function ($patient) use ($doctorId) {
+                // Get first and last consultation dates
+                $consultations = $patient->consultations()
+                    ->where('doctor_id', $doctorId)
+                    ->orderBy('created_at')
+                    ->get(['created_at']);
+
+                $firstConsultation = $consultations->first();
+                $lastConsultation = $consultations->last();
+
+                // Get lab request count through consultations
+                $labRequestCount = \DB::table('lab_requests')
+                    ->join('consultations', 'lab_requests.consultation_id', '=', 'consultations.id')
+                    ->where('consultations.patient_id', $patient->id)
+                    ->where('consultations.doctor_id', $doctorId)
+                    ->count();
+
+                return [
+                    'id' => $patient->id,
+                    'name' => $patient->name,
+                    'email' => $patient->email,
+                    'phone' => $patient->phone,
+                    'age' => $patient->age,
+                    'gender' => $patient->gender,
+                    'address' => $patient->address,
+                    'profile_picture' => $patient->profile_picture,
+                    'consultation_count' => $patient->consultation_count,
+                    'lab_request_count' => $labRequestCount,
+                    'first_consultation_date' => $firstConsultation ? $firstConsultation->created_at : null,
+                    'last_consultation_date' => $lastConsultation ? $lastConsultation->created_at : null,
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'data' => $patients
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Failed to fetch patients',
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 }
