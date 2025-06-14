@@ -10,23 +10,22 @@ import UserLayout from "@/layout/UserLayout.vue";
 <template>
   <UserLayout>
     <div
-    class="w-full h-screen bg-cover bg-center text-white p-48 space-y-8 "
-    :style="{ backgroundImage: `url(${Hero_Background})` }"
-  >
+      class="h-screen w-full space-y-8 bg-cover bg-center p-48 text-white"
+      :style="{ backgroundImage: `url(${Hero_Background})` }"
+    >
+      <div class="">
+        <p class="ml-3 text-xl text-yellow-300">Welcome to Tenadam</p>
+        <h1 class="text-7xl font-bold">ACCESS YOUR HEALTHCARE</h1>
+        <h1 class="text-7xl font-bold">Anytime, Anywhere</h1>
+      </div>
 
-    <div class="">
-    <p class="text-yellow-300 text-xl ml-3">Welcome to Tenadam</p>
-    <h1 class="font-bold text-7xl">ACCESS YOUR HEALTHCARE</h1>
-    <h1 class="font-bold text-7xl">Anytime, Anywhere</h1>
+      <p class="max-w-[480px]">
+        We are experienced in educational platform and skilled strategies for
+        the success of our online learning.
+      </p>
     </div>
-
-    <p class="  max-w-[480px]">We are experienced in educational platform and skilled strategies
-      for the success of our online learning.</p>
-
-      
-  </div>
     <CategoriesSection />
-    <RecentlyVisited />
+    <!-- <RecentlyVisited /> -->
     <ExploreFeatured />
   </UserLayout>
 </template>
