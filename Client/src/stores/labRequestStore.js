@@ -25,44 +25,37 @@ export const useLabRequestStore = defineStore('labRequestStore', {
       if (!status) return state.labRequests;
       return state.labRequests.filter(request => request.status === status);
     },
-    
+
     pendingRequests: (state) => {
       return state.labRequests.filter(request => request.status === 'pending');
     },
-    
+
     completedRequests: (state) => {
       return state.labRequests.filter(request => request.status === 'completed');
     },
   },
 
-  actions: {    async getLabRequests() {
+  actions: {
+    async getLabRequests() {
       this.isLoading = true;
       this.errors = {};
-      
-      try {
-        const res = await fetch('/api/lab-requests', {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          },
-        });
-        const data = await res.json();
-        
-        if (!res.ok) {
-          this.errors = data || { message: 'Failed to fetch lab requests' };
-          return { success: false, error: this.errors.message };
-        } else {
-          this.errors = {};
-          this.labRequests = Array.isArray(data) ? data : [];
-          return { success: true, data: this.labRequests };
-        }
-      } catch (err) {
-        this.errors = { message: err.message || 'An unexpected error occurred' };
-        return { success: false, error: err.message };
-      } finally {
-        this.isLoading = false;
+
+
+      const res = await fetch('/api/lab-requests', {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      });
+      const data = await res.json();
+
+      if (data.errors) {
+        this.errors = data.errors;
+      } else {
+        this.errors = {};
+        return data;
       }
     },
 
@@ -91,11 +84,11 @@ export const useLabRequestStore = defineStore('labRequestStore', {
         this.errors = { message: err.message || 'An unexpected error occurred' };
         return { success: false };
       }
-    },    async createLabRequest(labRequestData = null) {
+    }, async createLabRequest(labRequestData = null) {
       try {
         // Use provided data or fall back to store state
         const dataToSend = labRequestData || this.labRequest;
-        
+
         const res = await fetch('/api/lab-requests', {
           method: 'post',
           headers: {
@@ -116,18 +109,18 @@ export const useLabRequestStore = defineStore('labRequestStore', {
         }
 
         this.errors = {};
-        
+
         // Add to local store if we have labRequests array
         if (this.labRequests && Array.isArray(this.labRequests)) {
           this.labRequests.unshift(data);
         }
-        
+
         // Only reset form and redirect if using store state (not when called from modal)
         if (!labRequestData) {
           this.resetForm();
           router.push({ name: 'LabRequests' });
         }
-        
+
         return { success: true, message: 'Lab request created successfully!', data };
       } catch (err) {
         this.errors = { message: err.message || 'An unexpected error occurred' };
@@ -161,7 +154,7 @@ export const useLabRequestStore = defineStore('labRequestStore', {
         this.errors = { message: err.message || 'An unexpected error occurred' };
         return { success: false };
       }
-    },    async deleteLabRequest(id) {
+    }, async deleteLabRequest(id) {
       try {
         const res = await fetch(`/api/lab-requests/${id}`, {
           method: 'delete',

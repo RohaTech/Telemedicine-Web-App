@@ -4,6 +4,7 @@ import Modal from "@/components/UI/Modal.vue";
 import { useLabRequestStore } from "@/stores/labRequestStore";
 import { storeToRefs } from "pinia";
 import { useLabResultStore } from "@/stores/labResultStore";
+import { useAuthStore } from "@/stores/auth"; // Import auth store
 
 const { getLabRequests } = useLabRequestStore();
 const { createLabResult } = useLabResultStore();
@@ -25,18 +26,26 @@ const labResultData = ref({
   attachment: "",
 });
 
+const authStore = useAuthStore(); // Initialize auth store
+
 onMounted(async () => {
+  await authStore.getUser(); // Fetch the current user
   labRequests.value = await getLabRequests();
   console.log(labRequests.value);
 });
 
 const filteredLabRequests = computed(() => {
-  if (selectedStatus.value === "all") {
-    return labRequests.value;
-  }
-  return labRequests.value.filter(
-    (request) => request.status === selectedStatus.value,
+  const userId = authStore.user?.id; // Get the current user's ID
+  if (!userId) return []; // Return empty if user ID is not available
+
+  let filtered = labRequests.value.filter(
+    (request) => request.laboratory_id === userId,
   );
+
+  if (selectedStatus.value === "all") {
+    return filtered;
+  }
+  return filtered.filter((request) => request.status === selectedStatus.value);
 });
 
 // Function to change the selected status

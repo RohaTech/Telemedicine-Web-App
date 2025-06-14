@@ -43,7 +43,7 @@ class LabRequestController extends Controller
                 'patient_id' => 'nullable|exists:users,id',
                 'laboratory_id' => 'nullable|exists:laboratories,id',
                 'test_type' => 'required|string|max:255',
-                'status' => 'nullable|in:pending,completed,cancelled',
+                'status' => 'nullable|in:pending,completed,cancelled,in_progress',
             ]);
 
             // Set default status if not provided
@@ -52,10 +52,10 @@ class LabRequestController extends Controller
             }
 
             $labRequest = LabRequest::create($validatedData);
-            
+
             // Load relationships for response
             $labRequest->load(['consultation', 'consultation.patient', 'consultation.doctor', 'laboratory']);
-            
+
             return response()->json($labRequest, 201);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -78,7 +78,7 @@ class LabRequestController extends Controller
                 'consultation_id' => 'sometimes|exists:consultations,id',
                 'laboratory_id' => 'sometimes|exists:laboratories,id',
                 'test_type' => 'sometimes|string|max:255',
-                'status' => 'sometimes|in:pending,completed,cancelled',
+                'status' => 'sometimes|in:pending,completed,cancelled,in_progress',
             ]);
 
             $labRequest->update($validatedData);
