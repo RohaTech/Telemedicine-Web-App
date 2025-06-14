@@ -588,7 +588,8 @@
           </button>
         </div>
       </div>
-    </div>    <!-- Lab Request Modal - New Component -->
+    </div>
+    <!-- Lab Request Modal - New Component -->
     <DoctorLabRequestModal
       v-if="showLabRequestModal"
       :consultation-id="consultationStore.consultation?.id"
@@ -881,27 +882,27 @@ const closeConsultationModal = () => {
 const openLabRequestModal = () => {
   // Check if we have the required data before opening the modal
   if (!consultationStore.consultation?.id) {
-    toast.error('Consultation data not available. Please refresh the page.', {
+    toast.error("Consultation data not available. Please refresh the page.", {
       position: "top-right",
-      timeout: 3000
+      timeout: 3000,
     });
     return;
   }
-  
+
   if (!consultationStore.patient?.id) {
-    toast.error('Patient data not available. Please refresh the page.', {
+    toast.error("Patient data not available. Please refresh the page.", {
       position: "top-right",
-      timeout: 3000
+      timeout: 3000,
     });
     return;
   }
-  
-  console.log('Opening lab request modal with:', {
+
+  console.log("Opening lab request modal with:", {
     consultationId: consultationStore.consultation.id,
     patientId: consultationStore.patient.id,
-    doctorId: consultationStore.consultation.doctor_id
+    doctorId: consultationStore.consultation.doctor_id,
   });
-  
+
   showLabRequestModal.value = true;
 };
 
@@ -991,8 +992,6 @@ onMounted(async () => {
     // console.log("Consultation loaded:", consultationStore.consultation);
     // console.log("Initial notes:", consultationNotes.value);
     // console.log("Patient data:", consultationStore.patient);
-
-    init();
 
     // Show success message if consultation was created
     if (consultationStore.consultation) {

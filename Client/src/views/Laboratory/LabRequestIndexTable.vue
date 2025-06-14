@@ -4,6 +4,7 @@ import Modal from "@/components/UI/Modal.vue";
 import { useLabRequestStore } from "@/stores/labRequestStore";
 import { storeToRefs } from "pinia";
 import { useLabResultStore } from "@/stores/labResultStore";
+import { useAuthStore } from "@/stores/auth"; // Import auth store
 
 const { getLabRequests } = useLabRequestStore();
 const { createLabResult } = useLabResultStore();
@@ -25,18 +26,26 @@ const labResultData = ref({
   attachment: "",
 });
 
+const authStore = useAuthStore(); // Initialize auth store
+
 onMounted(async () => {
+  await authStore.getUser(); // Fetch the current user
   labRequests.value = await getLabRequests();
   console.log(labRequests.value);
 });
 
 const filteredLabRequests = computed(() => {
-  if (selectedStatus.value === "all") {
-    return labRequests.value;
-  }
-  return labRequests.value.filter(
-    (request) => request.status === selectedStatus.value,
+  const userId = authStore.user?.id; // Get the current user's ID
+  if (!userId) return []; // Return empty if user ID is not available
+
+  let filtered = labRequests.value.filter(
+    (request) => request.laboratory_id === userId,
   );
+
+  if (selectedStatus.value === "all") {
+    return filtered;
+  }
+  return filtered.filter((request) => request.status === selectedStatus.value);
 });
 
 // Function to change the selected status
@@ -261,10 +270,189 @@ const closeSendResultPopup = () => {
         </tbody>
       </table>
     </div>
-
-    <!-- Using the Modal component -->
     <Modal v-if="showPopup" @close="closePopup" :fullScreenBackdrop="true">
-      <!-- ...existing modal content... -->
+      <template #body>
+        <div
+          class="relative max-h-[700px] w-full max-w-[700px] overflow-y-auto overflow-x-hidden rounded-3xl bg-white p-4 lg:p-11"
+        >
+          <h5
+            class="modal-title mb-2 text-theme-xl font-semibold text-gray-800 lg:text-2xl"
+          >
+            More Details
+          </h5>
+          <p class="text-sm text-gray-500">Review lab request information</p>
+
+          <div v-if="selectedLabRequest" class="mt-8">
+            <!-- Basic Info Section -->
+            <div class="flex flex-col gap-6 lg:items-start lg:justify-between">
+              <div class="">
+                <h4
+                  class="text-left text-lg font-semibold text-gray-800 lg:mb-6"
+                >
+                  Patient's Information
+                </h4>
+
+                <div
+                  class="grid grid-cols-1 gap-4 text-left lg:grid-cols-2 lg:gap-7 2xl:gap-x-32"
+                >
+                  <div>
+                    <p class="mb-2 text-xs leading-normal text-gray-500">
+                      Name
+                    </p>
+                    <p class="text-sm font-medium text-gray-800">
+                      {{ selectedLabRequest.consultation.patient.name }}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p class="mb-2 text-xs leading-normal text-gray-500">Age</p>
+                    <p class="text-sm font-medium text-gray-800">
+                      {{
+                        selectedLabRequest.consultation.patient.birth_date
+                          ? new Date().getFullYear() -
+                            new Date(
+                              selectedLabRequest.consultation.patient.birth_date,
+                            ).getFullYear()
+                          : "N/A"
+                      }}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p class="mb-2 text-xs leading-normal text-gray-500">
+                      Gender
+                    </p>
+                    <p class="text-sm font-medium capitalize text-gray-800">
+                      {{ selectedLabRequest.consultation.patient.gender }}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p class="mb-2 text-xs leading-normal text-gray-500">
+                      Email address
+                    </p>
+                    <p class="text-sm font-medium text-gray-800">
+                      {{ selectedLabRequest.consultation.patient.email }}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p class="mb-2 text-xs leading-normal text-gray-500">
+                      Phone
+                    </p>
+                    <p class="text-sm font-medium text-gray-800">
+                      {{ selectedLabRequest.consultation.patient.phone }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="">
+                <h4
+                  class="text-left text-lg font-semibold text-gray-800 lg:mb-6"
+                >
+                  Doctor's Information
+                </h4>
+
+                <div
+                  class="grid grid-cols-1 gap-4 text-left lg:grid-cols-2 lg:gap-7 2xl:gap-x-32"
+                >
+                  <div>
+                    <p class="mb-2 text-xs leading-normal text-gray-500">
+                      Doctor Name
+                    </p>
+                    <p class="text-sm font-medium text-gray-800">
+                      {{ selectedLabRequest.consultation.doctor.name }}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p class="mb-2 text-xs leading-normal text-gray-500">
+                      Email address
+                    </p>
+                    <p class="text-sm font-medium text-gray-800">
+                      {{ selectedLabRequest.consultation.doctor.email }}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p class="mb-2 text-xs leading-normal text-gray-500">
+                      Phone
+                    </p>
+                    <p class="text-sm font-medium text-gray-800">
+                      {{ selectedLabRequest.consultation.doctor.phone }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="">
+                <h4
+                  class="text-left text-lg font-semibold text-gray-800 lg:mb-6"
+                >
+                  Lab Request Details
+                </h4>
+
+                <div
+                  class="grid grid-cols-1 gap-4 text-left lg:grid-cols-2 lg:gap-7 2xl:gap-x-32"
+                >
+                  <div>
+                    <p class="mb-2 text-xs leading-normal text-gray-500">
+                      Test Type
+                    </p>
+                    <p class="text-sm font-medium text-gray-800">
+                      {{ selectedLabRequest.test_type }}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p class="mb-2 text-xs leading-normal text-gray-500">
+                      Status
+                    </p>
+                    <p class="text-sm font-medium capitalize text-gray-800">
+                      {{ selectedLabRequest.status }}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p class="mb-2 text-xs leading-normal text-gray-500">
+                      Requested Date
+                    </p>
+                    <p class="text-sm font-medium text-gray-800">
+                      {{
+                        new Date(
+                          selectedLabRequest.created_at,
+                        ).toLocaleDateString("en-GB")
+                      }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Action buttons -->
+            <div class="flex justify-end gap-x-6">
+              <div
+                class="modal-footer mt-8 flex items-center gap-3 sm:justify-end"
+              >
+                <button
+                  @click="openSendResultPopup()"
+                  class="ark:border-gray-700 ark:bg-gray-800 ark:hover:bg-white/[0.03] flex w-full justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-success-50 hover:text-success-700 sm:w-auto"
+                >
+                  Send Result
+                </button>
+              </div>
+              <div
+                class="modal-footer mt-8 flex items-center gap-3 sm:justify-end"
+              >
+                <button
+                  @click="closePopup"
+                  class="ark:border-gray-700 ark:bg-gray-800 ark:hover:bg-white/[0.03] flex w-full justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 sm:w-auto"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
     </Modal>
 
     <!-- Send Result Modal -->
@@ -273,7 +461,84 @@ const closeSendResultPopup = () => {
       @close="closeSendResultPopup"
       :fullScreenBackdrop="true"
     >
-      <!-- ...existing modal content... -->
+      <template #body>
+        <div
+          class="relative max-h-[700px] w-full max-w-[700px] overflow-y-auto overflow-x-hidden rounded-3xl bg-white p-4 lg:p-11"
+        >
+          <h5
+            class="modal-title mb-2 text-theme-xl font-semibold text-gray-800 lg:text-2xl"
+          >
+            Send Lab Result
+          </h5>
+          <p class="text-sm text-gray-500">
+            Enter the lab result details and send to the patient.
+          </p>
+
+          <div v-if="selectedLabRequest" class="mt-8">
+            <!-- Form for sending lab result -->
+            <div>
+              <label
+                for="result_details"
+                class="mb-1.5 block text-left text-sm font-medium text-gray-700"
+              >
+                Result Details
+              </label>
+              <textarea
+                v-model="labResultData.result_details"
+                id="result_details"
+                rows="4"
+                class="ark:bg-gray-800 block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+                placeholder="Enter result details here..."
+              ></textarea>
+            </div>
+
+            <div class="mt-4">
+              <label
+                for="attachment"
+                class="mb-1.5 block text-left text-sm font-medium text-gray-700"
+              >
+                Upload Attachment <span class="text-red-500">*</span>
+              </label>
+              <div
+                :onclick="uploadAttachment"
+                class="mt-1 flex h-11 w-1/2 cursor-pointer justify-center rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 hover:border-2 focus:border-first-accent"
+              >
+                Click to upload
+              </div>
+              <p
+                v-if="isFileUploaded"
+                class="mt-4 text-left font-semibold text-success-400"
+              >
+                Attachment Uploaded Successfully
+              </p>
+              <p
+                v-if="errors?.attachment"
+                class="mt-2 text-xs font-semibold text-red-500"
+              >
+                {{ errors.attachment }}
+              </p>
+            </div>
+
+            <!-- Action buttons -->
+            <div
+              class="modal-footer mt-8 flex items-center gap-3 sm:justify-end"
+            >
+              <button
+                @click="closeSendResultPopup"
+                class="ark:border-gray-700 ark:bg-gray-800 ark:hover:bg-white/[0.03] flex w-full justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 sm:w-auto"
+              >
+                Cancel
+              </button>
+              <button
+                @click="handleSubmit"
+                class="ark:border-gray-700 ark:bg-gray-800 ark:hover:bg-white/[0.03] flex w-full justify-center rounded-lg border border-blue-500 bg-blue-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700 sm:w-auto"
+              >
+                Send
+              </button>
+            </div>
+          </div>
+        </div>
+      </template>
     </Modal>
   </div>
 </template>

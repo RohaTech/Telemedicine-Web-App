@@ -40,7 +40,7 @@ const labResultData = ref({
 onMounted(async () => {
   labRequests.value = await getLabRequests();
   laboratories.value = await getLaboratories();
-  console.log(laboratories.value);
+  console.log(labRequests.value);
 });
 
 const filteredLabRequests = computed(() => {
@@ -320,7 +320,7 @@ const closeSelectLabPopup = () => {
             </thead>
             <tbody class="ark:divide-gray-700 divide-y divide-gray-200">
               <!-- No results message -->
-              <tr v-if="filteredLabRequests.length === 0">
+              <tr v-if="filteredLabRequests?.length === 0">
                 <td colspan="6" class="px-5 py-8 text-center sm:px-6">
                   <div class="flex flex-col items-center justify-center">
                     <svg
