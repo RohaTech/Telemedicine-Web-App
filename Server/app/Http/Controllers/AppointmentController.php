@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Exception;
 use App\Services\TwilioService;
 
+
 class AppointmentController extends Controller
 {
     // Get all appointments
