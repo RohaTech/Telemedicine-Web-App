@@ -45,12 +45,11 @@ const menuGroups = [
         icon: AppointmentsIcon,
         name: "Waiting Appointments",
         path: "DoctorWaitingAppointments",
-      },
-      {
+      },      {
         icon: UserCircleIcon,
         name: "Patients",
-        path: "DoctorHome",
-      },      {
+        path: "DoctorPatients",
+      },{
         icon: LaboratoryIcon,
         name: "Laboratory",        subItems: [
           { name: "Lab Requests", path: "DoctorLabRequests", pro: false },

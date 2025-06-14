@@ -123,4 +123,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Appointment::class, 'doctor_id');
     }
+
+    /**
+     * A user can have multiple lab requests as a patient.
+     */
+    public function labRequests()
+    {
+        return $this->hasManyThrough(LabRequest::class, Consultation::class, 'patient_id', 'consultation_id', 'id', 'id');
+    }
 }
