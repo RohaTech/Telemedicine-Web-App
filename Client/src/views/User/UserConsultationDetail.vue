@@ -479,7 +479,7 @@ const getVitalIcon = (iconType) => {
                     Ready for your appointment?
                   </h1>
                   <p class="text-gray-600">
-                    click join video call button and wait for the doctor to start the call
+                    click Initiate video call button and wait for the doctor to start the call
                   </p>
 
                 </div>
@@ -662,7 +662,7 @@ const getVitalIcon = (iconType) => {
                     @click="init"
                     class="rounded-lg bg-blue-600 px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                   >
-                    Join Video Call
+                  Initiate    Video Call
                   </button>
                   <p class="mt-2 text-sm text-gray-500">
                     Your doctor will be notified when you join
