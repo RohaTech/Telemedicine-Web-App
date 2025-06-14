@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useLabRequestStore } from "@/stores/labRequestStore";
+import { useToast } from "vue-toastification";
 
 // Props
 const props = defineProps({
@@ -21,50 +22,42 @@ const props = defineProps({
 // Emits
 const emit = defineEmits(["close", "success"]);
 
-// Store
+// Store and Toast
 const { createLabRequest } = useLabRequestStore();
+const toast = useToast();
 
 // Form data
 const labRequestData = ref({
   consultation_id: props.consultationId,
-  patient_id: props.patientId,
-  doctor_id: props.doctorId,
   test_type: "",
   status: "pending",
-});
-
-// Debug log to check props
-console.log('DoctorLabRequestModal props:', {
-  consultationId: props.consultationId,
-  patientId: props.patientId,
-  doctorId: props.doctorId
 });
 
 // Loading state
 const isSubmitting = ref(false);
 
-// Common lab test types
+// Updated test types to match the controller
 const testTypes = [
-  "Complete Blood Count (CBC)",
-  "Blood Sugar Test",
-  "Lipid Profile",
-  "Liver Function Test",
-  "Kidney Function Test",
-  "Thyroid Function Test",
-  "Urine Analysis",
+  "Complete Blood Count",
+  "Basic Metabolic Panel",
+  "Comprehensive Metabolic Panel",
+  "Lipid Panel",
+  "Hemoglobin A1c",
+  "Thyroid Function Tests",
+  "Liver Function Tests",
+  "Kidney Function Tests",
+  "Urinalysis",
+  "C-Reactive Protein",
+  "Erythrocyte Sedimentation Rate",
+  "Blood Glucose Test",
+  "Prothrombin Time",
+  "Activated Partial Thromboplastin Time",
   "Electrolyte Panel",
-  "Cardiac Markers",
-  "Inflammatory Markers",
+  "Iron Studies",
   "Vitamin D Test",
-  "Hemoglobin A1C",
-  "Cholesterol Test",
-  "Blood Pressure",
-  "X-Ray",
-  "CT Scan",
-  "MRI",
-  "Ultrasound",
-  "ECG",
-  "Other",
+  "Blood Culture",
+  "Stool Occult Blood Test",
+  "Serum Uric Acid Test",
 ];
 
 // Form validation
@@ -74,32 +67,56 @@ const isFormValid = computed(() => {
 
 // Handle form submission
 const handleSubmit = async () => {
-  if (!isFormValid.value) return;
+  if (!isFormValid.value) {
+    toast.warning("Please select a test type before submitting.", {
+      position: "top-right",
+      timeout: 3000,
+    });
+    return;
+  }
+
+  console.log(labRequestData.value);
 
   isSubmitting.value = true;
-
-  // Debug log to see what data is being sent
-  console.log('Submitting lab request data:', labRequestData.value);
-
   try {
-    const result = await createLabRequest(labRequestData.value);
+    await createLabRequest(labRequestData.value);
 
-    if (result.success) {
-      emit("success");
-      emit("close");
-    } else {
-      // Handle validation errors
-      console.error('Lab request creation failed:', result);
-      if (result.errors) {
-        const errorMessages = Object.values(result.errors).flat().join('\n');
-        alert(`Validation errors:\n${errorMessages}`);
-      } else {
-        alert(result.error || "Failed to create lab request. Please try again.");
-      }
-    }
+    toast.success("Lab request created successfully!", {
+      position: "top-right",
+      timeout: 5000,
+      closeOnClick: true,
+      pauseOnFocusLoss: true,
+      pauseOnHover: true,
+      draggable: true,
+      draggablePercent: 0.6,
+      showCloseButtonOnHover: false,
+      hideProgressBar: false,
+      closeButton: "button",
+      icon: true,
+      rtl: false,
+    });
+
+    
+
+    emit("success");
+    emit("close");
   } catch (error) {
     console.error("Error creating lab request:", error);
-    alert("An unexpected error occurred. Please try again.");
+
+    toast.error("Failed to create lab request. Please try again.", {
+      position: "top-right",
+      timeout: 5000,
+      closeOnClick: true,
+      pauseOnFocusLoss: true,
+      pauseOnHover: true,
+      draggable: true,
+      draggablePercent: 0.6,
+      showCloseButtonOnHover: false,
+      hideProgressBar: false,
+      closeButton: "button",
+      icon: true,
+      rtl: false,
+    });
   } finally {
     isSubmitting.value = false;
   }
@@ -164,20 +181,6 @@ const handleClose = () => {
           </select>
         </div>
 
-        <!-- Custom Test Type (if Other is selected) -->
-        <div v-if="labRequestData.test_type === 'Other'">
-          <label class="mb-2 block text-sm font-medium text-gray-700">
-            Specify Test Type *
-          </label>
-          <input
-            v-model="labRequestData.test_type"
-            type="text"
-            placeholder="Enter specific test type..."
-            class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            required
-          />
-        </div>
-
         <!-- Information Note -->
         <div class="rounded-lg bg-blue-50 p-4">
           <div class="flex">
@@ -196,6 +199,8 @@ const handleClose = () => {
               <p class="text-sm text-blue-700">
                 <strong>Note:</strong> After submitting this request, the
                 patient will be able to select a laboratory to process the test.
+                The lab request will be created with a "pending" status until a
+                laboratory is assigned.
               </p>
             </div>
           </div>

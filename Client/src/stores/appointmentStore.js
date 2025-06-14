@@ -211,6 +211,7 @@ export const useAppointmentStore = defineStore("appointmentStore", {
           doctor_id: doctorId,
           appointment_date: appointmentData.date,
           time: appointmentData.time,
+          phone: appointmentData.phone,
           status: appointmentData.status || "pending",
         };
 

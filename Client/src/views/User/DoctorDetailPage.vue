@@ -10,6 +10,7 @@ import { useToast } from "vue-toastification"; // <-- Import useToast
 
 const appointmentData = ref({
   doctor_id: "",
+  phone: "",
   patient_id: "",
   date: "",
   time: "",
@@ -51,7 +52,9 @@ onMounted(async () => {
 
 const handleBook = async () => {
   const now = new Date();
+
   appointmentData.value.doctor_id = doctor.value?.user?.id;
+  appointmentData.value.phone = doctor.value?.user?.phone;
   appointmentData.value.patient_id = authStore?.user.id;
   appointmentData.value.date = now.toISOString().split("T")[0]; // YYYY-MM-DD
   appointmentData.value.time = now.toTimeString().split(" ")[0]; // HH:mm:ss
