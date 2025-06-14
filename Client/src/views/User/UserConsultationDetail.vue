@@ -4,6 +4,48 @@ import { useConsultationStore } from "@/stores/consultationStore";
 import { ref, reactive, onMounted, onUnmounted, nextTick, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
+import {
+  TUICallKit,
+  TUICallKitServer,
+  TUICallType,
+} from "@tencentcloud/call-uikit-vue";
+import * as GenerateTestUserSig from "@/debug/GenerateTestUserSig-es"; 
+
+
+const call = async () => {
+  await TUICallKitServer.calls({
+    userIDList: [calleeUserID.value],
+    type: TUICallType.VIDEO_CALL,
+  });
+};
+
+const SDKAppID = 40000719; // TODO: Replace with your SDKAppID (Notice: SDKAppID is of type number）
+const SDKSecretKey =
+  "17eb724f5184648ae6651277d82740750a9adb698cb23848a8c29939bbbaad82"; // TODO: Replace with your SDKSecretKey
+
+const callerUserID = ref("2");
+const calleeUserID = ref("");
+
+//【2】Initialize the TUICallKit component
+const init = async () => {
+  const { userSig } = GenerateTestUserSig.genTestUserSig({
+    userID: callerUserID.value,
+    SDKAppID,
+    SecretKey: SDKSecretKey,
+  });
+  await TUICallKitServer.init({
+    userID: callerUserID.value,
+    userSig,
+    SDKAppID,
+  });
+  alert("TUICallKit init succeed");
+};
+
+// onMounted(() => {
+//   callerUserID.value = "2";
+//   init();
+// });
+
 
 const route = useRoute();
 const toast = useToast();
@@ -26,11 +68,17 @@ let pollInterval;
 onMounted(async () => {
   try {
     // Get consultation data
-    consultation.value = await consultationStore.getAConsultation(route.params.id);
-    
+    consultation.value = await consultationStore.getAConsultation(
+      route.params.id,
+    );
+
     // Parse languages and store in reactive variable
     const languagesString =
       consultation.value.data?.doctor.doctor?.languages || "[]";
+      // callerUserID.value = JSON.stringify(consultation.value.data?.patient_id);
+
+ 
+      
     try {
       doctorLanguages.value = JSON.parse(languagesString);
     } catch (error) {
@@ -41,19 +89,22 @@ onMounted(async () => {
     // Set consultation data for chat
     if (consultation.value.data) {
       consultationStore.consultation = consultation.value.data;
-      
+
       // Load initial chat messages
       await consultationStore.fetchChatMessages();
 
       // Connect to real-time chat
       if (consultationStore.consultation?.id) {
-        console.log('Connecting to real-time chat for consultation:', consultationStore.consultation.id);
+        console.log(
+          "Connecting to real-time chat for consultation:",
+          consultationStore.consultation.id,
+        );
         consultationStore.connectToChat(consultationStore.consultation.id);
-        
-        toast.info('Connecting to real-time chat...', {
+
+        toast.info("Connecting to real-time chat...", {
           position: "bottom-right",
           timeout: 2000,
-          hideProgressBar: true
+          hideProgressBar: true,
         });
 
         // Set up periodic polling as a fallback for real-time updates
@@ -61,26 +112,27 @@ onMounted(async () => {
           try {
             const previousMessageCount = consultationStore.chatMessages.length;
             await consultationStore.fetchChatMessages();
-            
+
             // If new messages were fetched, auto-scroll
             if (consultationStore.chatMessages.length > previousMessageCount) {
               await nextTick(() => {
                 if (chatContainer.value) {
-                  chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
+                  chatContainer.value.scrollTop =
+                    chatContainer.value.scrollHeight;
                 }
               });
             }
           } catch (error) {
-            console.error('Error polling for messages:', error);
+            console.error("Error polling for messages:", error);
           }
         }, 5000); // Poll every 5 seconds
       }
     }
   } catch (error) {
-    console.error('Error loading consultation:', error);
-    toast.error('Failed to load consultation details.', {
+    console.error("Error loading consultation:", error);
+    toast.error("Failed to load consultation details.", {
       position: "top-right",
-      timeout: 3000
+      timeout: 3000,
     });
   }
 });
@@ -90,7 +142,7 @@ onUnmounted(() => {
   if (pollInterval) {
     clearInterval(pollInterval);
   }
-  
+
   // Disconnect from real-time chat
   consultationStore.disconnectFromChat();
 });
@@ -200,11 +252,11 @@ const allergies = ref([
 // Methods
 const handleSendMessage = async () => {
   if (!newMessage.value.trim()) return;
-  
+
   try {
     await consultationStore.sendMessage(newMessage.value, "Patient");
     newMessage.value = "";
-    
+
     // Auto-scroll to bottom after sending
     await nextTick(() => {
       if (chatContainer.value) {
@@ -212,10 +264,10 @@ const handleSendMessage = async () => {
       }
     });
   } catch (error) {
-    console.error('Error sending message:', error);
-    toast.error('Failed to send message. Please try again.', {
+    console.error("Error sending message:", error);
+    toast.error("Failed to send message. Please try again.", {
       position: "top-right",
-      timeout: 3000
+      timeout: 3000,
     });
   }
 };
@@ -259,30 +311,37 @@ const toggleChat = () => {
 };
 
 // Watch for new chat messages to auto-scroll
-watch(() => consultationStore.chatMessages, () => {
-  nextTick(() => {
-    if (chatContainer.value) {
-      chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
-    }
-  });
-}, { deep: true });
+watch(
+  () => consultationStore.chatMessages,
+  () => {
+    nextTick(() => {
+      if (chatContainer.value) {
+        chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
+      }
+    });
+  },
+  { deep: true },
+);
 
 // Watch for connection status changes
-watch(() => consultationStore.isConnectedToChat, (newStatus) => {
-  if (newStatus) {
-    toast.success('Real-time chat connected', {
-      position: "bottom-right",
-      timeout: 2000,
-      hideProgressBar: true
-    });
-  } else {
-    toast.warning('Chat connection lost, trying to reconnect...', {
-      position: "bottom-right",
-      timeout: 3000,
-      hideProgressBar: true
-    });
-  }
-});
+watch(
+  () => consultationStore.isConnectedToChat,
+  (newStatus) => {
+    if (newStatus) {
+      toast.success("Real-time chat connected", {
+        position: "bottom-right",
+        timeout: 2000,
+        hideProgressBar: true,
+      });
+    } else {
+      toast.warning("Chat connection lost, trying to reconnect...", {
+        position: "bottom-right",
+        timeout: 3000,
+        hideProgressBar: true,
+      });
+    }
+  },
+);
 
 const getVitalIcon = (iconType) => {
   const icons = {
@@ -298,7 +357,7 @@ const getVitalIcon = (iconType) => {
   <UserLayout>
     <div class="min-h-screen bg-gray-50">
       <!-- Header -->
-
+ <TUICallKit style="width: 650px; height: 500px" />
       <div class="flex h-[calc(100vh-80px)]">
         <!-- Static Sidebar -->
         <div class="flex w-80 flex-col border-r border-gray-200 bg-white">
@@ -374,7 +433,6 @@ const getVitalIcon = (iconType) => {
               </div>
             </div>
 
-          
             <!-- Recent History -->
             <div class="p-4">
               <h3 class="mb-3 flex items-center font-semibold text-gray-900">
@@ -413,7 +471,7 @@ const getVitalIcon = (iconType) => {
         <!-- Main Content Area -->
         <div class="relative flex flex-1 pb-10">
           <!-- Pre-Call Page -->
-          <div v-if="!isCallActive" class="flex flex-1 flex-col">
+          <div v-if" class="flex flex-1 flex-col">
             <div class="flex-1 p-8">
               <div class="mx-auto max-w-4xl">
                 <div class="mb-8 text-center">
@@ -426,7 +484,7 @@ const getVitalIcon = (iconType) => {
 
                   <div class="flex items-center justify-center space-x-4">
                     <div
-                      v-if="!isCallActive"
+                     
                       class="flex items-center space-x-2"
                     >
                       <!-- Clock Icon -->
@@ -446,20 +504,6 @@ const getVitalIcon = (iconType) => {
                       <span class="text-sm text-gray-600"
                         >Appointment in 5 minutes</span
                       >
-                    </div>
-                    <div class="flex items-center space-x-2">
-                      <!-- Circle Icon -->
-                      <svg
-                        :class="`h-3 w-3 fill-current ${isCallActive ? 'text-green-500' : 'text-yellow-500'}`"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle cx="12" cy="12" r="10" />
-                      </svg>
-                      <span
-                        :class="`text-sm font-medium ${isCallActive ? 'text-green-600' : 'text-yellow-600'}`"
-                      >
-                        {{ isCallActive ? "In Call" : "Waiting" }}
-                      </span>
                     </div>
                   </div>
                 </div>
@@ -650,11 +694,12 @@ const getVitalIcon = (iconType) => {
                     </li>
                   </ul>
                 </div>
-
+              
                 <!-- Join Call Button -->
                 <div class="text-center">
+               
                   <button
-                    @click="handleJoinCall"
+                    @click="init"
                     class="rounded-lg bg-blue-600 px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                   >
                     Join Video Call
@@ -666,167 +711,6 @@ const getVitalIcon = (iconType) => {
               </div>
             </div>
           </div>
-
-          <!-- Video Call Interface -->
-          <template v-else>
-            <!-- Video Call Section -->
-            <div class="relative flex-1 bg-gray-900">
-              <!-- Doctor Video (Main) -->
-              <div
-                class="relative flex h-full w-full items-center justify-center bg-gray-800"
-              >
-                <div class="text-center">
-                  <div
-                    class="mx-auto mb-4 flex h-32 w-32 items-center justify-center rounded-full bg-blue-600"
-                  >
-                    <span class="text-3xl font-semibold text-white">DS</span>
-                  </div>
-                  <p class="text-lg font-medium text-white">
-                    {{ consultation.data?.doctor.name || "Dr. Sarah Smith" }}
-                  </p>
-                  <p class="text-sm text-gray-300">
-                    {{
-                      consultation.data?.doctor.doctor?.specialization ||
-                      "Cardiologist"
-                    }}
-                  </p>
-                </div>
-
-                <!-- Patient Video (Inset) -->
-                <div
-                  class="absolute right-4 top-4 flex h-36 w-48 items-center justify-center rounded-lg border-2 border-gray-600 bg-gray-700"
-                >
-                  <div class="text-center">
-                    <div
-                      class="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-full bg-green-600"
-                    >
-                      <span class="text-lg font-semibold text-white">You</span>
-                    </div>
-                    <p class="text-sm font-medium text-white">Patient</p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Video Controls -->
-              <div
-                class="absolute bottom-6 left-1/2 -translate-x-1/2 transform"
-              >
-                <div
-                  class="flex items-center space-x-4 rounded-full bg-white bg-opacity-10 px-6 py-3 backdrop-blur-sm"
-                >
-                  <button
-                    @click="isMuted = !isMuted"
-                    :class="`rounded-full p-3 transition-colors ${
-                      isMuted
-                        ? 'bg-red-600 hover:bg-red-700'
-                        : 'bg-gray-600 hover:bg-gray-700'
-                    }`"
-                  >
-                    <!-- Mic / MicOff Icon -->
-                    <svg
-                      v-if="isMuted"
-                      class="h-5 w-5 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M5.586 15H4a1 1 0 01-1-1v-3a1 1 0 011-1h1m0 0V9a2 2 0 012-2h2m0 0V6a2 2 0 012-2h2a2 2 0 012 2v1m2 0v1a2 2 0 002 2h2m0 0v3a1 1 0 001 1h1.586l-8 8-8-8z"
-                      />
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"
-                      />
-                    </svg>
-                    <svg
-                      v-else
-                      class="h-5 w-5 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
-                      />
-                    </svg>
-                  </button>
-
-                  <button
-                    @click="isVideoOn = !isVideoOn"
-                    :class="`rounded-full p-3 transition-colors ${
-                      !isVideoOn
-                        ? 'bg-red-600 hover:bg-red-700'
-                        : 'bg-gray-600 hover:bg-gray-700'
-                    }`"
-                  >
-                    <!-- Video / VideoOff Icon -->
-                    <svg
-                      v-if="isVideoOn"
-                      class="h-5 w-5 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                      />
-                    </svg>
-                    <svg
-                      v-else
-                      class="h-5 w-5 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728"
-                      />
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                      />
-                    </svg>
-                  </button>
-
-                  <button
-                    @click="handleEndCall"
-                    class="rounded-full bg-red-600 p-3 transition-colors hover:bg-red-700"
-                  >
-                    <!-- Phone Icon -->
-                    <svg
-                      class="h-5 w-5 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </template>
 
           <!-- Floating Chat Button (when chat is hidden) -->
           <Transition
@@ -856,12 +740,17 @@ const getVitalIcon = (iconType) => {
                   stroke-width="2"
                   d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a8.955 8.955 0 01-2.345-.306c-.52.263-1.5.634-3.345.905-1.64.24-2.577-.747-2.336-2.388.24-1.644.643-2.775.906-3.345A8.955 8.955 0 014 12c0-4.418 3.582-8 8-8s8 3.582 8 8z"
                 />
-              </svg>              <!-- Notification Badge (shows number of messages) -->
+              </svg>
+              <!-- Notification Badge (shows number of messages) -->
               <div
                 v-if="consultationStore.chatMessages.length > 0"
                 class="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white"
               >
-                {{ consultationStore.chatMessages.length > 9 ? '9+' : consultationStore.chatMessages.length }}
+                {{
+                  consultationStore.chatMessages.length > 9
+                    ? "9+"
+                    : consultationStore.chatMessages.length
+                }}
               </div>
             </button>
           </Transition>
@@ -878,20 +767,41 @@ const getVitalIcon = (iconType) => {
             <div
               v-if="isChatVisible"
               class="flex w-96 flex-col border-l border-gray-200 bg-white"
-            >              <!-- Chat Header -->
+            >
+              <!-- Chat Header -->
               <div class="border-b border-gray-200 px-6 py-4">
                 <div class="flex items-center justify-between">
-                  <h2 class="text-lg font-semibold text-gray-900 flex items-center">
-                    <svg class="h-5 w-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                  <h2
+                    class="flex items-center text-lg font-semibold text-gray-900"
+                  >
+                    <svg
+                      class="mr-2 h-5 w-5 text-blue-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                      />
                     </svg>
                     Chat with Doctor
-                    <span v-if="consultationStore.isConnectedToChat" class="ml-2 flex items-center text-sm text-green-600">
-                      <div class="h-2 w-2 bg-green-500 rounded-full mr-1 animate-pulse"></div>
+                    <span
+                      v-if="consultationStore.isConnectedToChat"
+                      class="ml-2 flex items-center text-sm text-green-600"
+                    >
+                      <div
+                        class="mr-1 h-2 w-2 animate-pulse rounded-full bg-green-500"
+                      ></div>
                       Live
                     </span>
-                    <span v-else class="ml-2 flex items-center text-sm text-gray-500">
-                      <div class="h-2 w-2 bg-gray-400 rounded-full mr-1"></div>
+                    <span
+                      v-else
+                      class="ml-2 flex items-center text-sm text-gray-500"
+                    >
+                      <div class="mr-1 h-2 w-2 rounded-full bg-gray-400"></div>
                       Connecting...
                     </span>
                   </h2>
@@ -916,15 +826,32 @@ const getVitalIcon = (iconType) => {
                     </svg>
                   </button>
                 </div>
-              </div>              <!-- Messages -->
-              <div ref="chatContainer" class="flex-1 space-y-4 overflow-y-auto px-6 py-4">
-                <div v-if="consultationStore.chatMessages.length === 0" class="text-center text-gray-500 py-8">
-                  <svg class="h-12 w-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+              </div>
+              <!-- Messages -->
+              <div
+                ref="chatContainer"
+                class="flex-1 space-y-4 overflow-y-auto px-6 py-4"
+              >
+                <div
+                  v-if="consultationStore.chatMessages.length === 0"
+                  class="py-8 text-center text-gray-500"
+                >
+                  <svg
+                    class="mx-auto mb-3 h-12 w-12 text-gray-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                    />
                   </svg>
                   <p>No messages yet. Start the conversation!</p>
                 </div>
-                
+
                 <div
                   v-for="(msg, index) in consultationStore.chatMessages"
                   :key="index"
@@ -945,7 +872,8 @@ const getVitalIcon = (iconType) => {
                     </p>
                   </div>
                 </div>
-              </div>              <!-- Message Input -->
+              </div>
+              <!-- Message Input -->
               <div class="border-t border-gray-200 px-6 py-4">
                 <div class="flex space-x-2">
                   <input
@@ -953,18 +881,38 @@ const getVitalIcon = (iconType) => {
                     @keypress="handleKeyPress"
                     type="text"
                     placeholder="Type your message..."
-                    class="flex-1 rounded-lg border border-gray-300 px-3 py-2 transition-all duration-200 focus:border-transparent focus:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                    :disabled="consultationStore.isSendingMessage || !consultationStore.isConnectedToChat"
+                    class="flex-1 rounded-lg border border-gray-300 px-3 py-2 transition-all duration-200 focus:border-transparent focus:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-gray-100"
+                    :disabled="
+                      consultationStore.isSendingMessage ||
+                      !consultationStore.isConnectedToChat
+                    "
                   />
                   <button
                     @click="handleSendMessage"
-                    :disabled="consultationStore.isSendingMessage || !newMessage.trim() || !consultationStore.isConnectedToChat"
-                    class="rounded-lg bg-blue-600 px-4 py-2 text-white transition-all duration-200 hover:bg-blue-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 active:scale-95 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    :disabled="
+                      consultationStore.isSendingMessage ||
+                      !newMessage.trim() ||
+                      !consultationStore.isConnectedToChat
+                    "
+                    class="rounded-lg bg-blue-600 px-4 py-2 text-white transition-all duration-200 hover:bg-blue-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 active:scale-95 disabled:cursor-not-allowed disabled:bg-gray-400"
                   >
                     <!-- Send Icon with Loading State -->
-                    <span v-if="consultationStore.isSendingMessage" class="flex items-center">
-                      <svg class="h-4 w-4 animate-spin mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    <span
+                      v-if="consultationStore.isSendingMessage"
+                      class="flex items-center"
+                    >
+                      <svg
+                        class="mr-1 h-4 w-4 animate-spin"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                        />
                       </svg>
                       Sending...
                     </span>
@@ -985,7 +933,10 @@ const getVitalIcon = (iconType) => {
                     </span>
                   </button>
                 </div>
-                <p v-if="!consultationStore.isConnectedToChat" class="text-xs text-gray-500 mt-2">
+                <p
+                  v-if="!consultationStore.isConnectedToChat"
+                  class="mt-2 text-xs text-gray-500"
+                >
                   Connecting to chat... Messages will be sent once connected.
                 </p>
               </div>

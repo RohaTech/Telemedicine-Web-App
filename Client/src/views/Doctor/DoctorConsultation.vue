@@ -1,6 +1,7 @@
 <template>
   <DoctorLayout>
     <div class="min-h-screen bg-gray-50">
+      <TUICallKit style="width: 650px; height: 500px" />
       <!-- Header -->
       <div class="flex border-b border-gray-200 p-4">
         <h2 class="text-2xl font-semibold text-gray-900">
@@ -204,7 +205,6 @@
 
                   <!-- Pre-Call State -->
                   <div
-                    v-if="!isCallActive"
                     class="flex h-[calc(100%-4rem)] flex-col items-center justify-center"
                   >
                     <div class="mb-6 py-6 text-center">
@@ -232,162 +232,24 @@
                         Click the button below to initiate the video call with
                         your patient
                       </p>
-                      <button
-                        @click="startCall"
-                        class="mt-6 rounded-lg bg-second-accent px-6 py-3 text-center font-medium text-white hover:bg-second-accent/90 focus:outline-none focus:ring-2 focus:ring-second-accent focus:ring-offset-2"
-                      >
-                        Start Video Call
-                      </button>
+                      <div class="flex gap-x-4">
+                        <button
+                          @click="init"
+                          class="mt-6 rounded-lg bg-second-accent px-6 py-3 text-center font-medium text-white hover:bg-second-accent/90 focus:outline-none focus:ring-2 focus:ring-second-accent focus:ring-offset-2"
+                        >
+                          Initiate Video Call
+                        </button>
+                        <button
+                          @click="call"
+                          class="mt-6 rounded-lg bg-second-accent px-6 py-3 text-center font-medium text-white hover:bg-second-accent/90 focus:outline-none focus:ring-2 focus:ring-second-accent focus:ring-offset-2"
+                        >
+                          Start Video Call
+                        </button>
+                      </div>
                     </div>
                   </div>
 
                   <!-- Active Call State -->
-                  <div
-                    v-else
-                    class="relative aspect-video h-[calc(100%-4rem)] overflow-hidden rounded-lg bg-gray-900"
-                  >
-                    <!-- Video Content -->
-                    <div class="flex h-full w-full items-center justify-center">
-                      <div class="text-center">
-                        <div
-                          class="mx-auto mb-4 h-24 w-24 rounded-full bg-blue-100 p-6"
-                        >
-                          <svg
-                            class="h-full w-full text-blue-500"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                            />
-                          </svg>
-                        </div>
-                        <h3 class="text-lg font-medium text-white">
-                          Video call with Patient
-                        </h3>
-                        <p class="text-gray-300">
-                          The video consultation will appear here
-                        </p>
-                      </div>
-
-                      <!-- Patient Video (Inset) -->
-                      <div
-                        class="absolute right-4 top-4 h-36 w-48 overflow-hidden rounded-lg border-2 border-gray-600 bg-gray-700"
-                      >
-                        <div
-                          class="flex h-full w-full items-center justify-center"
-                        >
-                          <svg
-                            class="h-12 w-12 text-white opacity-75"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-
-                      <!-- Video Controls -->
-                      <div
-                        class="absolute bottom-4 left-1/2 -translate-x-1/2 transform"
-                      >
-                        <div
-                          class="flex items-center space-x-4 rounded-full bg-white bg-opacity-10 px-6 py-3 backdrop-blur-sm"
-                        >
-                          <button
-                            @click="isMuted = !isMuted"
-                            :class="`rounded-full p-3 transition-colors ${
-                              isMuted
-                                ? 'bg-red-500 text-white'
-                                : 'bg-gray-100 text-gray-900'
-                            }`"
-                          >
-                            <svg
-                              class="h-5 w-5"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                v-if="isMuted"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M5.586 15.414a8 8 0 1011.314 0M17 20h3m-3-3h3M3 3l18 18"
-                              />
-                              <path
-                                v-else
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0-11V3"
-                              />
-                            </svg>
-                          </button>
-
-                          <button
-                            @click="isVideoOn = !isVideoOn"
-                            :class="`rounded-full p-3 transition-colors ${
-                              !isVideoOn
-                                ? 'bg-red-500 text-white'
-                                : 'bg-gray-100 text-gray-900'
-                            }`"
-                          >
-                            <svg
-                              class="h-5 w-5"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                v-if="!isVideoOn"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M7.5 3.186c-.259.032-.516.07-.77.114M4.5 3.75v16.5a2.25 2.25 0 002.25 2.25h6.055c.749 0 1.471-.29 2.01-.804l4.5-4.5a2.25 2.25 0 00.659-1.591V7.5a2.25 2.25 0 00-2.25-2.25h-2.25l-2.1-2.1a2.25 2.25 0 00-1.591-.659h-4.5a2.25 2.25 0 00-2.25 2.25v.5"
-                              />
-                              <path
-                                v-else
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                              />
-                            </svg>
-                          </button>
-
-                          <button
-                            @click="endCall"
-                            class="rounded-full bg-red-600 p-3 transition-colors hover:bg-red-700"
-                          >
-                            <svg
-                              class="h-5 w-5 text-white"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M16 8l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M5 3a2 2 0 00-2 2v1c0 8.284 6.716 15 15 15h1a2 2 0 002-2v-3.28a1 1 0 00-.684-.948l-4.493-1.498a1 1 0 00-1.21.502l-1.13 2.257a11.042 11.042 0 01-5.516-5.517l2.257-1.128a1 1 0 00.502-1.21L9.228 3.683A1 1 0 008.279 3H5z"
-                              />
-                            </svg>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
                 </div>
 
                 <!-- Consultation Notes -->
@@ -446,18 +308,39 @@
 
             <!-- Chat Interface -->
             <div class="h-64 border-t border-gray-200 bg-white">
-              <div class="flex h-full flex-col">                <div class="border-b border-gray-200 px-4 py-3">
-                  <h3 class="text-md font-semibold text-gray-800 flex items-center">
-                    <svg class="h-5 w-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+              <div class="flex h-full flex-col">
+                <div class="border-b border-gray-200 px-4 py-3">
+                  <h3
+                    class="text-md flex items-center font-semibold text-gray-800"
+                  >
+                    <svg
+                      class="mr-2 h-5 w-5 text-blue-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                      />
                     </svg>
                     Chat with Patient
-                    <span v-if="consultationStore.isConnectedToChat" class="ml-2 flex items-center text-sm text-green-600">
-                      <div class="h-2 w-2 bg-green-500 rounded-full mr-1 animate-pulse"></div>
+                    <span
+                      v-if="consultationStore.isConnectedToChat"
+                      class="ml-2 flex items-center text-sm text-green-600"
+                    >
+                      <div
+                        class="mr-1 h-2 w-2 animate-pulse rounded-full bg-green-500"
+                      ></div>
                       Live
                     </span>
-                    <span v-else class="ml-2 flex items-center text-sm text-gray-500">
-                      <div class="h-2 w-2 bg-gray-400 rounded-full mr-1"></div>
+                    <span
+                      v-else
+                      class="ml-2 flex items-center text-sm text-gray-500"
+                    >
+                      <div class="mr-1 h-2 w-2 rounded-full bg-gray-400"></div>
                       Connecting...
                     </span>
                   </h3>
@@ -492,33 +375,55 @@
                       </p>
                     </div>
                   </div>
-                </div>                <div class="border-t border-gray-200 p-4">
+                </div>
+                <div class="border-t border-gray-200 p-4">
                   <div class="flex gap-2">
                     <input
                       v-model="newMessage"
                       type="text"
                       placeholder="Type a message..."
-                      class="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      class="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:bg-gray-100"
                       @keyup.enter="sendMessage"
-                      :disabled="consultationStore.isSendingMessage || !consultationStore.isConnectedToChat"
+                      :disabled="
+                        consultationStore.isSendingMessage ||
+                        !consultationStore.isConnectedToChat
+                      "
                     />
                     <button
                       @click="sendMessage"
-                      :disabled="consultationStore.isSendingMessage || !newMessage.trim() || !consultationStore.isConnectedToChat"
-                      class="rounded-lg bg-second-accent px-4 py-2 text-sm font-medium text-white hover:bg-second-accent/90 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                      :disabled="
+                        consultationStore.isSendingMessage ||
+                        !newMessage.trim() ||
+                        !consultationStore.isConnectedToChat
+                      "
+                      class="rounded-lg bg-second-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-second-accent/90 disabled:cursor-not-allowed disabled:bg-gray-400"
                     >
-                      <span v-if="consultationStore.isSendingMessage" class="flex items-center">
-                        <svg class="h-4 w-4 animate-spin mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                      <span
+                        v-if="consultationStore.isSendingMessage"
+                        class="flex items-center"
+                      >
+                        <svg
+                          class="mr-1 h-4 w-4 animate-spin"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                          />
                         </svg>
                         Sending...
                       </span>
-                      <span v-else>
-                        Send
-                      </span>
+                      <span v-else> Send </span>
                     </button>
                   </div>
-                  <p v-if="!consultationStore.isConnectedToChat" class="text-xs text-gray-500 mt-2">
+                  <p
+                    v-if="!consultationStore.isConnectedToChat"
+                    class="mt-2 text-xs text-gray-500"
+                  >
                     Connecting to chat... Messages will be sent once connected.
                   </p>
                 </div>
@@ -705,6 +610,48 @@ import { useToast } from "vue-toastification";
 import DoctorLayout from "@/layout/DoctorLayout.vue";
 import DoctorLabRequestModal from "@/components/Doctor/DoctorLabRequestModal.vue";
 
+import {
+  TUICallKit,
+  TUICallKitServer,
+  TUICallType,
+} from "@tencentcloud/call-uikit-vue";
+import * as GenerateTestUserSig from "@/debug/GenerateTestUserSig-es";
+
+const call = async () => {
+  await TUICallKitServer.calls({
+    userIDList: [calleeUserID.value],
+    type: TUICallType.VIDEO_CALL,
+  });
+};
+
+const SDKAppID = 40000719; // TODO: Replace with your SDKAppID (Notice: SDKAppID is of type number）
+const SDKSecretKey =
+  "17eb724f5184648ae6651277d82740750a9adb698cb23848a8c29939bbbaad82"; // TODO: Replace with your SDKSecretKey
+
+const callerUserID = ref("1");
+const calleeUserID = ref("2");
+
+//【2】Initialize the TUICallKit component
+const init = async () => {
+  const { userSig } = GenerateTestUserSig.genTestUserSig({
+    userID: callerUserID.value,
+    SDKAppID,
+    SecretKey: SDKSecretKey,
+  });
+  await TUICallKitServer.init({
+    userID: callerUserID.value,
+    userSig,
+    SDKAppID,
+  });
+  alert("TUICallKit init succeed");
+};
+
+// onMounted(() => {
+//   callerUserID.value = "1";
+//   calleeUserID.value = "2";
+//   init();
+// });
+
 const route = useRoute();
 const router = useRouter();
 const consultationStore = useConsultationStore();
@@ -740,11 +687,11 @@ const formatDate = (timestamp) => {
 // Send chat message
 const sendMessage = async () => {
   if (!newMessage.value.trim()) return;
-  
+
   try {
     await consultationStore.sendMessage(newMessage.value);
     newMessage.value = "";
-    
+
     // Auto-scroll to bottom after sending
     await nextTick(() => {
       if (chatContainer.value) {
@@ -752,23 +699,12 @@ const sendMessage = async () => {
       }
     });
   } catch (error) {
-    console.error('Error sending message:', error);
-    toast.error('Failed to send message. Please try again.', {
+    console.error("Error sending message:", error);
+    toast.error("Failed to send message. Please try again.", {
       position: "top-right",
-      timeout: 3000
+      timeout: 3000,
     });
   }
-};
-
-// Call management functions
-const startCall = () => {
-  isCallActive.value = true;
-  console.log("Starting call with patient");
-};
-
-const endCall = () => {
-  isCallActive.value = false;
-  console.log("Ending call with patient");
 };
 
 // Lab request function
@@ -808,15 +744,21 @@ const saveConsultationNotes = async () => {
 
   // Check if consultation exists
   if (!consultationStore.consultation?.id) {
-    toast.error("No consultation found. Please refresh the page and try again.", {
-      position: "top-right",
-      timeout: 5000
-    });
+    toast.error(
+      "No consultation found. Please refresh the page and try again.",
+      {
+        position: "top-right",
+        timeout: 5000,
+      },
+    );
     return;
   }
 
   try {
-    console.log('Attempting to save notes for consultation:', consultationStore.consultation.id);
+    console.log(
+      "Attempting to save notes for consultation:",
+      consultationStore.consultation.id,
+    );
     const result = await consultationStore.saveNotes(consultationNotes.value);
 
     if (result.success) {
@@ -844,7 +786,7 @@ const saveConsultationNotes = async () => {
         position: "top-right",
         timeout: 5000,
       });
-      console.error('Save failed:', result.error);
+      console.error("Save failed:", result.error);
     }
   } catch (error) {
     console.error("Error saving consultation notes:", error);
@@ -867,15 +809,16 @@ const triggerAutoSave = () => {
 
   // Set new timer for auto-save after 10 seconds of inactivity
   autoSaveTimer.value = setTimeout(async () => {
-
     // Check if consultation exists and notes have changed
     if (!consultationStore.consultation?.id) {
-      console.log('Auto-save skipped: No consultation found');
+      console.log("Auto-save skipped: No consultation found");
       return;
     }
-    
-    if (consultationNotes.value !== lastSavedNotes.value && consultationNotes.value.trim()) {
 
+    if (
+      consultationNotes.value !== lastSavedNotes.value &&
+      consultationNotes.value.trim()
+    ) {
       console.log("Auto-saving notes...");
       const result = await consultationStore.saveNotes(consultationNotes.value);
       if (result.success) {
@@ -886,7 +829,7 @@ const triggerAutoSave = () => {
           hideProgressBar: true,
         });
       } else {
-        console.error('Auto-save failed:', result.error);
+        console.error("Auto-save failed:", result.error);
       }
     }
   }, 10000); // 10 seconds delay
@@ -898,30 +841,37 @@ watch(consultationNotes, () => {
 });
 
 // Watch for new chat messages to auto-scroll
-watch(() => consultationStore.chatMessages, () => {
-  nextTick(() => {
-    if (chatContainer.value) {
-      chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
-    }
-  });
-}, { deep: true });
+watch(
+  () => consultationStore.chatMessages,
+  () => {
+    nextTick(() => {
+      if (chatContainer.value) {
+        chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
+      }
+    });
+  },
+  { deep: true },
+);
 
 // Watch for connection status changes
-watch(() => consultationStore.isConnectedToChat, (newStatus) => {
-  if (newStatus) {
-    toast.success('Real-time chat connected', {
-      position: "bottom-right",
-      timeout: 2000,
-      hideProgressBar: true
-    });
-  } else {
-    toast.warning('Chat connection lost, trying to reconnect...', {
-      position: "bottom-right",
-      timeout: 3000,
-      hideProgressBar: true
-    });
-  }
-});
+watch(
+  () => consultationStore.isConnectedToChat,
+  (newStatus) => {
+    if (newStatus) {
+      toast.success("Real-time chat connected", {
+        position: "bottom-right",
+        timeout: 2000,
+        hideProgressBar: true,
+      });
+    } else {
+      toast.warning("Chat connection lost, trying to reconnect...", {
+        position: "bottom-right",
+        timeout: 3000,
+        hideProgressBar: true,
+      });
+    }
+  },
+);
 
 // Modal functions
 const openConsultationModal = (consultation) => {
@@ -1022,24 +972,34 @@ onMounted(async () => {
     // Initialize lastSavedNotes with current notes
     lastSavedNotes.value = consultationNotes.value;
 
-    console.log('Consultation loaded:', consultationStore.consultation);
-    console.log('Initial notes:', consultationNotes.value);
-    console.log("Patient data:", consultationStore.patient);
+    // console.log("Consultation loaded:", consultationStore.consultation);
+    // console.log("Initial notes:", consultationNotes.value);
+    // console.log("Patient data:", consultationStore.patient);
+
+    init();
 
     // Show success message if consultation was created
     if (consultationStore.consultation) {
       if (!consultationNotes.value) {
-        toast.info('New consultation created. You can now start adding notes.', {
-          position: "top-right",
-          timeout: 4000
-        });
+        toast.info(
+          "New consultation created. You can now start adding notes.",
+          {
+            position: "top-right",
+            timeout: 4000,
+          },
+        );
       }
-    }    
-    
+    }
+
     // Fetch patient consultation history using store
     if (consultationStore.patient?.id) {
-      console.log('Fetching consultations for patient ID:', consultationStore.patient.id);
-      const result = await consultationStore.fetchPatientConsultations(consultationStore.patient.id);
+      console.log(
+        "Fetching consultations for patient ID:",
+        consultationStore.patient.id,
+      );
+      const result = await consultationStore.fetchPatientConsultations(
+        consultationStore.patient.id,
+      );
 
       if (!result.success) {
         if (result.usedFallback) {
@@ -1049,7 +1009,9 @@ onMounted(async () => {
         }
       }
     } else {
-      console.warn("No patient ID found, loading sample consultation data for demo");
+      console.warn(
+        "No patient ID found, loading sample consultation data for demo",
+      );
       // Load sample data for demonstration
       consultationStore.loadSampleConsultationData();
     }
@@ -1059,14 +1021,17 @@ onMounted(async () => {
 
     // Connect to real-time chat if consultation is available
     if (consultationStore.consultation?.id) {
-      console.log('Connecting to real-time chat for consultation:', consultationStore.consultation.id);
+      console.log(
+        "Connecting to real-time chat for consultation:",
+        consultationStore.consultation.id,
+      );
       consultationStore.connectToChat(consultationStore.consultation.id);
-      
+
       // Show connection status
-      toast.info('Connecting to real-time chat...', {
+      toast.info("Connecting to real-time chat...", {
         position: "bottom-right",
         timeout: 2000,
-        hideProgressBar: true
+        hideProgressBar: true,
       });
 
       // Set up periodic polling as a fallback for real-time updates
@@ -1074,27 +1039,28 @@ onMounted(async () => {
         try {
           const previousMessageCount = consultationStore.chatMessages.length;
           await consultationStore.fetchChatMessages();
-          
+
           // If new messages were fetched, auto-scroll
           if (consultationStore.chatMessages.length > previousMessageCount) {
             await nextTick(() => {
               if (chatContainer.value) {
-                chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
+                chatContainer.value.scrollTop =
+                  chatContainer.value.scrollHeight;
               }
             });
           }
         } catch (error) {
-          console.error('Error polling for messages:', error);
+          console.error("Error polling for messages:", error);
         }
       }, 5000); // Poll every 5 seconds
     } else {
-      console.warn('No consultation ID available for real-time chat');
+      console.warn("No consultation ID available for real-time chat");
     }
   } catch (error) {
-    console.error('Error during component initialization:', error);
-    toast.error('Failed to initialize consultation. Please refresh the page.', {
+    console.error("Error during component initialization:", error);
+    toast.error("Failed to initialize consultation. Please refresh the page.", {
       position: "top-right",
-      timeout: 5000
+      timeout: 5000,
     });
   }
 });
@@ -1104,12 +1070,12 @@ onUnmounted(() => {
   if (autoSaveTimer.value) {
     clearTimeout(autoSaveTimer.value);
   }
-  
+
   // Clear polling interval
   if (pollInterval) {
     clearInterval(pollInterval);
   }
-  
+
   // Disconnect from real-time chat and clear data
   consultationStore.clearData();
 });
