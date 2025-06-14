@@ -6,6 +6,7 @@ use App\Models\Appointment;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Exception;
+use App\Services\TwilioService;
 
 class AppointmentController extends Controller
 {
@@ -44,6 +45,22 @@ class AppointmentController extends Controller
     // Create a new appointment
     public function store(Request $request)
     {
+        $smsMessage = `New Patient Have Booked An Appointment. Check Your Dashboard For Details.`;
+
+
+
+        if ($request->status == 'waiting') {
+            try {
+                $twilio = new TwilioService();
+                $result = $twilio->sendSMS($request->phone, $smsMessage);
+                return response()->json($result);
+            } catch (Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Twilio service error: ' . $e->getMessage()
+                ], 500);
+            }
+        }
         try {
             $validatedData = $request->validate([
                 'patient_id' => 'required|exists:users,id',
