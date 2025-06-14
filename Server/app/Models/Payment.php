@@ -12,6 +12,7 @@ class Payment extends Model
     protected $fillable = [
         'patient_id',
         'doctor_id',
+        'consultation_id',
         'amount',
         'payment_method',
         'status',
@@ -32,5 +33,13 @@ class Payment extends Model
     public function doctor()
     {
         return $this->belongsTo(User::class, 'doctor_id');
+    }
+
+    /**
+     * A payment belongs to a consultation.
+     */
+    public function consultation()
+    {
+        return $this->belongsTo(Consultation::class, 'consultation_id');
     }
 }

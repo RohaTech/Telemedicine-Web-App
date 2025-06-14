@@ -68,13 +68,16 @@ Route::apiResource('/prescriptions', PrescriptionController::class);
 Route::apiResource('/payments', PaymentController::class);
 Route::apiResource('/notifications', NotificationController::class);
 
+// Consultation payment routes
+Route::get('/consultations/{consultation}/payment-status', [PaymentController::class, 'checkConsultationPaymentStatus'])->middleware('auth:sanctum');
+Route::post('/consultations/create-payment-intent', [PaymentController::class, 'createPaymentIntent'])->middleware('auth:sanctum');
+Route::post('/consultations/confirm-payment', [PaymentController::class, 'confirmPayment'])->middleware('auth:sanctum');
 
 Route::get('/patient/consultations', [ConsultationController::class, 'getUserConsultations'])->middleware('auth:sanctum');
 Route::apiResource('/consultations', ConsultationController::class)->middleware('auth:sanctum');
 Route::post('/messages', [ChatController::class, 'message']);
 Route::apiResource('/chats', ChatController::class);
 Route::get('/chats/consultation/{consultation_id}', [ChatController::class, 'getByConsultation']);
-
 
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -84,8 +87,6 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::post('/laboratories/login', [LaboratoryAuthController::class, 'login']);
 Route::post('/laboratories/register', [LaboratoryAuthController::class, 'register']);
 Route::post('/laboratories/logout', [LaboratoryAuthController::class, 'logout'])->middleware('auth:sanctum');
-
-
 
 
 Route::middleware('auth:sanctum')->group(function () {

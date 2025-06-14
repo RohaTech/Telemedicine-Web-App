@@ -46,11 +46,9 @@ export const useConsultationStore = defineStore("consultation", {
         };
         return { success: false };
       }
-    },
-
-    async getUserConsultations() {
+    },    async getUserConsultations() {
       try {
-        const res = await fetch("/api/consultations", {
+        const res = await fetch("/api/patient/consultations", {
           headers: {
             ...(localStorage.getItem("token") && {
               authorization: `Bearer ${localStorage.getItem("token")}`,
