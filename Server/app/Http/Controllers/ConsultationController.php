@@ -29,7 +29,9 @@ class ConsultationController extends Controller
             return response()->json(['error' => 'Unauthenticated'], 401);
         }
 
-        $consultations = $user->consultations()->with('doctor')->get();
+        $consultations = $user->consultations()
+            ->with(['doctor', 'doctor.doctor', 'patient', 'appointment'])
+            ->get();
 
         return response()->json($consultations, 200);
     }
@@ -38,7 +40,7 @@ class ConsultationController extends Controller
     public function show($id)
     {
         try {
-            $consultation = Consultation::findOrFail($id)->with(['doctor.doctor', 'prescription', 'appointment'])->first();
+            $consultation = Consultation::with(['doctor.doctor', 'prescription', 'appointment'])->findOrFail($id);
             return response()->json($consultation, 200);
         } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Consultation not found', 'message' => $e->getMessage()], 404);
@@ -140,7 +142,7 @@ class ConsultationController extends Controller
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'error' => 'Failed to fetch patient consultations', 
+                'error' => 'Failed to fetch patient consultations',
                 'message' => $e->getMessage()
             ], 500);
         }

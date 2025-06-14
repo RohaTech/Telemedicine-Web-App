@@ -2,10 +2,21 @@
 import { onMounted, ref, computed } from "vue";
 import UserLayout from "@/layout/UserLayout.vue";
 import { useConsultationStore } from "@/stores/consultationStore";
+import { useConsultationPaymentStore } from "@/stores/consultationPaymentStore";
+import PaymentModal from "@/components/Payment/PaymentModal.vue";
+import { useRouter } from "vue-router";
+import { useToast } from "vue-toastification";
+import paymentService from "@/services/paymentService";
 
 const { getUserConsultations } = useConsultationStore();
+const paymentStore = useConsultationPaymentStore();
+const router = useRouter();
+const toast = useToast();
 
 const consultations = ref([]);
+const showPaymentModal = ref(false);
+const selectedConsultation = ref(null);
+const paymentStatuses = ref(new Map());
 
 const statusOptions = ["confirmed", "pending", "cancelled", "waiting"];
 const selectedStatus = ref("all"); // Default to 'all'
@@ -28,13 +39,132 @@ const getConsultationStatus = (consultationDate) => {
   }
 };
 
+// Check if consultation has been paid for
+const checkPaymentStatus = async (consultationId) => {
+  if (paymentStatuses.value.has(consultationId)) {
+    return paymentStatuses.value.get(consultationId);
+  }
+
+  try {
+    const result = await paymentService.checkConsultationPayment(consultationId);
+    if (result.success) {
+      paymentStatuses.value.set(consultationId, result.isPaid);
+      return result.isPaid;
+    }
+  } catch (error) {
+    console.error('Error checking payment status:', error);
+  }
+  
+  return false;
+};
+
+// Handle consultation access
+const handleConsultationAccess = async (consultation) => {
+  console.log('Consultation data:', consultation); // Debug log
+  
+  // Only check payment for today's consultations
+  if (getConsultationStatus(consultation.consultation_date) === 'today') {
+    const isPaid = await checkPaymentStatus(consultation.id);
+    
+    if (!isPaid) {
+      // Show payment modal with proper null checks
+      selectedConsultation.value = consultation;
+      showPaymentModal.value = true;
+      return;
+    }
+  }
+  
+  // If paid or not today's consultation, proceed to consultation
+  router.push({
+    name: 'UserConsultationDetail',
+    params: { id: consultation.id },
+  });
+};
+
+// Handle successful payment
+const handlePaymentSuccess = async (paymentData) => {
+  if (selectedConsultation.value) {
+    // Update payment status
+    paymentStatuses.value.set(selectedConsultation.value.id, true);
+    
+    toast.success('Payment successful! Redirecting to consultation...', {
+      position: "top-right",
+      timeout: 2000
+    });
+    
+    // Navigate to consultation after short delay
+    setTimeout(() => {
+      router.push({
+        name: 'UserConsultationDetail',
+        params: { id: selectedConsultation.value.id },
+      });
+    }, 1000);
+  }
+};
+
+// Close payment modal
+const closePaymentModal = () => {
+  showPaymentModal.value = false;
+  selectedConsultation.value = null;
+};
+
+// Helper function to safely get consultation fee
+const getConsultationFee = (consultation) => {
+  try {
+    console.log('Getting consultation fee for:', consultation); // Debug log
+    
+    // Try multiple possible paths for the consultation fee
+    const fee = consultation?.doctor?.doctor?.payment || 
+                consultation?.doctor?.payment ||
+                null;
+    
+    console.log('Extracted fee:', fee); // Debug log
+    
+    if (fee && fee > 0) {
+      return fee;
+    }
+    
+    console.warn('No valid payment amount found for consultation, using fallback');
+    return 50; // Only use fallback if no valid payment is found
+  } catch (error) {
+    console.error('Error getting consultation fee:', error);
+    return 50; // Error fallback
+  }
+};
+
+// Helper function to safely get doctor name
+const getDoctorName = (consultation) => {
+  try {
+    return consultation?.doctor?.name || 
+           consultation?.doctor?.user?.name || 
+           'the Doctor'; // Default fallback
+  } catch (error) {
+    console.error('Error getting doctor name:', error);
+    return 'the Doctor'; // Default fallback
+  }
+};
+
 onMounted(async () => {
   window.scrollTo({
     top: 0,
     behavior: "smooth",
-  });
-  consultations.value = await getUserConsultations();
+  });  consultations.value = await getUserConsultations();
   console.log("consultations.value", consultations.value.data);
+  
+  // Debug: Log the structure of the first consultation
+  if (consultations.value?.data && consultations.value.data.length > 0) {
+    console.log("First consultation structure:", consultations.value.data[0]);
+    console.log("Doctor data:", consultations.value.data[0]?.doctor);
+  }
+  
+  // Pre-load payment statuses for today's consultations
+  if (consultations.value?.data) {
+    for (const consultation of consultations.value.data) {
+      if (getConsultationStatus(consultation.consultation_date) === 'today') {
+        await checkPaymentStatus(consultation.id);
+      }
+    }
+  }
 });
 </script>
 
@@ -130,22 +260,24 @@ onMounted(async () => {
               </td>
               <td class="px-5 py-4 sm:px-6">
                 {{ consultation.consultation_date }}
-              </td>
-              <td class="px-5 py-4 sm:px-6">
-                <!-- Today's consultation - Active button -->
-                <RouterLink
-                  :to="{
-                    name: 'UserConsultationDetail',
-                    params: { id: consultation.id },
-                  }"
+              </td>              <td class="px-5 py-4 sm:px-6">
+                <!-- Today's consultation - Payment required button -->
+                <button
+                  @click="handleConsultationAccess(consultation)"
                   v-if="
                     getConsultationStatus(consultation.consultation_date) ===
                     'today'
                   "
-                  class="ark:bg-gray-800 ark:text-white rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                  class="ark:bg-gray-800 ark:text-white rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center space-x-2"
                 >
-                  Go to Consultation
-                </RouterLink>
+                  <span v-if="paymentStatuses.get(consultation.id)">Go to Consultation</span>
+                  <span v-else>
+                    <svg class="w-4 h-4 mr-1 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                    </svg>
+                    Pay & Start Consultation
+                  </span>
+                </button>
 
                 <!-- Future consultation - Disabled state -->
                 <span
@@ -168,10 +300,15 @@ onMounted(async () => {
               </td>
             </tr>
           </tbody>
-        </table>
-      </div>
-
-      <!-- Using the Modal component -->
+        </table>      </div>      <!-- Payment Modal -->
+      <PaymentModal
+        :show="showPaymentModal"
+        :consultation-id="selectedConsultation?.id"
+        :consultation-fee="getConsultationFee(selectedConsultation)"
+        :doctor-name="getDoctorName(selectedConsultation)"
+        @close="closePaymentModal"
+        @payment-success="handlePaymentSuccess"
+      />
     </div>
   </UserLayout>
 </template>
