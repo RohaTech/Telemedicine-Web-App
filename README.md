@@ -1,61 +1,156 @@
- 
-# Telemedicine Web App
+# Tenadam Telemedicine Web Application
 
-A ready-to-use template for building modern web applications with Laravel as the backend framework and Vue.js for the frontend. This template provides a clean starting point for projects, with pre-configured integration between Laravel and Vue.
+A full-featured telemedicine platform enabling patients to consult with doctors online, book appointments, manage medical records, and make secure payments. Includes real-time chat, video calls, and a robust, branded payment and receipt system.
 
- 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-username/laravel-vue-template.git
-   cd laravel-vue-template
-   ```
+---
 
-2. Install PHP dependencies:
-   ```bash
-   cd server composer install
-   ```
+## Features
 
-3. Install JavaScript dependencies:
-   ```bash
-   cd client npm install
-   ```
+- **User & Doctor Registration/Login**
+  - Secure authentication for patients and doctors.
 
-4. Copy and configure the `.env` file:
-   ```bash
-   cp .env.example .env
-   ```
-   Update the database credentials and other environment variables.
+- **Doctor Directory & Booking**
+  - Browse doctors by specialty, view profiles, and book appointments.
 
-5. Generate the application key:
-   ```bash
-   php artisan key:generate
-   ```
+- **Online Consultations**
+  - Video call and real-time chat for seamless doctor-patient interaction.
 
-6. Run migrations:
-   ```bash
-   php artisan migrate
-   ```
+- **Medical Records**
+  - Patients and doctors can view and manage consultation history and prescriptions.
 
-7. Build frontend assets:
-   ```bash
-   cd client npm run dev
-   ```
+- **Simulated Payment Gateway**
+  - Supports card, M-Pesa, and Telebirr payments.
+  - Payment amount always matches the doctor’s set consultation fee (from the database).
+  - Robust error handling for undefined/null data.
+  - Professional PDF receipts with Tenadam branding and logo.
 
-8. Start the development server:
-   ```bash
-   cd server php artisan serve
-   ```
+- **Admin Panel**
+  - Manage users, doctors, appointments, and system settings.
 
- 
+---
+
+## Tech Stack
+
+- **Frontend:** Vue.js, Vite, Tailwind CSS, jsPDF
+- **Backend:** Laravel, PHP, MySQL/SQLite
+- **Real-time:** Laravel Echo, Pusher/PeerJS (for chat and video)
+- **PDF Generation:** jsPDF
+
+---
+
+## Setup Instructions
+
+### Prerequisites
+
+- Node.js (v16+)
+- PHP (v8+)
+- Composer
+- MySQL or SQLite
+
+### Installation Steps
+
+1. **Clone the Repository**
+    ```bash
+    git clone <repository-url>
+    cd tenadam-telemedicine
+    ```
+
+2. **Install Backend Dependencies**
+    ```bash
+    composer install
+    cp .env.example .env
+    php artisan key:generate
+    php artisan migrate
+    ```
+
+3. **Install Frontend Dependencies**
+    ```bash
+    cd frontend
+    npm install
+    ```
+
+4. **Run the Application**
+
+    - **Backend:**  
+      ```bash
+      php artisan serve
+      ```
+
+    - **Frontend:**  
+      ```bash
+      cd frontend
+      npm run dev
+      ```
+
+    - **PeerJS Server (for video calls):**  
+      ```bash
+      peerjs --port 9000
+      ```
+
+---
+
+## Usage
+
+1. Register as a patient or doctor.
+2. Patients can browse doctors, book appointments, and join consultations.
+3. Consultations support video calls and real-time chat.
+4. Pay for consultations using card, M-Pesa, or Telebirr.
+   - The payment amount is always the doctor’s set fee (never a default).
+5. After payment, download a branded PDF receipt.
+6. Admins can manage users, doctors, and appointments.
+
+---
+
+## Payment System Details
+
+- **Dynamic Fee:**  
+  The payment amount is always fetched from the doctor’s profile in the database.
+
+- **Multiple Methods:**  
+  Card, M-Pesa, Telebirr (simulated for demo).
+
+- **PDF Receipts:**  
+  Receipts use Tenadam branding, colors (`#048581`, `#2FC7A1`), and logo.
+
+- **Robustness:**  
+  Handles null/undefined data gracefully; logs errors for debugging.
+
+---
+
+## Real-Time Features
+
+- **Video Calls:**  
+  Secure, browser-based video consultations.
+
+- **Chat:**  
+  Instant messaging during consultations.
+
+---
+
+## Development Notes
+
+- All code is robust to missing/null data.
+- Payment and consultation flows are fully documented in:
+  - `DEV_PAYMENT_SYSTEM.md`
+  - `PAYMENT_GATEWAY_IMPLEMENTATION.md`
+  - `RECEIPT_PDF_IMPLEMENTATION.md`
+  - `PAYMENT_AMOUNT_FIX.md`
+- Debug logging is enabled throughout the payment and consultation flows.
+
+---
 
 ## Contributing
 
-Contributions are welcome! Please follow these steps:
+Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
 
-1. Fork the repository.
-2. Create a feature branch (`git checkout -b feature-name`).
-3. Commit your changes (`git commit -m 'Add a new feature'`).
-4. Push to the branch (`git push origin feature-name`).
-5. Open a Pull Request.
+---
 
- 
+## License
+
+MIT
+
+---
+
+## Contact
+
+For questions or support, please contact [rohatechofficial@gmail.com].
