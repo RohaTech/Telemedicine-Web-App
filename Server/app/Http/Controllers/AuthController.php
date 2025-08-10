@@ -1,0 +1,206 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use App\Models\Doctor;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\DoctorRegistrationPending;
+use Illuminate\Support\Facades\Log;
+
+class AuthController extends Controller
+{
+    public function register(Request $request)
+    {
+        $fields = $request->validate([
+            'name' => 'required|max:255',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:8|confirmed',
+            'role' => 'required|in:admin,doctor,patient',
+            'phone' => ['required', 'string', 'regex:/^09\d{8}$/', 'unique:users'],
+            'birth_date' => 'nullable|date',
+            'gender' => 'nullable|in:male,female,other',
+            'region' => 'nullable|string',
+            'city' => 'nullable|string',
+            'profile_picture' => 'nullable|string',
+        ]);
+
+        $user = User::create([
+            'name' => $fields['name'],
+            'email' => $fields['email'],
+            'password' => Hash::make($fields['password']),
+            'role' => $fields['role'],
+            'phone' => $fields['phone'],
+            'birth_date' => $fields['birth_date'],
+            'gender' => $fields['gender'],
+            'region' => $fields['region'],
+            'city' => $fields['city'],
+            'profile_picture' => $fields['profile_picture'],
+        ]);
+
+        $token = $user->createToken($request->name)->plainTextToken;
+
+        return response()->json([
+            'user' => $user,
+            'token' => $token,
+        ], 201);
+    }
+    public function login(Request $request)
+    {
+        $fields = $request->validate([
+            'email' => 'required|email|exists:users',
+            'password' => 'required',
+        ]);
+
+        $user = User::where('email', $fields['email'])->first();
+
+        if (!$user || !Hash::check($fields['password'], $user->password)) {
+            throw ValidationException::withMessages([
+                'email' => ['The provided credentials are incorrect.'],
+            ]);
+        }
+        if ($user->role === 'doctor') {
+            $doctor = $user->doctor;
+            if ($doctor->approval_status === 'pending') {
+                return response()->json([
+                    'error' => 'Your account is under review. Please wait for admin approval.',
+                ], 403);
+            }
+            if ($doctor->approval_status === 'rejected') {
+                return response()->json([
+                    'error' => 'Your account was rejected. Please contact support.',
+                ], 403);
+            }
+        }
+
+        $token = $user->createToken($user->name)->plainTextToken;
+        return response()->json([
+            'user' => $user,
+            'token' => $token,
+        ], 200);
+    }
+    public function logout(Request $request)
+    {
+        $request->user()->tokens()->delete();
+        return ['message' => 'Your are log out'];
+    }
+
+    public function registerDoctor(Request $request)
+    {
+        try {
+            // Validate request data
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:8|confirmed',
+                'phone' => ['required', 'string', 'regex:/^09\d{8}$/', 'unique:users'],
+                'city' => 'required|string|max:255',
+                'region' => 'required|string|max:255',
+                'gender' => 'nullable|in:male,female,other',
+                'birth_date' => 'nullable|date',
+                'medical_license_number' => 'required|string|unique:doctors',
+                'specialty' => 'required|string',
+                'qualification' => 'required|string',
+                'experience_years' => 'required|integer|min:0',
+                'university_attended' => 'required|string',
+                'license_issue_date' => 'required|date',
+                'license_expiry_date' => 'required|date|after:license_issue_date',
+                'status' => 'nullable|in:pending,active,suspended,expired',
+                'payment' => 'required|numeric|min:0',
+                'location' => 'required|json',
+                'certificate_path' => 'required|url',
+                'profile_picture' => 'required|url',
+                'languages' => 'nullable|json',
+                'overview' => 'required|string',
+            ]);
+
+            // Parse location JSON
+            $locationData = json_decode($validated['location'], true);
+            if (!isset($locationData['lat']) || !isset($locationData['lng'])) {
+                throw ValidationException::withMessages([
+                    'location' => ['Location must include lat and lng.'],
+                ]);
+            }
+
+            // Parse languages JSON (if present)
+            $languages = null;
+            if (isset($validated['languages'])) {
+                $languages = json_decode($validated['languages'], true);
+            }
+
+            // Use a transaction to ensure atomicity
+            return DB::transaction(function () use ($validated, $locationData, $languages) {
+                // Create User
+                $user = User::create([
+                    'name' => $validated['name'],
+                    'email' => $validated['email'],
+                    'password' => Hash::make($validated['password']),
+                    'phone' => $validated['phone'],
+                    'city' => $validated['city'],
+                    'region' => $validated['region'],
+                    'gender' => $validated['gender'],
+                    'profile_picture' => $validated['profile_picture'],
+                    'birth_date' => $validated['birth_date'],
+                    'role' => 'doctor',
+                ]);
+
+                // Create Doctor
+                $doctor = Doctor::create([
+                    'user_id' => $user->id,
+                    'medical_license_number' => $validated['medical_license_number'],
+                    'specialty' => $validated['specialty'],
+                    'qualification' => $validated['qualification'],
+                    'experience_years' => $validated['experience_years'],
+                    'university_attended' => $validated['university_attended'],
+                    'license_issue_date' => $validated['license_issue_date'],
+                    'license_expiry_date' => $validated['license_expiry_date'],
+                    'status' => $validated['status'] ?? 'pending',
+                    'payment' => $validated['payment'],
+                    'location' => json_encode([
+                        'lat' => $locationData['lat'],
+                        'lng' => $locationData['lng'],
+                    ]), // Store only lat and lng
+                    'certificate_path' => $validated['certificate_path'],
+                    'languages' => $languages ? json_encode($languages) : null,
+                    'overview' => $validated['overview'],
+                    'available' => false,
+                ]);
+
+                // Generate an API token
+                $token = $user->createToken('auth_token')->plainTextToken;
+
+                // Send email
+                try {
+                    Mail::to($user->email)->send(new DoctorRegistrationPending($user));
+                    Log::info('Email sent successfully', ['user_id' => $user->id]);
+                } catch (\Exception $e) {
+                    Log::error('Failed to send email', ['error' => $e->getMessage()]);
+                    return response()->json([
+                        'error' => 'Failed to send email',
+                        'message' => $e->getMessage(),
+                    ], 500);
+                }
+
+                return response()->json([
+                    'user' => $user,
+                    'doctor' => $doctor,
+                    'token' => $token,
+                ], 201);
+            });
+        } catch (ValidationException $e) {
+            return response()->json([
+                'error' => 'Validation failed',
+                'messages' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Failed to register doctor',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+}
