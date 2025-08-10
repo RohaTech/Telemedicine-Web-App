@@ -403,10 +403,9 @@ const closeSelectLabPopup = () => {
                   </p>
                   <p
                     v-else
-                    @click="openDetailPopup(labRequest)"
                     class="cursor-pointer rounded bg-gray-200 p-1 py-2 text-center text-theme-sm font-bold text-gray-500 transition-colors duration-200 hover:bg-success-50 hover:text-success-700"
                   >
-                    More Detail
+                    ----
                   </p>
                 </td>
               </tr>

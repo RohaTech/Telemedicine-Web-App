@@ -164,16 +164,16 @@ const router = createRouter({
       path: "/doctor/appointments",
       name: "DoctorAppointments",
       component: DoctorAppointment,
-    },    {
+    }, {
       path: "/doctor/appointments-waiting",
       name: "DoctorWaitingAppointments",
       component: DoctorWaitingAppointments,
-    },    {
+    }, {
       path: "/doctor/lab-requests",
       name: "DoctorLabRequests",
       component: DoctorLabRequests,
       meta: { auth: true, doctor: true },
-    },    {
+    }, {
       path: "/doctor/lab-results",
       name: "DoctorLabResults",
       component: DoctorLabResults,
@@ -425,6 +425,9 @@ router.beforeEach(async (to, from) => {
   if (authStore.user?.role === "admin" && to.meta.auth) {
     return { name: "AdminHome" };
   }
+  if (authStore.user?.role === "admin" && to.meta.guest) {
+    return { name: "AdminHome" };
+  }
   if (authStore.user?.role === "doctor" && to.meta.welcome) {
     return { name: "DoctorHome" };
   }
@@ -469,6 +472,9 @@ router.beforeEach(async (to, from) => {
     return { name: "Welcome" };
   }
   if (!authStore.user && to.meta.auth) {
+    return { name: "GetStarted" };
+  }
+  if (!authStore.user && to.meta.admin) {
     return { name: "GetStarted" };
   }
   if (!authStore.user && to.meta.laboratory) {
